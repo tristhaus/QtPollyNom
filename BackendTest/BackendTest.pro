@@ -9,7 +9,8 @@ CONFIG += console c++11 thread
 CONFIG -= app_bundle
 
 HEADERS += \
-        tst_basex.h
+        tst_basex.h \
+        tst_constant.h
 
 SOURCES += \
         main.cpp

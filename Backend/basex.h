@@ -5,7 +5,7 @@
 
 namespace Backend {
 
-class BaseX : Expression
+class BaseX final : Expression
 {
     Q_OBJECT
 

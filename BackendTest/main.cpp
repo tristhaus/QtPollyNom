@@ -1,4 +1,5 @@
 #include "tst_basex.h"
+#include "tst_constant.h"
 
 #include <gtest/gtest.h>
 
