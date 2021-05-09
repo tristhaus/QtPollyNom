@@ -27,4 +27,18 @@ TEST(BackendTest, BaseXShallEvaluateCorrectly)
     EXPECT_DOUBLE_EQ(result2.value(), -4.5);
 }
 
+TEST(BackendTest, BaseXShallPrintCorrectly)
+{
+    // Arrange
+    BaseX x;
+
+    // Act
+    auto result1 = x.Print();
+
+    // Assert
+    ASSERT_TRUE(result1.has_value());
+
+    EXPECT_STREQ(result1.value().c_str(), "x");
+}
+
 #endif // TST_BASEX_H

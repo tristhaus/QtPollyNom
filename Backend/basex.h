@@ -12,7 +12,10 @@ class BaseX : Expression
 public:
     BaseX();
 
+    virtual int GetLevel();
+    virtual bool IsMonadic();
     virtual std::optional<double> Evaluate(double input);
+    virtual std::optional<std::string> Print();
 };
 
 }
