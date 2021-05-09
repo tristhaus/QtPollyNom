@@ -1,3 +1,5 @@
-HEADERS += Backend/expression.h
+HEADERS += $$PWD/expression.h \
+    $$PWD/basex.h
 
-SOURCES += Backend/expression.cpp
+SOURCES += $$PWD/expression.cpp \
+    $$PWD/basex.cpp
