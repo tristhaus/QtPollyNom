@@ -16,6 +16,9 @@ public:
     ~MainWindow();
 
 private:
+    void InitializePlot();
+
+private:
     Ui::MainWindow *ui;
 };
 #endif // MAINWINDOW_H
