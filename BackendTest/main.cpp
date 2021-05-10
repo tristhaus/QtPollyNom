@@ -1,5 +1,6 @@
 #include "tst_basex.h"
 #include "tst_constant.h"
+#include "tst_equality.h"
 
 #include <gtest/gtest.h>
 

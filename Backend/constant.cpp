@@ -26,4 +26,21 @@ std::optional<std::string> Constant::Print()
     return std::to_string(this->value);
 }
 
+bool Constant::operator==(const Expression &other) const
+{
+    if (const Constant * b = dynamic_cast<const Constant*>(&other))
+    {
+        return b != NULL && this->value == b->value;
+    }
+    else
+    {
+        return false;
+    }
+}
+
+bool Constant::operator!=(const Expression &other) const
+{
+    return !this->operator==(other);
+}
+
 }

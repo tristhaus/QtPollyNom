@@ -18,6 +18,8 @@ public:
     virtual bool IsMonadic() = 0;
     virtual std::optional<double> Evaluate(double input) = 0;
     virtual std::optional<std::string> Print() = 0;
+    virtual bool operator==(const Expression &other) const = 0;
+    virtual bool operator!=(const Expression &other) const = 0;
 };
 
 }

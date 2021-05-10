@@ -20,6 +20,8 @@ public:
     virtual bool IsMonadic();
     virtual std::optional<double> Evaluate(double);
     virtual std::optional<std::string> Print();
+    virtual bool operator==(const Expression &other) const;
+    virtual bool operator!=(const Expression &other) const;
 };
 
 }

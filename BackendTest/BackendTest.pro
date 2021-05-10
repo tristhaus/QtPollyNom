@@ -10,7 +10,8 @@ CONFIG -= app_bundle
 
 HEADERS += \
         tst_basex.h \
-        tst_constant.h
+        tst_constant.h \
+        tst_equality.h
 
 SOURCES += \
         main.cpp
