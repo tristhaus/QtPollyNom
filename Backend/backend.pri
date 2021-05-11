@@ -1,7 +1,8 @@
-HEADERS += $$PWD/expression.h \
+HEADERS += \
+    $$PWD/expression.h \
     $$PWD/basex.h \
     $$PWD/constant.h
 
-SOURCES += $$PWD/expression.cpp \
+SOURCES += \
     $$PWD/basex.cpp \
     $$PWD/constant.cpp

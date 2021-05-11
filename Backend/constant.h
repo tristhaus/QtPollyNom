@@ -5,29 +5,29 @@
 
 namespace Backend {
 
-class Constant final : public Expression
-{
-    Q_OBJECT
+    class Constant final : public Expression
+    {
+        Q_OBJECT
 
-private:
+    private:
 
-    double value;
+        double value;
 
-public:
-    Constant(double input);
-    virtual ~Constant();
-    Constant(const Constant&) = delete;
-    Constant(Constant&&) = delete;
-    Constant& operator=(const Constant&) = delete;
-    Constant& operator=(Constant&&) = delete;
+    public:
+        Constant(double input);
+        virtual ~Constant();
+        Constant(const Constant&) = delete;
+        Constant(Constant&&) = delete;
+        Constant& operator=(const Constant&) = delete;
+        Constant& operator=(Constant&&) = delete;
 
-    virtual int GetLevel() const;
-    virtual bool IsMonadic() const;
-    virtual std::optional<double> Evaluate(double) const;
-    virtual std::optional<std::string> Print() const;
-    virtual bool operator==(const Expression &other) const;
-    virtual bool operator!=(const Expression &other) const;
-};
+        virtual int GetLevel() const;
+        virtual bool IsMonadic() const;
+        virtual std::optional<double> Evaluate(double) const;
+        virtual std::optional<std::string> Print() const;
+        virtual bool operator==(const Expression &other) const;
+        virtual bool operator!=(const Expression &other) const;
+    };
 
 }
 
