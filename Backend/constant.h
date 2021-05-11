@@ -15,6 +15,11 @@ private:
 
 public:
     Constant(double input);
+    virtual ~Constant();
+    Constant(const Constant&) = delete;
+    Constant(Constant&&) = delete;
+    Constant& operator=(const Constant&) = delete;
+    Constant& operator=(Constant&&) = delete;
 
     virtual int GetLevel() const;
     virtual bool IsMonadic() const;

@@ -12,7 +12,16 @@ class Expression : public QObject
     Q_OBJECT
 
 public:
-    explicit Expression(QObject *parent = nullptr);
+    explicit Expression(QObject *parent = nullptr) : QObject(parent)
+    {
+    }
+    virtual ~Expression()
+    {
+    }
+    Expression(const Expression&) = delete;
+    Expression(Expression&&) = delete;
+    Expression& operator=(const Expression&) = delete;
+    Expression& operator=(Expression&&) = delete;
 
     virtual int GetLevel() const = 0;
     virtual bool IsMonadic() const = 0;

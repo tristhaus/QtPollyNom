@@ -6,6 +6,10 @@ Constant::Constant(double input) : value(input)
 {
 }
 
+Constant::~Constant()
+{
+}
+
 int Constant::GetLevel() const
 {
     return 0;

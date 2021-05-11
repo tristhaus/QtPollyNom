@@ -6,6 +6,10 @@ BaseX::BaseX()
 {
 }
 
+BaseX::~BaseX()
+{
+}
+
 int BaseX::GetLevel() const
 {
     return 0;

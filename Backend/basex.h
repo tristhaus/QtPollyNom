@@ -11,6 +11,11 @@ class BaseX final : public Expression
 
 public:
     BaseX();
+    virtual ~BaseX();
+    BaseX(const BaseX&) = delete;
+    BaseX(BaseX&&) = delete;
+    BaseX& operator=(const BaseX&) = delete;
+    BaseX& operator=(BaseX&&) = delete;
 
     virtual int GetLevel() const;
     virtual bool IsMonadic() const;
