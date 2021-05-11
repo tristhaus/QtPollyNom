@@ -6,22 +6,22 @@ Constant::Constant(double input) : value(input)
 {
 }
 
-int Constant::GetLevel()
+int Constant::GetLevel() const
 {
     return 0;
 }
 
-bool Constant::IsMonadic()
+bool Constant::IsMonadic() const
 {
     return true;
 }
 
-std::optional<double> Constant::Evaluate(double)
+std::optional<double> Constant::Evaluate(double) const
 {
     return this->value;
 }
 
-std::optional<std::string> Constant::Print()
+std::optional<std::string> Constant::Print() const
 {
     return std::to_string(this->value);
 }

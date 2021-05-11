@@ -6,22 +6,22 @@ BaseX::BaseX()
 {
 }
 
-int BaseX::GetLevel()
+int BaseX::GetLevel() const
 {
     return 0;
 }
 
-bool BaseX::IsMonadic()
+bool BaseX::IsMonadic() const
 {
     return true;
 }
 
-std::optional<double> BaseX::Evaluate(double input)
+std::optional<double> BaseX::Evaluate(double input) const
 {
     return input;
 }
 
-std::optional<std::string> BaseX::Print()
+std::optional<std::string> BaseX::Print() const
 {
     return std::string("x");
 }

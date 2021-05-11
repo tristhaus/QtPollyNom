@@ -14,10 +14,10 @@ class Expression : public QObject
 public:
     explicit Expression(QObject *parent = nullptr);
 
-    virtual int GetLevel() = 0;
-    virtual bool IsMonadic() = 0;
-    virtual std::optional<double> Evaluate(double input) = 0;
-    virtual std::optional<std::string> Print() = 0;
+    virtual int GetLevel() const = 0;
+    virtual bool IsMonadic() const = 0;
+    virtual std::optional<double> Evaluate(double input) const = 0;
+    virtual std::optional<std::string> Print() const = 0;
     virtual bool operator==(const Expression &other) const = 0;
     virtual bool operator!=(const Expression &other) const = 0;
 };

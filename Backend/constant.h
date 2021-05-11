@@ -16,10 +16,10 @@ private:
 public:
     Constant(double input);
 
-    virtual int GetLevel();
-    virtual bool IsMonadic();
-    virtual std::optional<double> Evaluate(double);
-    virtual std::optional<std::string> Print();
+    virtual int GetLevel() const;
+    virtual bool IsMonadic() const;
+    virtual std::optional<double> Evaluate(double) const;
+    virtual std::optional<std::string> Print() const;
     virtual bool operator==(const Expression &other) const;
     virtual bool operator!=(const Expression &other) const;
 };
