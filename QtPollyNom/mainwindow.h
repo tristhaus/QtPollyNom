@@ -51,7 +51,7 @@ private:
 private:
     Ui::MainWindow *ui;
 
-    GamePoc gamePoc;
+    Backend::GamePoc gamePoc;
     QFutureWatcher<void> gameUpdateFutureWatcher;
 
     std::vector<QCPAbstractPlottable*> dotCurves;
