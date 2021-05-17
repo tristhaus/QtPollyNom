@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
-    <height>600</height>
+    <width>600</width>
+    <height>821</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -54,7 +54,11 @@
              </widget>
             </item>
             <item>
-             <widget class="QLineEdit" name="funcLineEdit0"/>
+             <widget class="QLineEdit" name="funcLineEdit0">
+              <property name="text">
+               <string>1/x (fake)</string>
+              </property>
+             </widget>
             </item>
            </layout>
           </item>
@@ -68,7 +72,11 @@
              </widget>
             </item>
             <item>
-             <widget class="QLineEdit" name="funcLineEdit1"/>
+             <widget class="QLineEdit" name="funcLineEdit1">
+              <property name="text">
+               <string>(x-3.0)*(x+4.0) (fake)</string>
+              </property>
+             </widget>
             </item>
            </layout>
           </item>
@@ -134,7 +142,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>800</width>
+     <width>600</width>
      <height>21</height>
     </rect>
    </property>
