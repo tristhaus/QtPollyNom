@@ -157,31 +157,38 @@ TEST(BackendTest, EqualityShallWorkCorrectlyForSums)
     // Arrange
     std::shared_ptr<Expression> x1 = std::make_shared<BaseX>();
     std::shared_ptr<Expression> x2 = std::make_shared<BaseX>();
+    std::shared_ptr<Expression> c1 = std::make_shared<Constant>(3.0);
 
-    auto x1Summand = Sum::Summand(Sum::Sign::Plus, x1);
-    auto x2Summand = Sum::Summand(Sum::Sign::Minus, x2);
+    auto x1Summand = Sum::Summand(Sum::Sign::Plus, x1);  // x
+    auto x2Summand = Sum::Summand(Sum::Sign::Minus, x2); // - x
+    auto c1Summand = Sum::Summand(Sum::Sign::Plus, c1);  // 3.0
 
-    Sum s1 = Sum({x1Summand, x1Summand});
-    Sum s2 = Sum({x1Summand, x1Summand});
-    Sum s3 = Sum({x1Summand, x2Summand});
-    Sum s4 = Sum({x1Summand, x1Summand, x1Summand});
-    Sum s5 = Sum({x2Summand, x1Summand});
+    Sum s1 = Sum({x1Summand, x1Summand});            // x + x
+    Sum s2 = Sum({x1Summand, x1Summand});            // x + x
+    Sum s3 = Sum({x1Summand, x2Summand});            // x - x
+    Sum s4 = Sum({x1Summand, x1Summand, x1Summand}); // x + x + x
+    Sum s5 = Sum({x2Summand, x1Summand});            // - x + x
+    Sum s6 = Sum({c1Summand, x1Summand, x2Summand}); // 3.0 + x - x
+    Sum s7 = Sum({x2Summand, c1Summand, x1Summand}); // - x + 3.0 + x
 
     // Act, Assert
     ASSERT_TRUE(s1 == s2);
     ASSERT_FALSE(s1 == s3);
     ASSERT_FALSE(s1 == s4);
     ASSERT_TRUE(s3 == s5);
+    ASSERT_TRUE(s6 == s7);
 
     ASSERT_FALSE(s1 != s2);
     ASSERT_TRUE(s1 != s3);
     ASSERT_TRUE(s1 != s4);
     ASSERT_FALSE(s3 != s5);
+    ASSERT_FALSE(s6 != s7);
 
     ASSERT_EQ(s1, s2);
     ASSERT_NE(s1, s3);
     ASSERT_NE(s1, s4);
     ASSERT_EQ(s3, s5);
+    ASSERT_EQ(s6, s7);
 }
 
 // while we do not consider ( a + b ) + c == a + ( b + c ) to be true (associativity)
@@ -194,18 +201,18 @@ TEST(BackendTest, EqualityShallWorkCorrectlyForRecursiveSums)
     std::shared_ptr<Expression> x2 = std::make_shared<BaseX>();
     std::shared_ptr<Expression> c = std::make_shared<Constant>(3.0);
 
-    auto x1Summand = Sum::Summand(Sum::Sign::Plus, x1);
-    auto x2Summand = Sum::Summand(Sum::Sign::Minus, x2);
-    auto cSummand = Sum::Summand(Sum::Sign::Minus, c);
+    auto x1Summand = Sum::Summand(Sum::Sign::Plus, x1);  // x
+    auto x2Summand = Sum::Summand(Sum::Sign::Minus, x2); // -x
+    auto cSummand = Sum::Summand(Sum::Sign::Minus, c);   // -3.0
 
-    std::shared_ptr<Expression> s1 = std::make_shared<Sum>(std::vector<Sum::Summand>({x1Summand, x1Summand}));
-    std::shared_ptr<Expression> s2 = std::make_shared<Sum>(std::vector<Sum::Summand>({x1Summand, x2Summand}));
+    std::shared_ptr<Expression> s1 = std::make_shared<Sum>(std::vector<Sum::Summand>({x1Summand, x1Summand})); // x + x
+    std::shared_ptr<Expression> s2 = std::make_shared<Sum>(std::vector<Sum::Summand>({x1Summand, x2Summand})); // x - x
 
-    auto s1Summand = Sum::Summand(Sum::Sign::Plus, s1);
-    auto s2Summand = Sum::Summand(Sum::Sign::Minus, s2);
+    auto s1Summand = Sum::Summand(Sum::Sign::Plus, s1);  // x + x
+    auto s2Summand = Sum::Summand(Sum::Sign::Minus, s2); // -(x - x)
 
-    std::shared_ptr<Expression> s3 = std::make_shared<Sum>(std::vector<Sum::Summand>({cSummand, s1Summand, s2Summand}));
-    std::shared_ptr<Expression> s4 = std::make_shared<Sum>(std::vector<Sum::Summand>({s2Summand, s1Summand, cSummand}));
+    std::shared_ptr<Expression> s3 = std::make_shared<Sum>(std::vector<Sum::Summand>({cSummand, s1Summand, s2Summand})); // - 3.0 + ( x + x ) - ( x - x )
+    std::shared_ptr<Expression> s4 = std::make_shared<Sum>(std::vector<Sum::Summand>({s2Summand, s1Summand, cSummand})); // - ( x - x ) + ( x + x ) - 3.0
 
     ASSERT_TRUE(*s3 == *s4);
     ASSERT_FALSE(*s3 != *s4);

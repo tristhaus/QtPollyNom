@@ -154,7 +154,6 @@ namespace Backend
             }
 
             return otherTemp.empty();
-
         }
         else
         {

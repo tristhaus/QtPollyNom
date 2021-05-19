@@ -34,11 +34,7 @@ TEST(BackendTest, SumShallEvaluateCorrectly)
     std::shared_ptr<BaseX> x = std::make_shared<BaseX>();
     std::shared_ptr<Constant> c = std::make_shared<Constant>(3.0);
 
-    std::vector<Sum::Summand> summands;
-    summands.push_back(Sum::Summand(Sum::Sign::Plus, x));
-    summands.push_back(Sum::Summand(Sum::Sign::Minus, c));
-
-    Sum sum(summands);
+    Sum sum({Sum::Summand(Sum::Sign::Plus, x), Sum::Summand(Sum::Sign::Minus, c)});
 
     // Act
     auto result1 = sum.Evaluate(0.0);
@@ -58,11 +54,7 @@ TEST(BackendTest, SumShallPrintCorrectly)
     std::shared_ptr<BaseX> x = std::make_shared<BaseX>();
     std::shared_ptr<Constant> c = std::make_shared<Constant>(3.0);
 
-    std::vector<Sum::Summand> summands;
-    summands.push_back(Sum::Summand(Sum::Sign::Plus, x));
-    summands.push_back(Sum::Summand(Sum::Sign::Minus, c));
-
-    Sum sum(summands);
+    Sum sum({Sum::Summand(Sum::Sign::Plus, x), Sum::Summand(Sum::Sign::Minus, c)});
 
     // Act
     auto result1 = sum.Print();
