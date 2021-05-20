@@ -25,6 +25,7 @@
 #include "../Backend/basex.h"
 #include "../Backend/expression.h"
 #include "../Backend/sum.h"
+#include "../Backend/product.h"
 
 using namespace testing;
 using namespace Backend;
@@ -218,6 +219,119 @@ TEST(BackendTest, EqualityShallWorkCorrectlyForRecursiveSums)
     ASSERT_FALSE(*s3 != *s4);
 
     ASSERT_EQ(*s3, *s4);
+}
+
+TEST(BackendTest, EqualityShallWorkCorrectlyForFactors)
+{
+    // Arrange
+    std::shared_ptr<Expression> x1 = std::make_shared<BaseX>();
+    std::shared_ptr<Expression> x2 = std::make_shared<BaseX>();
+    std::shared_ptr<Expression> x3 = std::make_shared<BaseX>();
+
+    auto x1Factor = Product::Factor(Product::Exponent::Positive, x1);
+    auto x2Factor = Product::Factor(Product::Exponent::Positive, x2);
+    auto x3Factor = Product::Factor(Product::Exponent::Negative, x3);
+
+    std::shared_ptr<Expression> c1 = std::make_shared<Constant>(3.0);
+    std::shared_ptr<Expression> c2 = std::make_shared<Constant>(3.0);
+    std::shared_ptr<Expression> c3 = std::make_shared<Constant>(4.0);
+
+    auto c1Factor = Product::Factor(Product::Exponent::Positive, c1);
+    auto c2Factor = Product::Factor(Product::Exponent::Positive, c2);
+    auto c3Factor = Product::Factor(Product::Exponent::Negative, c3);
+
+    // Act, Assert
+    ASSERT_TRUE(x1Factor == x1Factor);
+    ASSERT_TRUE(x1Factor == x2Factor);
+    ASSERT_FALSE(x1Factor == x3Factor);
+
+    ASSERT_FALSE(x1Factor != x1Factor);
+    ASSERT_FALSE(x1Factor != x2Factor);
+    ASSERT_TRUE(x1Factor != x3Factor);
+
+    ASSERT_TRUE(c1Factor == c1Factor);
+    ASSERT_TRUE(c1Factor == c2Factor);
+    ASSERT_FALSE(c1Factor == c3Factor);
+
+    ASSERT_FALSE(c1Factor != c1Factor);
+    ASSERT_FALSE(c1Factor != c2Factor);
+    ASSERT_TRUE(c1Factor != c3Factor);
+
+    ASSERT_EQ(x1Factor, x1Factor);
+    ASSERT_EQ(x1Factor, x2Factor);
+    ASSERT_NE(x1Factor, x3Factor);
+
+    ASSERT_EQ(c1Factor, c1Factor);
+    ASSERT_EQ(c1Factor, c2Factor);
+    ASSERT_NE(c1Factor, c3Factor);
+}
+
+TEST(BackendTest, EqualityShallWorkCorrectlyForProducts)
+{
+    // Arrange
+    std::shared_ptr<Expression> x1 = std::make_shared<BaseX>();
+    std::shared_ptr<Expression> x2 = std::make_shared<BaseX>();
+    std::shared_ptr<Expression> c1 = std::make_shared<Constant>(3.0);
+
+    auto x1Factor = Product::Factor(Product::Exponent::Positive, x1);
+    auto x2Factor = Product::Factor(Product::Exponent::Negative, x2);
+    auto c1Factor = Product::Factor(Product::Exponent::Positive, c1);
+
+    Product p1 = Product({x1Factor, x1Factor});           // x * x
+    Product p2 = Product({x1Factor, x1Factor});           // x * x
+    Product p3 = Product({x1Factor, x2Factor});           // x / x
+    Product p4 = Product({x1Factor, x1Factor, x1Factor}); // x * x * x
+    Product p5 = Product({x2Factor, x1Factor});           // 1 / x * x
+    Product p6 = Product({c1Factor, x1Factor, x2Factor}); // 3.0 * x / x
+    Product p7 = Product({x2Factor, c1Factor, x1Factor}); // 1 / x * 3.0 * x
+
+    // Act, Assert
+    ASSERT_TRUE(p1 == p2);
+    ASSERT_FALSE(p1 == p3);
+    ASSERT_FALSE(p1 == p4);
+    ASSERT_TRUE(p3 == p5);
+    ASSERT_TRUE(p6 == p7);
+
+    ASSERT_FALSE(p1 != p2);
+    ASSERT_TRUE(p1 != p3);
+    ASSERT_TRUE(p1 != p4);
+    ASSERT_FALSE(p3 != p5);
+    ASSERT_FALSE(p6 != p7);
+
+    ASSERT_EQ(p1, p2);
+    ASSERT_NE(p1, p3);
+    ASSERT_NE(p1, p4);
+    ASSERT_EQ(p3, p5);
+    ASSERT_EQ(p6, p7);
+}
+
+// while we do not consider ( a * b ) * c == a * ( b * c ) to be true (associativity)
+// we should have commutativity even when recursive comparison is needed, so
+// ( a * b ) * c == c * ( b * a ) should be true
+TEST(BackendTest, EqualityShallWorkCorrectlyForRecursiveProducts)
+{
+    // Arrange
+    std::shared_ptr<Expression> x1 = std::make_shared<BaseX>();
+    std::shared_ptr<Expression> x2 = std::make_shared<BaseX>();
+    std::shared_ptr<Expression> c = std::make_shared<Constant>(3.0);
+
+    auto x1Factor = Product::Factor(Product::Exponent::Positive, x1); // x
+    auto x2Factor = Product::Factor(Product::Exponent::Negative, x2); // 1 / x
+    auto cFactor = Product::Factor(Product::Exponent::Negative, c);   // 1 / 3.0
+
+    std::shared_ptr<Expression> p1 = std::make_shared<Product>(std::vector<Product::Factor>({x1Factor, x1Factor})); // x * x
+    std::shared_ptr<Expression> p2 = std::make_shared<Product>(std::vector<Product::Factor>({x1Factor, x2Factor})); // x / x
+
+    auto s1Factor = Product::Factor(Product::Exponent::Positive, p1); // 1 * ( x * x )
+    auto s2Factor = Product::Factor(Product::Exponent::Negative, p2); // 1 / ( x * x )
+
+    std::shared_ptr<Expression> p3 = std::make_shared<Product>(std::vector<Product::Factor>({cFactor, s1Factor, s2Factor})); // 1 / 3.0 * ( x * x ) / ( x / x )
+    std::shared_ptr<Expression> p4 = std::make_shared<Product>(std::vector<Product::Factor>({s2Factor, s1Factor, cFactor})); // 1 / ( x / x ) * ( x * x ) / 3.0
+
+    ASSERT_TRUE(*p3 == *p4);
+    ASSERT_FALSE(*p3 != *p4);
+
+    ASSERT_EQ(*p3, *p4);
 }
 
 #endif // TST_EQUALITY_H

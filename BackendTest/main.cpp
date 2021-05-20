@@ -20,6 +20,7 @@
 #include "tst_constant.h"
 #include "tst_equality.h"
 #include "tst_sum.h"
+#include "tst_product.h"
 
 #include <gtest/gtest.h>
 

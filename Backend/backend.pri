@@ -22,6 +22,7 @@ HEADERS += \
     $$PWD/expression.h \
     $$PWD/basex.h \
     $$PWD/constant.h \
+    $$PWD/product.h \
     $$PWD/sum.h
 
 SOURCES += \
@@ -29,4 +30,5 @@ SOURCES += \
     $$PWD/gamepoc.cpp \
     $$PWD/basex.cpp \
     $$PWD/constant.cpp \
+    $$PWD/product.cpp \
     $$PWD/sum.cpp
