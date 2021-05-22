@@ -391,4 +391,35 @@ TEST(BackendTest, ProductSumMixShouldParseCorrectly4)
     EXPECT_EQ(*exprProduct, referenceSum);
 }
 
+TEST(BackendTest, ParseabilityShouldBeEvaluatedCorrectly)
+{
+    // Arrange
+    Parser parser;
+    std::string x = "X";
+    std::string y = "Y";
+    std::string number = " +030.500 ";
+    std::string invalidNumber = "030.50.0";
+    std::string bracedX = "(X)";
+    std::string doubleBracedX = "((X))";
+
+    // Act
+    auto resultX = parser.IsParseable(x);
+    auto resultInvalid = parser.IsParseable(y);
+    auto resultNumber = parser.IsParseable(number);
+    auto resultInvalidNumber = parser.IsParseable(invalidNumber);
+    auto resultBracedX = parser.IsParseable(bracedX);
+    auto resultDoubleBracedX = parser.IsParseable(doubleBracedX);
+
+    // Assert
+    BaseX referenceX;
+    Constant referenceConstant(30.5);
+
+    EXPECT_TRUE(resultX);
+    EXPECT_FALSE(resultInvalid);
+    EXPECT_TRUE(resultNumber);
+    EXPECT_FALSE(resultInvalidNumber);
+    EXPECT_TRUE(resultBracedX);
+    EXPECT_TRUE(resultDoubleBracedX);
+}
+
 #endif // TST_PARSER_H

@@ -57,6 +57,11 @@ namespace Backend {
         }
     }
 
+    bool Parser::IsParseable(const std::string& input) const
+    {
+        return this->Parse(input) != nullptr;
+    }
+
     std::string Parser::PrepareInput(const std::string & input) const
     {
         static std::regex re("[ \t]", std::regex_constants::ECMAScript);

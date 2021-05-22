@@ -24,13 +24,31 @@
 
 namespace Backend {
 
+    /*!
+     * \class Parser
+     * \brief The Parser class provides functionality to obtain a \ref Expression from a string.
+     */
     class Parser
     {
     public:
+        /*!
+         * \brief Initializes a new instance.
+         */
         Parser();
 
-        // todo IsParseable
+        /*!
+         * \brief Parse creates an \Ref expression from a string, if possible.
+         * \param input The string to parse.
+         * \return A pointer to the expression or a nullptr.
+         */
         std::shared_ptr<Expression> Parse(const std::string & input) const;
+
+        /*!
+         * \brief IsParseable indicates whether the supplied string is parseable.
+         * \param input The string to check for parseability.
+         * \return true if the argument is parseable, false otherwise.
+         */
+        bool IsParseable(const std::string & input) const;
 
     private:
         std::string PrepareInput(const std::string & input) const;
