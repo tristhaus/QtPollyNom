@@ -1,0 +1,49 @@
+/*
+ * This file is part of QtPollyNom.
+ *
+ * QtPollyNom is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * QtPollyNom is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with QtPollyNom.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+#ifndef PARSER_H
+#define PARSER_H
+
+#include <memory>
+#include "expression.h"
+
+namespace Backend {
+
+    class Parser
+    {
+    public:
+        Parser();
+
+        // todo IsParseable
+        std::shared_ptr<Expression> Parse(const std::string & input) const;
+
+    private:
+        std::string PrepareInput(const std::string & input) const;
+        bool ValidateInput(const std::string & input) const;
+        unsigned long long FindMatchingBrace(const std::string & input, int pos) const;
+
+        std::shared_ptr<Expression> InternalParse(std::string input) const;
+        void Tokenize(const std::string & input, std::vector<std::string> & tokens, std::vector<std::string> & ops) const;
+        std::shared_ptr<Expression> ParseToConstant(const std::string & input) const;
+        std::shared_ptr<Expression> ParseToSum(std::vector<std::string> & tokens, std::vector<std::string> & ops) const;
+        std::shared_ptr<Expression> ParseToProduct(std::vector<std::string> & tokens, std::vector<std::string> & ops) const;
+    };
+
+}
+
+#endif // PARSER_H
