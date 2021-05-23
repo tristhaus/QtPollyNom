@@ -21,25 +21,95 @@
 
 namespace Backend {
 
-    Evaluator::Evaluator(std::shared_ptr<Expression> expression/*, std::vector<Dot&> & dots*/)
+    Evaluator::Evaluator(std::shared_ptr<Expression> expression, std::vector<std::shared_ptr<Dot>> dots, double minX, double maxX, double limit)
         : expression(expression),
-          /*dots(dots),*/
-          graphData(std::make_pair(std::vector<double>(),std::vector<double>()))
+          dots(dots),
+          minX(minX),
+          maxX(maxX),
+          limit(limit),
+          EvaluateWasCalled(false),
+          AddPointToCurrentBranchAtWasCalled(false)
     {
     }
 
-    std::pair<std::vector<double>, std::vector<double> > Evaluator::Evaluate()
+    static double forwardX(double in)
     {
-        // TODO : the actual logic
-        return this->graphData;
+        return in;
     }
 
-    bool Evaluator::AddPointAt(double x)
+    static double backwardX(double in)
     {
+        return -in;
+    }
+
+    void Evaluator::Evaluate()
+    {
+        if(AddPointToCurrentBranchAtWasCalled)
+        {
+            throw std::exception("programmer mistake: cannot call Evaluate() after calling AddPointToCurrentBranchAt()");
+        }
+        EvaluateWasCalled = true;
+
+        // todo add evaluation of dots
+
+        double lastXinPreviousInterval = this->minX;
+        double x = lastXinPreviousInterval;
+
+        while (x < this->maxX)
+        {
+            graphData.emplace_back(std::make_pair(std::vector<double>(),std::vector<double>()));
+            auto & branch = graphData.back();
+
+            // look for interval
+            double xInCurrentInterval = lastXinPreviousInterval;
+            bool foundInterval = false;
+            while (!foundInterval && xInCurrentInterval < this->maxX)
+            {
+                xInCurrentInterval += this->LargeIncrement;
+                auto result = this->expression->Evaluate(xInCurrentInterval);
+                if (result.has_value())
+                {
+                    this->AddCompletePointToCurrentBranch(xInCurrentInterval, result.value());
+                    foundInterval = true;
+                }
+            }
+
+            // maybe the function is not defined anywhere in our window
+            if (!foundInterval)
+            {
+                break;
+            }
+
+            double lastXinCurrentInterval;
+
+            // work inside interval - backward
+            this->WorkAnInterval(backwardX, x, xInCurrentInterval, lastXinCurrentInterval);
+
+            // work inside interval - forward
+            this->WorkAnInterval(forwardX, x, xInCurrentInterval, lastXinCurrentInterval);
+
+            // finish up interval
+            if (!branch.first.empty())
+            {
+                lastXinPreviousInterval = lastXinCurrentInterval;
+            }
+        }
+    }
+
+    bool Evaluator::AddPointToCurrentBranchAt(double x)
+    {
+        if(EvaluateWasCalled)
+        {
+            throw std::exception("programmer mistake: cannot call AddPointToCurrentBranchAt() after calling Evaluate()");
+        }
+        AddPointToCurrentBranchAtWasCalled = true;
+
+        EnsureAtLeastOneBranch();
+
         auto evaluationResult = this->expression->Evaluate(x);
         if(evaluationResult.has_value())
         {
-            this->AddCompletePoint(x, evaluationResult.value());
+            this->AddCompletePointToCurrentBranch(x, evaluationResult.value());
             return true;
         }
         else
@@ -48,25 +118,99 @@ namespace Backend {
         }
     }
 
-    void Evaluator::AddCompletePoint(double x, double y)
+    void Evaluator::AddCompletePointToCurrentBranch(double x, double y)
     {
+        auto & branch = graphData.back();
+
         // keep list sorted by x value
-        if(graphData.first.empty() || x > graphData.first.back())
+        if(branch.first.empty() || x > branch.first.back())
         {
-            graphData.first.emplace_back(x);
-            graphData.second.emplace_back(y);
+            branch.first.emplace_back(x);
+            branch.second.emplace_back(y);
+            return;
+        }
+
+        if(x < branch.first.front())
+        {
+            branch.first.insert(branch.first.begin(), x);
+            branch.second.insert(branch.second.begin(), y);
             return;
         }
 
         // we need to locate the correct position
-        auto xBegin = graphData.first.begin();
-        auto xEnd = graphData.first.end();
+        auto xBegin = branch.first.begin();
+        auto xEnd = branch.first.end();
         auto xIt = std::lower_bound(xBegin, xEnd, x);
 
-        auto yIt = graphData.second.begin() + (xIt - xBegin);
+        auto yIt = branch.second.begin() + (xIt - xBegin);
 
-        graphData.first.insert(xIt, x);
-        graphData.second.insert(yIt, y);
+        branch.first.insert(xIt, x);
+        branch.second.insert(yIt, y);
+    }
+
+    std::vector<std::pair<std::vector<double>, std::vector<double>>> Evaluator::GetGraph()
+    {
+        return this->graphData;
+    }
+
+    void Evaluator::EnsureAtLeastOneBranch()
+    {
+        if(graphData.empty()){
+            graphData.emplace_back(std::make_pair(std::vector<double>(),std::vector<double>()));
+        }
+    }
+
+    static double SquareDistance(double x1, double y1, double x2, double y2)
+    {
+       return (x1-x2)*(x1-x2) + (y1-y2)*(y1-y2);
+    }
+
+    void Evaluator::WorkAnInterval(double (*direction)(double), double & x, double xInCurrentInterval, double & xOld)
+    {
+        x = xInCurrentInterval + direction(Epsilon);
+        auto yOptional = this->expression->Evaluate(x);
+        xOld = xInCurrentInterval;
+
+        double y = yOptional.value_or(0.0);
+        double yOld = yOptional.value_or(this->expression->Evaluate(xInCurrentInterval).value());
+
+        double incr = this->InitialIncrement;
+
+        // scan the interval until it is interrupted
+        bool interrupt = false;
+        while (!interrupt)
+        {
+            interrupt = true;
+            yOptional = this->expression->Evaluate(x);
+
+            if (yOptional.has_value())
+            {
+                y = yOptional.value();
+                interrupt = !(this->minX <= x && x <= this->maxX && -this->limit <= y && y <= this->limit);
+            }
+
+            if (!interrupt)
+            {
+                double squareDist = SquareDistance(x, y, xOld, yOld);
+                if (squareDist < this->TargetDistance || incr < this->Epsilon)
+                {
+                    if (squareDist < this->Epsilon)
+                    {
+                        incr *= 2.0;
+                    }
+
+                    this->AddCompletePointToCurrentBranch(x, y);
+                    xOld = x;
+                    yOld = y;
+                    x = x + direction(incr);
+                }
+                else
+                {
+                    incr *= 0.5;
+                    x = x - direction(incr);
+                }
+            }
+        }
     }
 
 }
