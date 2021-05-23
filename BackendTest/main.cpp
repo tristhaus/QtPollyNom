@@ -22,6 +22,7 @@
 #include "tst_sum.h"
 #include "tst_product.h"
 #include "tst_parser.h"
+#include "tst_evaluator.h"
 
 #include <gtest/gtest.h>
 

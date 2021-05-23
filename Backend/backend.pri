@@ -18,6 +18,7 @@
 
 HEADERS += \
     $$PWD/dot.h \
+    $$PWD/evaluator.h \
     $$PWD/gamepoc.h \
     $$PWD/expression.h \
     $$PWD/basex.h \
@@ -28,6 +29,7 @@ HEADERS += \
 
 SOURCES += \
     $$PWD/dot.cpp \
+    $$PWD/evaluator.cpp \
     $$PWD/gamepoc.cpp \
     $$PWD/basex.cpp \
     $$PWD/constant.cpp \
