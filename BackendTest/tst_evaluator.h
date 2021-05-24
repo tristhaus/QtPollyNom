@@ -104,8 +104,7 @@ TEST(BackendTest, ForXSquaredEvaluatorShallCreateOneList)
     Evaluator evaluator(product, std::vector<std::shared_ptr<Dot>>(), -10.5, 10.5, 1000.0);
 
     // Act
-    evaluator.Evaluate();
-    auto graph = evaluator.GetGraph();
+    auto graph = evaluator.Evaluate();
 
     // Assert
     ASSERT_EQ(graph.size() , 1);
@@ -123,8 +122,7 @@ TEST(BackendTest, ForOneOverXEvaluatorShallCreateTwoLists)
     Evaluator evaluator(product, std::vector<std::shared_ptr<Dot>>(), -10.5, 10.5, 1000.0);
 
     // Act
-    evaluator.Evaluate();
-    auto graph = evaluator.GetGraph();
+    auto graph = evaluator.Evaluate();
 
     // Assert
     ASSERT_EQ(graph.size() , 2);
@@ -132,6 +130,28 @@ TEST(BackendTest, ForOneOverXEvaluatorShallCreateTwoLists)
     EXPECT_GE(graph[0].second.size(), 1);
     EXPECT_GE(graph[1].first.size(), 1);
     EXPECT_GE(graph[1].second.size(), 1);
+}
+
+TEST(BackendTest, EvaluatorShallCorrectlyDetermineDotsBeingHitBasedOnGraph)
+{
+    // Arrange
+    auto baseX = std::make_shared<BaseX>();
+    auto product = std::make_shared<Product>(std::vector<Product::Factor>{Product::Factor(Product::Exponent::Positive, baseX), Product::Factor(Product::Exponent::Positive, baseX)});
+
+    std::vector<std::shared_ptr<Dot>> dots;
+    dots.push_back(std::make_shared<Dot>(1.05, 1.05, true));
+    dots.push_back(std::make_shared<Dot>(0.0, -0.25, true));
+    dots.push_back(std::make_shared<Dot>(4.0, 1.0, false));
+
+    Evaluator evaluator(product, dots, -10.5, 10.5, 1000.0);
+
+    // Act
+    evaluator.Evaluate();
+
+    // Assert
+    EXPECT_TRUE(dots[0]->IsActive());
+    EXPECT_TRUE(dots[1]->IsActive());
+    EXPECT_FALSE(dots[2]->IsActive());
 }
 
 #endif // TST_EVALUATOR_H

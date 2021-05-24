@@ -74,11 +74,11 @@ namespace Backend {
         Evaluator& operator=(Evaluator&&) = delete;
 
         /*!
-         * \brief Evaluate creates the graph data in branches.
+         * \brief Evaluate creates the graph data in branches and provides the graph.
          *
          * Provided for production purposes. Using this invalidates the use of AddPointToCurrentBranchAt().
          */
-        void Evaluate();
+        std::vector<std::pair<std::vector<double>, std::vector<double>>> Evaluate();
 
         /*!
          * \brief AddPointAt evaluates the contained expression at the given x coordinate.
@@ -98,6 +98,13 @@ namespace Backend {
         std::vector<std::pair<std::vector<double>, std::vector<double>>> GetGraph();
 
     private:
+        /*!
+         * \brief GetRandom provides a random number between 0.0 and 1.0.
+         * \return A random number between 0.0 and 1.0.
+         */
+        static double GetRandom();
+        void CreateGraph();
+        void CheckDotsForHit();
         void AddCompletePointToCurrentBranch(double x, double y);
         void EnsureAtLeastOneBranch();
         void WorkAnInterval(double (*direction)(double), double& x, double xInCurrentInterval, double& xOld);
