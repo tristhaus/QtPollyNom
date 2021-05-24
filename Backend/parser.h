@@ -20,6 +20,7 @@
 #define PARSER_H
 
 #include <memory>
+#include <regex>
 #include "expression.h"
 
 namespace Backend {
@@ -30,6 +31,13 @@ namespace Backend {
      */
     class Parser
     {
+    private:
+        /*!
+         * \brief InputValidationRegex provides cheap validation for the input string.
+         * It must be adjusted any time another math function is added to the game.
+         */
+        static const std::regex InputValidationRegex;
+
     public:
         /*!
          * \brief Initializes a new instance.

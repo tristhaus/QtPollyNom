@@ -69,12 +69,13 @@ namespace Backend {
         return std::regex_replace(input, re, "");
     }
 
+    // This must be adjusted any time another math function is added to the game.
+    const std::regex Parser::InputValidationRegex("^[-0-9.,+/*()xX]+$", std::regex_constants::ECMAScript);
+
     bool Parser::ValidateInput(const std::string & input) const
     {
-        static std::regex re("^[-0-9.,+/*()xX]+$", std::regex_constants::ECMAScript); // todo member, maybe static? // document extension
-
         // check unsupported characters
-        if(!std::regex_match(input, re))
+        if(!std::regex_match(input, Parser::InputValidationRegex))
         {
             return false;
         }
@@ -296,7 +297,7 @@ namespace Backend {
 
             if (c == '(')
             {
-                unsigned long long endIndex = FindMatchingBrace(input, index); // TODO: check this return type
+                auto endIndex = FindMatchingBrace(input, index);
                 token += input.substr(index, endIndex - index + 1);
                 index = endIndex;
                 continue;
