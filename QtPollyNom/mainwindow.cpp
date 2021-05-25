@@ -124,8 +124,8 @@ void MainWindow::DrawDots()
         QCPCurve * curve = new QCPCurve(ui->plot->xAxis, ui->plot->yAxis);
         this->dotCurves.push_back(curve);
 
-        auto coord = dotsIterator->GetCoordinates();
-        auto radius = dotsIterator->GetRadius();
+        auto coord = (*dotsIterator)->GetCoordinates();
+        auto radius = (*dotsIterator)->GetRadius();
 
         QVector<QCPCurveData> dataCurve(pointCount);
 
@@ -137,7 +137,7 @@ void MainWindow::DrawDots()
 
         // apply color according to dot characteristics
         curve->data()->set(dataCurve, true);
-        auto dotColor = determineDotColor(dotsIterator->IsActive(), dotsIterator->IsGood());
+        auto dotColor = determineDotColor((*dotsIterator)->IsActive(), (*dotsIterator)->IsGood());
         curve->setBrush(QBrush(dotColor));
         curve->setPen(QPen(dotColor));
 

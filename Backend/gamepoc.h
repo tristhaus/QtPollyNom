@@ -20,6 +20,7 @@
 #define GAMEPOC_H
 
 #include <vector>
+#include <memory>
 #include "dot.h"
 
 namespace Backend {
@@ -33,7 +34,7 @@ namespace Backend {
      */
     class GamePoc
     {
-        std::vector<Dot> dots;
+        std::vector<std::shared_ptr<Dot>> dots;
         std::vector<std::vector<std::pair<std::vector<double>, std::vector<double>>>> graphs;
 
     public:
@@ -59,7 +60,7 @@ namespace Backend {
          * \brief Gets the dot information.
          * \return The dot information.
          */
-        const std::vector<Dot>& GetDots() const;
+        const std::vector<std::shared_ptr<Dot>>& GetDots() const;
 
     private:
         void SetupPOCItems();

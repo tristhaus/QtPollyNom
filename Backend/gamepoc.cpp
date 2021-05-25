@@ -17,6 +17,8 @@
  */
 
 #include "gamepoc.h"
+#include "parser.h"
+#include "evaluator.h"
 
 namespace Backend {
 
@@ -28,8 +30,6 @@ namespace Backend {
     void GamePoc::Update()
     {
         this->SetupPOCGraphs();
-        dots[0].SetIsActive(true);
-        dots[1].SetIsActive(true);
     }
 
     const std::vector<std::vector<std::pair<std::vector<double>, std::vector<double>>>>& GamePoc::GetGraphs() const
@@ -37,7 +37,7 @@ namespace Backend {
         return graphs;
     }
 
-    const std::vector<Dot>& GamePoc::GetDots() const
+    const std::vector<std::shared_ptr<Dot>>& GamePoc::GetDots() const
     {
         return dots;
     }
@@ -52,61 +52,34 @@ namespace Backend {
     {
         this->graphs.clear();
 
-        std::vector<double> firstBranchHyperbolaX;
-        std::vector<double> firstBranchHyperbolaY;
-        std::vector<double> secondBranchHyperbolaX;
-        std::vector<double> secondBranchHyperbolaY;
+        Parser parser;
 
-        std::vector<double> branchPolynomialX;
-        std::vector<double> branchPolynomialY;
-
-        const int grain = 10000;
-        for(int i=0; i<(grain + 1); ++i)
         {
-            double x1 = -10.0 + 9.999 * i / grain;
-            double y1 = 1/x1;
+            auto hyperbolaExpression = parser.Parse("1.0/x");
 
-            firstBranchHyperbolaX.push_back(x1);
-            firstBranchHyperbolaY.push_back(y1);
-
-            double x2 = 0.0 + 9.999 * i / grain;
-            double y2 = 1/x2;
-
-            secondBranchHyperbolaX.push_back(x2);
-            secondBranchHyperbolaY.push_back(y2);
-
-            double x3 = -10.0 + 20.0 * i / grain;
-            double y3 = (x3-3.0)*(x3+4.0);
-
-            branchPolynomialX.push_back(x3);
-            branchPolynomialY.push_back(y3);
+            // note that unconditionally passing all dots is wrong
+            // eventually, only those that have not been hit yet shall be passed
+            Evaluator hyperbolaEvaluator(hyperbolaExpression, dots, -10.5, 10.5, 1000.0);
+            auto hyperbolaGraph = hyperbolaEvaluator.Evaluate();
+            this->graphs.push_back(hyperbolaGraph);
         }
-
-        std::pair<std::vector<double>, std::vector<double>> firstBranchHyperbola = std::make_pair(firstBranchHyperbolaX, firstBranchHyperbolaY);
-        std::pair<std::vector<double>, std::vector<double>> secondBranchHyperbola = std::make_pair(secondBranchHyperbolaX, secondBranchHyperbolaY);
-
-        std::pair<std::vector<double>, std::vector<double>> branchPolynomial = std::make_pair(branchPolynomialX, branchPolynomialY);
-
-        std::vector<std::pair<std::vector<double>, std::vector<double>>> graphHyperbola;
-        graphHyperbola.push_back(firstBranchHyperbola);
-        graphHyperbola.push_back(secondBranchHyperbola);
-
-        std::vector<std::pair<std::vector<double>, std::vector<double>>> graphPolynomial;
-        graphPolynomial.push_back(branchPolynomial);
-
-        this->graphs.push_back(graphHyperbola);
-        this->graphs.push_back(graphPolynomial);
+        {
+            auto polynomialExpression = parser.Parse("(x-3.0)*(x+4.0)");
+            Evaluator polynomialEvaluator(polynomialExpression, dots, -10.5, 10.5, 1000.0);
+            auto polynomialGraph = polynomialEvaluator.Evaluate();
+            this->graphs.push_back(polynomialGraph);
+        }
     }
 
     void GamePoc::SetupPOCDots()
     {
         // dots to be made active
-        dots.emplace_back(Dot(1.0, 1.0, true));
-        dots.emplace_back(Dot(-8.0, -0.25, true));
+        dots.push_back(std::make_shared<Dot>(1.0, 1.0, true));
+        dots.push_back(std::make_shared<Dot>(-8.0, -0.25, true));
 
         // dots to remain inactive
-        dots.emplace_back(Dot(5.0, -5.0, true));
-        dots.emplace_back(Dot(2.5, 5.0, false));
+        dots.push_back(std::make_shared<Dot>(5.0, -5.0, true));
+        dots.push_back(std::make_shared<Dot>(2.5, 5.0, false));
     }
 
 }
