@@ -29,7 +29,7 @@ namespace Backend {
      * \class Parser
      * \brief The Parser class provides functionality to obtain a \ref Expression from a string.
      */
-    class Parser
+    class Parser final
     {
     private:
         /*!

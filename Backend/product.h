@@ -35,7 +35,7 @@ namespace Backend
      * Note that the Product supports commutativity, but not associativity (or distributivity for that matter)
      * when checking for (in)equality.
      */
-    class Product : public Expression
+    class Product final : public Expression
     {
     public:
         /*!

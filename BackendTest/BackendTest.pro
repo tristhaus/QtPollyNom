@@ -30,6 +30,7 @@ CONFIG -= app_bundle
 HEADERS += \
         tst_basex.h \
         tst_constant.h \
+        tst_dot.h \
         tst_equality.h \
         tst_evaluator.h \
         tst_parser.h \

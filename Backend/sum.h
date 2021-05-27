@@ -34,7 +34,7 @@ namespace Backend
      * Note that the Sum supports commutativity, but not associativity (or distributivity for that matter)
      * when checking for (in)equality.
      */
-    class Sum : public Expression
+    class Sum final : public Expression
     {
     public:
         /*!

@@ -30,7 +30,7 @@ namespace Backend {
      * \brief The Evaluator class accepts an expression, a set of dots and an interval to create a graph
      * and find if any of the dots have been hit by the graph.
      */
-    class Evaluator
+    class Evaluator final
     {
     private:
 
@@ -55,7 +55,6 @@ namespace Backend {
         const double LargeIncrement = 1e-2;
 
         std::shared_ptr<Expression> expression;
-        std::vector<std::shared_ptr<Dot>> dots;
         const double minX;
         const double maxX;
         const double limit;
@@ -66,7 +65,14 @@ namespace Backend {
         bool AddPointToCurrentBranchAtWasCalled;
 
     public:
-        Evaluator(std::shared_ptr<Expression> expression, std::vector<std::shared_ptr<Dot>> dots, double minX, double maxX, double limit);
+        /*!
+         * \brief Initializes a new instance for the given expression and parameters.
+         * \param expression The expression to evaluate.
+         * \param minX The minimal x to consider.
+         * \param maxX The maximal x to consider.
+         * \param limit The absolute value of y after which the point shall not be included in the resulting data.
+         */
+        Evaluator(std::shared_ptr<Expression> expression, double minX, double maxX, double limit);
         ~Evaluator() = default;
         Evaluator(const Evaluator&) = delete;
         Evaluator& operator=(const Evaluator&) = delete;
@@ -98,13 +104,7 @@ namespace Backend {
         std::vector<std::pair<std::vector<double>, std::vector<double>>> GetGraph();
 
     private:
-        /*!
-         * \brief GetRandom provides a random number between 0.0 and 1.0.
-         * \return A random number between 0.0 and 1.0.
-         */
-        static double GetRandom();
         void CreateGraph();
-        void CheckDotsForHit();
         void AddCompletePointToCurrentBranch(double x, double y);
         void EnsureAtLeastOneBranch();
         void WorkAnInterval(double (*direction)(double), double& x, double xInCurrentInterval, double& xOld);

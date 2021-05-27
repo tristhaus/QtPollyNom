@@ -51,6 +51,7 @@ namespace Backend {
     void GamePoc::SetupPOCGraphs()
     {
         this->graphs.clear();
+        this->ResetDots();
 
         Parser parser;
 
@@ -59,15 +60,26 @@ namespace Backend {
 
             // note that unconditionally passing all dots is wrong
             // eventually, only those that have not been hit yet shall be passed
-            Evaluator hyperbolaEvaluator(hyperbolaExpression, dots, -10.5, 10.5, 1000.0);
+            Evaluator hyperbolaEvaluator(hyperbolaExpression, -10.5, 10.5, 1000.0);
             auto hyperbolaGraph = hyperbolaEvaluator.Evaluate();
             this->graphs.push_back(hyperbolaGraph);
+            this->CheckDots(hyperbolaExpression, hyperbolaGraph);
         }
         {
             auto polynomialExpression = parser.Parse("(x-3.0)*(x+4.0)");
-            Evaluator polynomialEvaluator(polynomialExpression, dots, -10.5, 10.5, 1000.0);
+            Evaluator polynomialEvaluator(polynomialExpression, -10.5, 10.5, 1000.0);
             auto polynomialGraph = polynomialEvaluator.Evaluate();
             this->graphs.push_back(polynomialGraph);
+            this->CheckDots(polynomialExpression, polynomialGraph);
+        }
+
+    }
+
+    void GamePoc::CheckDots(std::shared_ptr<Expression> expression, std::vector<std::pair<std::vector<double>, std::vector<double>>> graphData)
+    {
+        for(auto dotIterator = this->dots.begin(); dotIterator != this->dots.end(); ++dotIterator)
+        {
+            (*dotIterator)->CheckForHit(expression, graphData);
         }
     }
 
@@ -80,6 +92,14 @@ namespace Backend {
         // dots to remain inactive
         dots.push_back(std::make_shared<Dot>(5.0, -5.0, true));
         dots.push_back(std::make_shared<Dot>(2.5, 5.0, false));
+    }
+
+    void GamePoc::ResetDots()
+    {
+        for(auto dotIterator = this->dots.begin(); dotIterator != this->dots.end(); ++dotIterator)
+        {
+            (*dotIterator)->ResetIsActive();
+        }
     }
 
 }

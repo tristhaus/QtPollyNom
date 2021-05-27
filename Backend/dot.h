@@ -30,7 +30,7 @@ namespace Backend {
      * \class Dot
      * \brief The Dot class represents a circular target zone that a graph may or may not hit.
      */
-    class Dot
+    class Dot final
     {
     private:
         double x;
@@ -52,12 +52,6 @@ namespace Backend {
         Dot(Dot&&) = default;
         Dot& operator=(const Dot&) = default;
         Dot& operator=(Dot&&) = default;
-
-        /*!
-         * \brief Sets the IsActive value.
-         * \param isActive Value indicating whether the dot is active.
-         */
-        void SetIsActive(bool isActive);
 
         /*!
          * \brief Gets the coordinates of the center of the dot as an ordered pair.
@@ -82,6 +76,31 @@ namespace Backend {
          * \return true if the dot is a good dot.
          */
         bool IsGood() const;
+
+        /*!
+         * \brief Reset resets the \ref IsActive flag to false.
+         */
+        void ResetIsActive();
+
+        /*!
+         * \brief CheckForHit checks whether the dot is hit by the current expression and its graph data.
+         * \param expression The current expression.
+         * \param graphData The otherwise created graph data for the expression.
+         */
+        void CheckForHit(const std::shared_ptr<Expression> expression, const std::vector<std::pair<std::vector<double>, std::vector<double>>> graphData);
+
+    private:
+        /*!
+         * \brief GetRandom provides a random number between 0.0 and 1.0.
+         * \return A random number between 0.0 and 1.0.
+         */
+        static double GetRandom();
+
+        /*!
+         * \brief Sets the IsActive value.
+         * \param isActive Value indicating whether the dot is active.
+         */
+        void SetIsActive(bool isActive);
     };
 
 }

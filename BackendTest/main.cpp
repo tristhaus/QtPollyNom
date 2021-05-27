@@ -23,6 +23,7 @@
 #include "tst_product.h"
 #include "tst_parser.h"
 #include "tst_evaluator.h"
+#include "tst_dot.h"
 
 #include <gtest/gtest.h>
 

@@ -32,8 +32,9 @@ namespace Backend {
      *
      * Because it is a POC, the documentation is sparse.
      */
-    class GamePoc
+    class GamePoc final
     {
+    private:
         std::vector<std::shared_ptr<Dot>> dots;
         std::vector<std::vector<std::pair<std::vector<double>, std::vector<double>>>> graphs;
 
@@ -66,6 +67,8 @@ namespace Backend {
         void SetupPOCItems();
         void SetupPOCGraphs();
         void SetupPOCDots();
+        void ResetDots();
+        void CheckDots(std::shared_ptr<Expression> expression, std::vector<std::pair<std::vector<double>, std::vector<double>>> graphData);
     };
 
 }
