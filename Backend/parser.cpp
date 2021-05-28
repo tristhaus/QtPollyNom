@@ -19,6 +19,7 @@
 #include <regex>
 #include <algorithm>
 #include <string>
+#include <functional>
 
 #include "parser.h"
 #include "basex.h"

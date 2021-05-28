@@ -29,8 +29,6 @@ namespace Backend {
      */
     class BaseX final : public Expression
     {
-        Q_OBJECT
-
     public:
         /*!
          * \brief Initializes a new instance.

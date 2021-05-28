@@ -19,7 +19,7 @@
 #ifndef EXPRESSION_H
 #define EXPRESSION_H
 
-#include <QObject>
+#include <string>
 #include <optional>
 
 namespace Backend
@@ -30,12 +30,10 @@ namespace Backend
      *
      * It is abstract and disallows most operations. Its inheritors should basically be immutable.
      */
-    class Expression : public QObject
+    class Expression
     {
-        Q_OBJECT
-
     public:
-        explicit Expression(QObject *parent = nullptr) : QObject(parent)
+        explicit Expression()
         {
         }
         virtual ~Expression()

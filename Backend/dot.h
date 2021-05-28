@@ -19,7 +19,10 @@
 #ifndef DOT_H
 #define DOT_H
 
-#include <utility>
+#include <vector>
+#include <memory>
+
+#include "expression.h"
 
 namespace Backend {
 

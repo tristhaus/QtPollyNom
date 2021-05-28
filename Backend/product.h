@@ -20,6 +20,7 @@
 #define PRODUCT_H
 
 #include <vector>
+#include <memory>
 
 #include "expression.h"
 

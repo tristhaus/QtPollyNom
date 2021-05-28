@@ -29,8 +29,6 @@ namespace Backend {
      */
     class Constant final : public Expression
     {
-        Q_OBJECT
-
     private:
         double value;
 

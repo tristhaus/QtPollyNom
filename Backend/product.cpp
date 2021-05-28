@@ -18,6 +18,7 @@
 
 #include "product.h"
 #include <cfenv>
+#include <cmath>
 
 namespace Backend
 {
