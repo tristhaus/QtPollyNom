@@ -16,6 +16,9 @@
  *
  */
 
+#include <chrono>
+#include <thread>
+
 #include "gamepoc.h"
 #include "evaluator.h"
 
@@ -42,6 +45,13 @@ namespace Backend {
         return dots;
     }
 
+    void GamePoc::Clear()
+    {
+        this->funcStrings.clear();
+        this->graphs.clear();
+        this->ResetDots();
+    }
+
     void GamePoc::SetupPOCItems()
     {
         this->CreateGraphs();
@@ -60,6 +70,14 @@ namespace Backend {
                 this->PushEmptyGraph();
                 continue;
             }
+
+#ifdef _DEBUG
+            if(funcStrings[i] == "slow")
+            {
+                std::this_thread::sleep_for(std::chrono::milliseconds(2000));
+                continue;
+            }
+#endif
 
             auto expression = parser.Parse(funcStrings[i]);
             if(!expression)

@@ -33,26 +33,14 @@ class MainWindow : public QMainWindow
 {
     Q_OBJECT
 
-public:
-    MainWindow(QWidget *parent = nullptr);
-    ~MainWindow();
-
-private slots:
-    void on_calcButton_clicked();
-    void on_update_finished();
-
-private:
-    void InitializePlot();
-    void SetupColors();
-    void DrawDots();
-    void DrawGraphs();
-    void SetGameIsBusy(bool isBusy);
-
 private:
     Ui::MainWindow *ui;
 
     Backend::GamePoc gamePoc;
     QFutureWatcher<void> gameUpdateFutureWatcher;
+    QTimer waitTimer;
+
+    std::unique_ptr<QMessageBox> waitingMessageBox;
 
     std::vector<QCPAbstractPlottable*> dotCurves;
 
@@ -61,5 +49,23 @@ private:
     QColor inactiveGoodDotColor;
     QColor activeBadDotColor;
     QColor inactiveBadDotColor;
+
+public:
+    MainWindow(QWidget *parent = nullptr);
+    ~MainWindow();
+
+private slots:
+    void on_calcButton_clicked();
+    void on_update_finished();
+    void on_clock_finished();
+    void on_waitingMessageBox_button_clicked();
+
+private:
+    void InitializePlot();
+    void SetupColors();
+    void DrawDots();
+    void DrawGraphs();
+    void SetGameIsBusy(bool isBusy);
+    void UpdateGui();
 };
 #endif // MAINWINDOW_H

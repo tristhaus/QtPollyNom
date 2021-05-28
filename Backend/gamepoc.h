@@ -68,6 +68,11 @@ namespace Backend {
          */
         const std::vector<std::shared_ptr<Dot>>& GetDots() const;
 
+        /*!
+         * \brief Clears all input of the game.
+         */
+        void Clear();
+
     private:
         void SetupPOCItems();
         void CreateGraphs();

@@ -30,11 +30,23 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+
+    this->waitTimer.setSingleShot(true);
+    this->waitTimer.setInterval(500);
+
     this->SetupColors();
 
     this->InitializePlot();
 
     connect(&gameUpdateFutureWatcher, &QFutureWatcher<void>::finished, this, &MainWindow::on_update_finished);
+    /*
+     * todo: resolve Application Output messages
+     * qt.core.qmetaobject.connectslotsbyname: QMetaObject::connectSlotsByName: No matching signal for on_update_finished()
+     * qt.core.qmetaobject.connectslotsbyname: QMetaObject::connectSlotsByName: No matching signal for on_clock_finished()
+     * qt.core.qmetaobject.connectslotsbyname: QMetaObject::connectSlotsByName: No matching signal for on_waitingMessageBox_button_clicked()
+     *
+     */
+    connect(&waitTimer, &QTimer::timeout, this, &MainWindow::on_clock_finished);
 }
 
 MainWindow::~MainWindow()
@@ -149,6 +161,8 @@ void MainWindow::DrawGraphs()
 {
     auto& graphs = this->gamePoc.GetGraphs();
 
+    ui->plot->clearGraphs();
+
     for(unsigned long long graphIndex = 0; graphIndex < graphs.size(); ++graphIndex)
     {
         auto& graph = graphs[graphIndex];
@@ -179,6 +193,16 @@ void MainWindow::SetGameIsBusy(bool isBusy)
     this->ui->funcLineEdit4->setDisabled(isBusy);
 }
 
+void MainWindow::UpdateGui()
+{
+    this->SetGameIsBusy(false);
+
+    this->DrawDots();
+    this->DrawGraphs();
+
+    ui->plot->replot();
+}
+
 void MainWindow::on_calcButton_clicked()
 {
     SetGameIsBusy(true);
@@ -190,18 +214,50 @@ void MainWindow::on_calcButton_clicked()
     funcStrings.emplace_back(this->ui->funcLineEdit3->text().toLocal8Bit().constData());
     funcStrings.emplace_back(this->ui->funcLineEdit4->text().toLocal8Bit().constData());
 
-    QFuture<void> future = QtConcurrent::run([=](){
+    QFuture<void> updateFuture = QtConcurrent::run([=](){
         this->gamePoc.Update(funcStrings);
     });
-    this->gameUpdateFutureWatcher.setFuture(future);
+    this->gameUpdateFutureWatcher.setFuture(updateFuture);
+
+    this->waitTimer.start();
 }
 
+// todo: review these names and look into the clazy-warning in the .h
 void MainWindow::on_update_finished()
 {
-    SetGameIsBusy(false);
+    this->waitTimer.stop();
+    if(this->waitingMessageBox)
+    {
+        this->waitingMessageBox->close();
+        this->waitingMessageBox.reset();
+    }
 
-    this->DrawDots();
-    this->DrawGraphs();
+    this->UpdateGui();
+}
 
-    ui->plot->replot();
+void MainWindow::on_clock_finished()
+{
+    if(this->gameUpdateFutureWatcher.isFinished() || this->gameUpdateFutureWatcher.isCanceled())
+    {
+        return;
+    }
+
+    this->waitingMessageBox = std::make_unique<QMessageBox>(
+                QMessageBox::Icon::NoIcon,
+                "Plotting",
+                "Waiting for plot to complete ...");
+
+    auto * button = new QPushButton("Stop waiting");
+    this->waitingMessageBox->addButton(button, QMessageBox::ButtonRole::NoRole);
+
+    connect(&(*(this->waitingMessageBox)), &QMessageBox::buttonClicked, this, &MainWindow::on_waitingMessageBox_button_clicked);
+
+    this->waitingMessageBox->exec();
+}
+
+void MainWindow::on_waitingMessageBox_button_clicked()
+{
+    this->gameUpdateFutureWatcher.cancel();
+    this->gamePoc.Clear();
+    this->UpdateGui();
 }
