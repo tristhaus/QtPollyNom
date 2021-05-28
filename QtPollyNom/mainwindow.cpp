@@ -183,8 +183,15 @@ void MainWindow::on_calcButton_clicked()
 {
     SetGameIsBusy(true);
 
+    std::vector<std::string> funcStrings;
+    funcStrings.emplace_back(this->ui->funcLineEdit0->text().toLocal8Bit().constData());
+    funcStrings.emplace_back(this->ui->funcLineEdit1->text().toLocal8Bit().constData());
+    funcStrings.emplace_back(this->ui->funcLineEdit2->text().toLocal8Bit().constData());
+    funcStrings.emplace_back(this->ui->funcLineEdit3->text().toLocal8Bit().constData());
+    funcStrings.emplace_back(this->ui->funcLineEdit4->text().toLocal8Bit().constData());
+
     QFuture<void> future = QtConcurrent::run([=](){
-        this->gamePoc.Update();
+        this->gamePoc.Update(funcStrings);
     });
     this->gameUpdateFutureWatcher.setFuture(future);
 }

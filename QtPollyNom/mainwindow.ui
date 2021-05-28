@@ -56,7 +56,7 @@
             <item>
              <widget class="QLineEdit" name="funcLineEdit0">
               <property name="text">
-               <string>1/x (fake)</string>
+               <string>1/x</string>
               </property>
              </widget>
             </item>
@@ -74,7 +74,7 @@
             <item>
              <widget class="QLineEdit" name="funcLineEdit1">
               <property name="text">
-               <string>(x-3.0)*(x+4.0) (fake)</string>
+               <string>(x-3.0)*(x+4.0)</string>
               </property>
              </widget>
             </item>

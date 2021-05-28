@@ -17,7 +17,6 @@
  */
 
 #include "gamepoc.h"
-#include "parser.h"
 #include "evaluator.h"
 
 namespace Backend {
@@ -27,9 +26,10 @@ namespace Backend {
         this->SetupPOCItems();
     }
 
-    void GamePoc::Update()
+    void GamePoc::Update(const std::vector<std::string> & funcStrings)
     {
-        this->SetupPOCGraphs();
+        this->funcStrings = funcStrings;
+        this->CreateGraphs();
     }
 
     const std::vector<std::vector<std::pair<std::vector<double>, std::vector<double>>>>& GamePoc::GetGraphs() const
@@ -44,35 +44,51 @@ namespace Backend {
 
     void GamePoc::SetupPOCItems()
     {
-        SetupPOCGraphs();
-        SetupPOCDots();
+        this->CreateGraphs();
+        this->SetupPOCDots();
     }
 
-    void GamePoc::SetupPOCGraphs()
+    void GamePoc::CreateGraphs()
     {
         this->graphs.clear();
         this->ResetDots();
 
-        Parser parser;
-
+        for(unsigned long int i=0; i < funcStrings.size() && i < 5; ++i)
         {
-            auto hyperbolaExpression = parser.Parse("1.0/x");
+            if(funcStrings[i].empty())
+            {
+                this->PushEmptyGraph();
+                continue;
+            }
 
-            // note that unconditionally passing all dots is wrong
-            // eventually, only those that have not been hit yet shall be passed
-            Evaluator hyperbolaEvaluator(hyperbolaExpression, -10.5, 10.5, 1000.0);
-            auto hyperbolaGraph = hyperbolaEvaluator.Evaluate();
-            this->graphs.push_back(hyperbolaGraph);
-            this->CheckDots(hyperbolaExpression, hyperbolaGraph);
-        }
-        {
-            auto polynomialExpression = parser.Parse("(x-3.0)*(x+4.0)");
-            Evaluator polynomialEvaluator(polynomialExpression, -10.5, 10.5, 1000.0);
-            auto polynomialGraph = polynomialEvaluator.Evaluate();
-            this->graphs.push_back(polynomialGraph);
-            this->CheckDots(polynomialExpression, polynomialGraph);
-        }
+            auto expression = parser.Parse(funcStrings[i]);
+            if(!expression)
+            {
+                this->PushEmptyGraph();
+                continue;
+            }
 
+            Evaluator evaluator(expression, -10.5, 10.5, 1000.0);
+            auto graph = evaluator.Evaluate();
+            this->graphs.push_back(graph);
+            this->CheckDots(expression, graph);
+        }
+    }
+
+    void GamePoc::PushEmptyGraph()
+    {
+        this->graphs.push_back(std::vector<std::pair<std::vector<double>, std::vector<double>>>());
+    }
+
+    void GamePoc::SetupPOCDots()
+    {
+        // dots to be made active
+        this->dots.push_back(std::make_shared<Dot>(1.0, 1.0, true));
+        this->dots.push_back(std::make_shared<Dot>(-8.0, -0.25, true));
+
+        // dots to remain inactive
+        this->dots.push_back(std::make_shared<Dot>(5.0, -5.0, true));
+        this->dots.push_back(std::make_shared<Dot>(2.5, 5.0, false));
     }
 
     void GamePoc::CheckDots(std::shared_ptr<Expression> expression, std::vector<std::pair<std::vector<double>, std::vector<double>>> graphData)
@@ -81,17 +97,6 @@ namespace Backend {
         {
             (*dotIterator)->CheckForHit(expression, graphData);
         }
-    }
-
-    void GamePoc::SetupPOCDots()
-    {
-        // dots to be made active
-        dots.push_back(std::make_shared<Dot>(1.0, 1.0, true));
-        dots.push_back(std::make_shared<Dot>(-8.0, -0.25, true));
-
-        // dots to remain inactive
-        dots.push_back(std::make_shared<Dot>(5.0, -5.0, true));
-        dots.push_back(std::make_shared<Dot>(2.5, 5.0, false));
     }
 
     void GamePoc::ResetDots()

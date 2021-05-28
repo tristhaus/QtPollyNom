@@ -21,6 +21,7 @@
 
 #include <vector>
 #include <memory>
+#include "parser.h"
 #include "dot.h"
 
 namespace Backend {
@@ -36,7 +37,10 @@ namespace Backend {
     {
     private:
         std::vector<std::shared_ptr<Dot>> dots;
+        std::vector<std::string> funcStrings;
         std::vector<std::vector<std::pair<std::vector<double>, std::vector<double>>>> graphs;
+
+        Parser parser;
 
     public:
         GamePoc();
@@ -48,8 +52,9 @@ namespace Backend {
 
         /*!
          * \brief Simulates the evaluation of the functions supplied by the user.
+         * \param funcStrings The user-supplied string representations of functions.
          */
-        void Update();
+        void Update(const std::vector<std::string> & funcStrings);
 
         /*!
          * \brief Gets the sorted data calculated in the update representing the graphs of the functions.
@@ -65,10 +70,11 @@ namespace Backend {
 
     private:
         void SetupPOCItems();
-        void SetupPOCGraphs();
+        void CreateGraphs();
+        void PushEmptyGraph();
         void SetupPOCDots();
-        void ResetDots();
         void CheckDots(std::shared_ptr<Expression> expression, std::vector<std::pair<std::vector<double>, std::vector<double>>> graphData);
+        void ResetDots();
     };
 
 }
