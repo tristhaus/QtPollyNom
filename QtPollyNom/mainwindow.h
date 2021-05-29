@@ -55,10 +55,10 @@ public:
     ~MainWindow();
 
 private slots:
-    void on_calcButton_clicked();
-    void on_update_finished();
-    void on_clock_finished();
-    void on_waitingMessageBox_button_clicked();
+    void OnCalcButtonClicked();
+    void OnGameUpdateFinished();
+    void OnWaitTimerFinished();
+    void OnWaitingMessageBoxButtonClicked();
 
 private:
     void InitializePlot();

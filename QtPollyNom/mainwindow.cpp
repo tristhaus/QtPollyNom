@@ -38,15 +38,9 @@ MainWindow::MainWindow(QWidget *parent)
 
     this->InitializePlot();
 
-    connect(&gameUpdateFutureWatcher, &QFutureWatcher<void>::finished, this, &MainWindow::on_update_finished);
-    /*
-     * todo: resolve Application Output messages
-     * qt.core.qmetaobject.connectslotsbyname: QMetaObject::connectSlotsByName: No matching signal for on_update_finished()
-     * qt.core.qmetaobject.connectslotsbyname: QMetaObject::connectSlotsByName: No matching signal for on_clock_finished()
-     * qt.core.qmetaobject.connectslotsbyname: QMetaObject::connectSlotsByName: No matching signal for on_waitingMessageBox_button_clicked()
-     *
-     */
-    connect(&waitTimer, &QTimer::timeout, this, &MainWindow::on_clock_finished);
+    connect(ui->calcButton, &QPushButton::clicked, this, &MainWindow::OnCalcButtonClicked);
+    connect(&gameUpdateFutureWatcher, &QFutureWatcher<void>::finished, this, &MainWindow::OnGameUpdateFinished);
+    connect(&waitTimer, &QTimer::timeout, this, &MainWindow::OnWaitTimerFinished);
 }
 
 MainWindow::~MainWindow()
@@ -203,7 +197,7 @@ void MainWindow::UpdateGui()
     ui->plot->replot();
 }
 
-void MainWindow::on_calcButton_clicked()
+void MainWindow::OnCalcButtonClicked()
 {
     SetGameIsBusy(true);
 
@@ -222,8 +216,7 @@ void MainWindow::on_calcButton_clicked()
     this->waitTimer.start();
 }
 
-// todo: review these names and look into the clazy-warning in the .h
-void MainWindow::on_update_finished()
+void MainWindow::OnGameUpdateFinished()
 {
     this->waitTimer.stop();
     if(this->waitingMessageBox)
@@ -235,7 +228,7 @@ void MainWindow::on_update_finished()
     this->UpdateGui();
 }
 
-void MainWindow::on_clock_finished()
+void MainWindow::OnWaitTimerFinished()
 {
     if(this->gameUpdateFutureWatcher.isFinished() || this->gameUpdateFutureWatcher.isCanceled())
     {
@@ -250,12 +243,12 @@ void MainWindow::on_clock_finished()
     auto * button = new QPushButton("Stop waiting");
     this->waitingMessageBox->addButton(button, QMessageBox::ButtonRole::NoRole);
 
-    connect(&(*(this->waitingMessageBox)), &QMessageBox::buttonClicked, this, &MainWindow::on_waitingMessageBox_button_clicked);
+    connect(&(*(this->waitingMessageBox)), &QMessageBox::buttonClicked, this, &MainWindow::OnWaitingMessageBoxButtonClicked);
 
     this->waitingMessageBox->exec();
 }
 
-void MainWindow::on_waitingMessageBox_button_clicked()
+void MainWindow::OnWaitingMessageBoxButtonClicked()
 {
     this->gameUpdateFutureWatcher.cancel();
     this->gamePoc.Clear();
