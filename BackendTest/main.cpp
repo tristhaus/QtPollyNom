@@ -24,6 +24,7 @@
 #include "tst_parser.h"
 #include "tst_evaluator.h"
 #include "tst_dot.h"
+#include "tst_randomdotgenerator.h"
 
 #include <gtest/gtest.h>
 

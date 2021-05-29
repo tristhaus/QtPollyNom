@@ -18,6 +18,7 @@
 
 HEADERS += \
     $$PWD/dot.h \
+    $$PWD/dotgenerator.h \
     $$PWD/evaluator.h \
     $$PWD/gamepoc.h \
     $$PWD/expression.h \
@@ -26,6 +27,7 @@ HEADERS += \
     $$PWD/mathhelper.h \
     $$PWD/parser.h \
     $$PWD/product.h \
+    $$PWD/randomdotgenerator.h \
     $$PWD/sum.h
 
 SOURCES += \
@@ -37,4 +39,5 @@ SOURCES += \
     $$PWD/mathhelper.cpp \
     $$PWD/parser.cpp \
     $$PWD/product.cpp \
+    $$PWD/randomdotgenerator.cpp \
     $$PWD/sum.cpp
