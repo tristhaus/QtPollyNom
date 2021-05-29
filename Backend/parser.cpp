@@ -124,9 +124,9 @@ namespace Backend {
         return true;
     }
 
-    unsigned long long Parser::FindMatchingBrace(const std::string & input, int pos) const
+    unsigned long long Parser::FindMatchingBrace(const std::string & input, unsigned long long pos) const
     {
-        if (pos < 0 || static_cast<unsigned long long>(pos) > input.length() - 1)
+        if (pos > input.length() - 1)
         {
             return -1;
         }
@@ -148,7 +148,7 @@ namespace Backend {
         int count = 0;
         if (lookForClosing)
         {
-            for (int index = pos; static_cast<unsigned long long>(index) < input.length(); index++)
+            for (unsigned long long index = pos; index < input.length(); index++)
             {
                 char c = input[index];
                 if (c == '(')
@@ -168,7 +168,7 @@ namespace Backend {
         }
         else
         {
-            for (int index = pos; index >= 0; index--)
+            for (int index = static_cast<int>(pos); index >= 0; index--)
             {
                 char c = input[index];
                 if (c == ')')

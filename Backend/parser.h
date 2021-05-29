@@ -61,7 +61,7 @@ namespace Backend {
     private:
         std::string PrepareInput(const std::string & input) const;
         bool ValidateInput(const std::string & input) const;
-        unsigned long long FindMatchingBrace(const std::string & input, int pos) const;
+        unsigned long long FindMatchingBrace(const std::string & input, unsigned long long pos) const;
 
         std::shared_ptr<Expression> InternalParse(std::string input) const;
         void Tokenize(const std::string & input, std::vector<std::string> & tokens, std::vector<std::string> & ops) const;
