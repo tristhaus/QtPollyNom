@@ -28,15 +28,18 @@ CONFIG += console c++11 thread
 CONFIG -= app_bundle
 
 HEADERS += \
+        fixeddotgenerator.h \
         tst_basex.h \
         tst_constant.h \
         tst_dot.h \
         tst_equality.h \
         tst_evaluator.h \
+        tst_game.h \
         tst_parser.h \
         tst_product.h \
         tst_randomdotgenerator.h \
         tst_sum.h
 
 SOURCES += \
+        fixeddotgenerator.cpp \
         main.cpp
