@@ -9,7 +9,7 @@ namespace Backend
      * \class RandomDotgenerator
      * \brief The RandomDotgenerator class creates dots a grid points using a offset. It can generate 361 dots total.
      */
-    class RandomDotgenerator final : public DotGenerator
+    class RandomDotGenerator final : public DotGenerator
     {
     private:
         unsigned short goodDots;
@@ -20,7 +20,7 @@ namespace Backend
          * \param goodDots The number of good dots to create.
          * \param badDots The number of bad dots to create.
          */
-        RandomDotgenerator(unsigned short goodDots, unsigned short badDots);
+        RandomDotGenerator(unsigned short goodDots, unsigned short badDots);
 
         /*!
          * \reimp

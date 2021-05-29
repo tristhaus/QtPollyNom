@@ -21,12 +21,18 @@
 
 #include "gamepoc.h"
 #include "evaluator.h"
+#include "randomdotgenerator.h"
 
 namespace Backend {
 
-    GamePoc::GamePoc()
+    //GamePoc::GamePoc() : GamePoc()
+    //{
+    //}
+
+    GamePoc::GamePoc(std::shared_ptr<DotGenerator> dotGenerator)
+        : dotGenerator(dotGenerator)
     {
-        this->SetupPOCItems();
+        this->CreateItems();
     }
 
     void GamePoc::Update(const std::vector<std::string> & funcStrings)
@@ -52,10 +58,10 @@ namespace Backend {
         this->ResetDots();
     }
 
-    void GamePoc::SetupPOCItems()
+    void GamePoc::CreateItems()
     {
         this->CreateGraphs();
-        this->SetupPOCDots();
+        this->CreateDots();
     }
 
     void GamePoc::CreateGraphs()
@@ -98,15 +104,9 @@ namespace Backend {
         this->graphs.push_back(std::vector<std::pair<std::vector<double>, std::vector<double>>>());
     }
 
-    void GamePoc::SetupPOCDots()
+    void GamePoc::CreateDots()
     {
-        // dots to be made active
-        this->dots.push_back(std::make_shared<Dot>(1.0, 1.0, true));
-        this->dots.push_back(std::make_shared<Dot>(-8.0, -0.25, true));
-
-        // dots to remain inactive
-        this->dots.push_back(std::make_shared<Dot>(5.0, -5.0, true));
-        this->dots.push_back(std::make_shared<Dot>(2.5, 5.0, false));
+        this->dots = this->dotGenerator->Generate();
     }
 
     void GamePoc::CheckDots(std::shared_ptr<Expression> expression, std::vector<std::pair<std::vector<double>, std::vector<double>>> graphData)

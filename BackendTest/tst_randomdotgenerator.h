@@ -11,7 +11,7 @@ using namespace Backend;
 TEST(BackendTest, RandomDotGeneratorShallCreateDotsInsideCertainRange)
 {
     // Arrange
-    RandomDotgenerator generator(320, 41);
+    RandomDotGenerator generator(320, 41);
 
     // Act
     auto dots = generator.Generate();

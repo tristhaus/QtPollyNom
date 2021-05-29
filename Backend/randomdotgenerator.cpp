@@ -3,13 +3,13 @@
 
 namespace Backend
 {
-    RandomDotgenerator::RandomDotgenerator(unsigned short goodDots, unsigned short badDots)
+    RandomDotGenerator::RandomDotGenerator(unsigned short goodDots, unsigned short badDots)
         : goodDots(goodDots),
           badDots(badDots)
     {
     }
 
-    std::vector<std::shared_ptr<Dot>> RandomDotgenerator::Generate()
+    std::vector<std::shared_ptr<Dot>> RandomDotGenerator::Generate()
     {
         const int maxLine = 19;
         const int maxPositions = maxLine*maxLine;
@@ -30,12 +30,12 @@ namespace Backend
 
         auto createDot = [&](const bool kind)
         {
-            auto index = RandomDotgenerator::GetRandomIndexUpToIncluding(allPositions.size() - 1);
+            auto index = RandomDotGenerator::GetRandomIndexUpToIncluding(allPositions.size() - 1);
             int position = allPositions[index];
             allPositions.erase(allPositions.begin() + index);
 
-            auto x = static_cast<double>(position/maxLine) - downCorrection + RandomDotgenerator::GetRandomOffset();
-            auto y = static_cast<double>(position%maxLine) - downCorrection + RandomDotgenerator::GetRandomOffset();
+            auto x = static_cast<double>(position/maxLine) - downCorrection + RandomDotGenerator::GetRandomOffset();
+            auto y = static_cast<double>(position%maxLine) - downCorrection + RandomDotGenerator::GetRandomOffset();
 
             retval.push_back(std::make_shared<Dot>(x, y, kind));
         };
@@ -57,7 +57,7 @@ namespace Backend
         return retval;
     }
 
-    /* static class member */ size_t RandomDotgenerator::GetRandomIndexUpToIncluding(size_t upper)
+    /* static class member */ size_t RandomDotGenerator::GetRandomIndexUpToIncluding(size_t upper)
     {
         static std::random_device rd;
         static std::mt19937 gen(rd());
@@ -65,7 +65,7 @@ namespace Backend
         return dis(gen);
     }
 
-    /* static class member */ double RandomDotgenerator::GetRandomOffset()
+    /* static class member */ double RandomDotGenerator::GetRandomOffset()
     {
         const double maxOffset = 0.15;
 

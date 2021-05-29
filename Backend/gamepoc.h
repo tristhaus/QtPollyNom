@@ -23,6 +23,8 @@
 #include <memory>
 #include "parser.h"
 #include "dot.h"
+#include "dotgenerator.h"
+#include "randomdotgenerator.h"
 
 namespace Backend {
 
@@ -41,9 +43,14 @@ namespace Backend {
         std::vector<std::vector<std::pair<std::vector<double>, std::vector<double>>>> graphs;
 
         Parser parser;
+        std::shared_ptr<DotGenerator> dotGenerator;
 
     public:
-        GamePoc();
+        /*!
+         * \brief Initializes a new instance using the supplied dot generator.
+         * \param dotGenerator The generator to use in creation of a new game.
+         */
+        GamePoc(std::shared_ptr<DotGenerator> dotGenerator = std::make_shared<RandomDotGenerator>(8, 2));
         ~GamePoc() = default;
         GamePoc(const GamePoc&) = delete;
         GamePoc(GamePoc&&) = delete;
@@ -74,10 +81,10 @@ namespace Backend {
         void Clear();
 
     private:
-        void SetupPOCItems();
+        void CreateItems();
         void CreateGraphs();
         void PushEmptyGraph();
-        void SetupPOCDots();
+        void CreateDots();
         void CheckDots(std::shared_ptr<Expression> expression, std::vector<std::pair<std::vector<double>, std::vector<double>>> graphData);
         void ResetDots();
     };
