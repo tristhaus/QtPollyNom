@@ -49,3 +49,6 @@ RC_ICONS = icon.ico
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
+
+QMAKE_CXXFLAGS_RELEASE+= /Zi
+QMAKE_LFLAGS_RELEASE+= /INCREMENTAL:NO /Debug /MAP

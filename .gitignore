@@ -49,6 +49,7 @@ Thumbs.db
 *.idb
 *.ilk
 *.pdb
+*.map
 *.sln
 *.suo
 *.vcproj
@@ -70,4 +71,5 @@ Thumbs.db
 # --------
 *.dll
 *.exe
+*.zip
 

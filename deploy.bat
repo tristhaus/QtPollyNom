@@ -1,0 +1,19 @@
+set PATH=%PATH%;C:\Qt\6.0.3\msvc2019_64\bin
+
+IF EXIST .\Deploy-Release (
+    rmdir .\Deploy-Release /s /q
+)
+md .\Deploy-Release
+
+windeployqt --dir .\Deploy-Release ..\build-QtPollyNomSuper-Desktop_Qt_6_0_3_MSVC2019_64bit-Release\QtPollyNom\release\QtPollyNom.exe
+copy ..\build-QtPollyNomSuper-Desktop_Qt_6_0_3_MSVC2019_64bit-Release\QtPollyNom\release\QtPollyNom.exe .\Deploy-Release\
+
+IF EXIST .\Deploy-Release-PDB (
+    rmdir .\Deploy-Release-PDB /s /q
+)
+md .\Deploy-Release-PDB
+
+windeployqt --pdb --dir .\Deploy-Release-PDB ..\build-QtPollyNomSuper-Desktop_Qt_6_0_3_MSVC2019_64bit-Release\QtPollyNom\release\QtPollyNom.exe
+copy ..\build-QtPollyNomSuper-Desktop_Qt_6_0_3_MSVC2019_64bit-Release\QtPollyNom\release\QtPollyNom.exe .\Deploy-Release-PDB\
+copy ..\build-QtPollyNomSuper-Desktop_Qt_6_0_3_MSVC2019_64bit-Release\QtPollyNom\release\QtPollyNom.map .\Deploy-Release-PDB\
+copy ..\build-QtPollyNomSuper-Desktop_Qt_6_0_3_MSVC2019_64bit-Release\QtPollyNom\release\QtPollyNom.pdb .\Deploy-Release-PDB\
