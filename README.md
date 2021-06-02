@@ -6,7 +6,7 @@ Copyright tristhaus 2021 and later.
 
 ## For Users
 
-Currently, this is an alpha-stage demo of what QtPollyNom shall become. A pre-release of the current status has been made available. For comparison and an impression of the eventual feature set, see [PollyNom](https://github.com/tristhaus/pollynom). See Release tab for up-to-date information on what is already supported.
+Currently, this is an alpha-stage demo of what QtPollyNom shall become. A pre-release of the current status has been made available. For comparison and an impression of the eventual feature set, see [PollyNom](https://github.com/tristhaus/pollynom). See Release tab for up-to-date information on what is already supported. You may contact me at `qtpollynom` at `gmail.com` for comments on the program.
 
 ## For Developers
 
