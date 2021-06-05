@@ -43,7 +43,7 @@ bool Power::IsMonadic() const
 
 std::optional<double> Power::Evaluate(double input) const
 {
-    return 0.0;
+    return 0.0; //todo
 }
 
 std::optional<std::string> Power::Print() const
@@ -69,12 +69,24 @@ std::optional<std::string> Power::Print() const
 
 bool Power::operator==(const Expression& other) const
 {
-    return false; //todo
+    if (const Power * b = dynamic_cast<const Power*>(&other))
+    {
+        if(b == nullptr)
+        {
+            return false;
+        }
+
+        return *(this->base) == *(b->base) && *(this->exponent) == *(b->exponent);
+    }
+    else
+    {
+        return false;
+    }
 }
 
 bool Power::operator!=(const Expression& other) const
 {
-    return true; //todo
+    return !(*this == other);
 }
 
 }

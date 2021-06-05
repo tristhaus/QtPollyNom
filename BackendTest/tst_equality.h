@@ -26,6 +26,7 @@
 #include "../Backend/expression.h"
 #include "../Backend/sum.h"
 #include "../Backend/product.h"
+#include "../Backend/power.h"
 
 using namespace testing;
 using namespace Backend;
@@ -151,7 +152,6 @@ TEST(BackendTest, EqualityShallWorkCorrectlyForSummands)
     ASSERT_EQ(c1Summand, c2Summand);
     ASSERT_NE(c1Summand, c3Summand);
 }
-
 
 TEST(BackendTest, EqualityShallWorkCorrectlyForSums)
 {
@@ -332,6 +332,56 @@ TEST(BackendTest, EqualityShallWorkCorrectlyForRecursiveProducts)
     ASSERT_FALSE(*p3 != *p4);
 
     ASSERT_EQ(*p3, *p4);
+}
+
+TEST(BackendTest, EqualityShallWorkCorrectlyForPowers)
+{
+    // Arrange
+    std::shared_ptr<Expression> x1 = std::make_shared<BaseX>();
+    std::shared_ptr<Expression> x2 = std::make_shared<BaseX>();
+    std::shared_ptr<Expression> c1 = std::make_shared<Constant>(3.0);
+
+    Power q1 = Power(x1, c1); // x ^ 3.0
+    Power q2 = Power(x2, c1); // x ^ 3.0
+    Power q3 = Power(c1, x2); // 3.0 ^ x
+    Power q4 = Power(x1, x2); // x ^ x
+
+    // Act, Assert
+    ASSERT_TRUE(q1 == q2);
+    ASSERT_FALSE(q1 == q3);
+    ASSERT_FALSE(q1 == q4);
+
+    ASSERT_FALSE(q1 != q2);
+    ASSERT_TRUE(q1 != q3);
+    ASSERT_TRUE(q1 != q4);
+
+    ASSERT_EQ(q1, q2);
+    ASSERT_NE(q1, q3);
+    ASSERT_NE(q1, q4);
+}
+
+TEST(BackendTest, EqualityShallWorkCorrectlyForRecursivePowers)
+{
+    // Arrange
+    std::shared_ptr<Expression> x1 = std::make_shared<BaseX>();
+    std::shared_ptr<Expression> c = std::make_shared<Constant>(3.0);
+
+    std::shared_ptr<Expression> q1 = std::make_shared<Power>(x1, x1); // x ^ x
+    std::shared_ptr<Expression> q2 = std::make_shared<Power>(x1, c);  // x ^ 3.0
+
+    std::shared_ptr<Expression> q3 = std::make_shared<Power>(x1, q1); // x ^ ( x ^ x )
+    std::shared_ptr<Expression> q4 = std::make_shared<Power>(x1, q1); // x ^ ( x ^ x )
+    std::shared_ptr<Expression> q5 = std::make_shared<Power>(x1, q2); // x ^ ( x ^ 3.0 )
+
+    // Act, Assert
+    ASSERT_TRUE(*q3 == *q4);
+    ASSERT_FALSE(*q3 == *q5);
+
+    ASSERT_FALSE(*q3 != *q4);
+    ASSERT_TRUE(*q3 != *q5);
+
+    ASSERT_EQ(*q3, *q4);
+    ASSERT_NE(*q3, *q5);
 }
 
 #endif // TST_EQUALITY_H
