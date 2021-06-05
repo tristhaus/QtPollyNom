@@ -31,6 +31,73 @@
 using namespace testing;
 using namespace Backend;
 
+TEST(BackendTest, PowerShallEvaluateCorrectly)
+{
+    // Arrange
+    std::shared_ptr<BaseX> x = std::make_shared<BaseX>();
+    std::shared_ptr<Constant> c1 = std::make_shared<Constant>(3.0);
+    std::shared_ptr<Constant> c2 = std::make_shared<Constant>(2.0);
+
+    std::shared_ptr<Power> q1 = std::make_shared<Power>(c1, x);
+    std::shared_ptr<Power> q2 = std::make_shared<Power>(x, c2);
+
+    // Act
+    auto result1 = q1->Evaluate(0.0);
+    auto result2 = q2->Evaluate(-4.5);
+
+    // Assert
+    ASSERT_TRUE(result1.has_value());
+    ASSERT_TRUE(result2.has_value());
+
+    EXPECT_DOUBLE_EQ(1.0, result1.value());
+    EXPECT_DOUBLE_EQ(20.25, result2.value());
+}
+
+TEST(BackendTest, PowerShallEvaluateDifficultCasesCorrectly)
+{
+    // Arrange
+    std::shared_ptr<BaseX> x = std::make_shared<BaseX>();
+    std::shared_ptr<Constant> c1 = std::make_shared<Constant>(-2.0);
+    std::shared_ptr<Constant> c2 = std::make_shared<Constant>(0.5);
+    std::shared_ptr<Constant> c3 = std::make_shared<Constant>(0.333333333);
+
+    std::shared_ptr<Power> q1 = std::make_shared<Power>(c1, x); // (-2.0) ^ x
+    std::shared_ptr<Power> q2 = std::make_shared<Power>(x, c2); // x ^ 0.5
+    std::shared_ptr<Power> q3 = std::make_shared<Power>(x, c3); // x ^ 0.333333333
+
+    // Act
+    auto result1 = q1->Evaluate(0.0);
+    auto result2 = q1->Evaluate(2.0);
+    auto result3 = q1->Evaluate(1.5);
+
+    auto result4 = q2->Evaluate(1.0);
+    auto result5 = q2->Evaluate(9.0);
+    auto result6 = q2->Evaluate(-9.0);
+
+    auto result7 = q3->Evaluate(8.0);
+    auto result8 = q3->Evaluate(-8.0);
+
+    // Assert
+    ASSERT_TRUE(result1.has_value());
+    ASSERT_TRUE(result2.has_value());
+    ASSERT_FALSE(result3.has_value());
+
+    ASSERT_TRUE(result4.has_value());
+    ASSERT_TRUE(result5.has_value());
+    ASSERT_FALSE(result6.has_value());
+
+    ASSERT_TRUE(result7.has_value());
+    ASSERT_FALSE(result8.has_value());
+
+    EXPECT_DOUBLE_EQ(1.0, result1.value());
+    EXPECT_DOUBLE_EQ(4.0, result2.value());
+
+    EXPECT_DOUBLE_EQ(1.0, result4.value());
+    EXPECT_DOUBLE_EQ(3.0, result5.value());
+
+    EXPECT_NEAR(2.0, result7.value(), 1e-6);
+}
+
 TEST(BackendTest, PowerShallPrintCorrectly)
 {
     // Arrange

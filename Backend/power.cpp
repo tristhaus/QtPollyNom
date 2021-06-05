@@ -17,6 +17,8 @@
  */
 
 #include "power.h"
+#include <cfenv>
+#include <cmath>
 
 namespace Backend
 {
@@ -29,6 +31,9 @@ Power::Power(std::shared_ptr<Expression> base, std::shared_ptr<Expression> expon
 
 Power::~Power()
 {
+    // paranoid: remove possible source for circular references
+    base.reset();
+    exponent.reset();
 }
 
 int Power::GetLevel() const
@@ -43,7 +48,24 @@ bool Power::IsMonadic() const
 
 std::optional<double> Power::Evaluate(double input) const
 {
-    return 0.0; //todo
+    auto baseResult = base->Evaluate(input);
+    auto exponentResult = exponent->Evaluate(input);
+
+    if(!baseResult.has_value() || !exponentResult.has_value())
+    {
+        return {};
+    }
+
+    std::feclearexcept(FE_ALL_EXCEPT);
+    auto retval = std::pow(baseResult.value(), exponentResult.value());
+
+    if(!std::isfinite(retval) || std::fetestexcept(FE_DIVBYZERO | FE_OVERFLOW | FE_INVALID))
+    {
+        return {};
+        std::feclearexcept(FE_ALL_EXCEPT);
+    }
+
+    return retval;
 }
 
 std::optional<std::string> Power::Print() const
