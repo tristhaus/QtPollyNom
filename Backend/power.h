@@ -24,50 +24,59 @@
 
 namespace Backend
 {
-
-class Power final : public Expression
-{
-private:
-    std::shared_ptr<Expression> base;
-    std::shared_ptr<Expression> exponent;
-public:
-    Power(std::shared_ptr<Expression> base, std::shared_ptr<Expression> exponent);
-    virtual ~Power();
-    Power(const Power&) = delete;
-    Power(Power&&) = delete;
-    Power& operator=(const Power&) = delete;
-    Power& operator=(Power&&) = delete;
-
     /*!
-     * \reimp
+     * \class Power
+     * \brief The Power class represents a power, consisting of a base and an exponent.
      */
-    virtual int GetLevel() const;
+    class Power final : public Expression
+    {
+    private:
+        std::shared_ptr<Expression> base;
+        std::shared_ptr<Expression> exponent;
 
-    /*!
-     * \reimp
-     */
-    virtual bool IsMonadic() const;
+    public:
+        /*!
+         * \brief Initializes a new instance holding the supplied base and exponent.
+         * \param base The base of the power expression.
+         * \param exponent The exponent of the power expression.
+         */
+        Power(std::shared_ptr<Expression> base, std::shared_ptr<Expression> exponent);
+        virtual ~Power();
+        Power(const Power&) = delete;
+        Power(Power&&) = delete;
+        Power& operator=(const Power&) = delete;
+        Power& operator=(Power&&) = delete;
 
-    /*!
-     * \reimp
-     */
-    virtual std::optional<double> Evaluate(double input) const;
+        /*!
+         * \reimp
+         */
+        virtual int GetLevel() const;
 
-    /*!
-     * \reimp
-     */
-    virtual std::optional<std::string> Print() const;
+        /*!
+         * \reimp
+         */
+        virtual bool IsMonadic() const;
 
-    /*!
-     * \reimp
-     */
-    virtual bool operator==(const Expression &other) const;
+        /*!
+         * \reimp
+         */
+        virtual std::optional<double> Evaluate(double input) const;
 
-    /*!
-     * \reimp
-     */virtual bool operator!=(const Expression &other) const;
-};
+        /*!
+         * \reimp
+         */
+        virtual std::optional<std::string> Print() const;
 
+        /*!
+         * \reimp
+         */
+        virtual bool operator==(const Expression &other) const;
+
+        /*!
+         * \reimp
+         */
+        virtual bool operator!=(const Expression &other) const;
+    };
 }
 
 #endif // POWER_H

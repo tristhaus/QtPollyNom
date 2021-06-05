@@ -26,6 +26,7 @@
 #include "../Backend/expression.h"
 #include "../Backend/sum.h"
 #include "../Backend/product.h"
+#include "../Backend/power.h"
 #include "../Backend/parser.h"
 
 using namespace testing;
@@ -389,6 +390,144 @@ TEST(BackendTest, ProductSumMixShouldParseCorrectly4)
 
     ASSERT_TRUE(exprProduct);
     EXPECT_EQ(*exprProduct, referenceSum);
+}
+
+TEST(BackendTest, PowerShouldParseCorrectly1)
+{
+    // Arrange
+    Parser parser;
+    std::string square = "x^2.0";
+
+    // Act
+    auto exprPower = parser.Parse(square);
+
+    // Assert
+    auto x = std::make_shared<BaseX>();
+    auto constant = std::make_shared<Constant>(2.0);
+
+    Power referencePower(x, constant);
+
+    ASSERT_TRUE(exprPower);
+    EXPECT_EQ(*exprPower, referencePower);
+}
+
+TEST(BackendTest, PowerShouldParseCorrectly2)
+{
+    // Arrange
+    Parser parser;
+    std::string invertedSquare = "x^(-2.0)";
+
+    // Act
+    auto exprPower = parser.Parse(invertedSquare);
+
+    // Assert
+    auto x = std::make_shared<BaseX>();
+    auto constant = std::make_shared<Constant>(-2.0);
+
+    Power referencePower(x, constant);
+
+    ASSERT_TRUE(exprPower);
+    EXPECT_EQ(*exprPower, referencePower);
+}
+
+TEST(BackendTest, PowerShouldParseCorrectly3)
+{
+    // Arrange
+    Parser parser;
+    std::string invertedSquare = "x^-2.0";
+
+    // Act
+    auto exprPower = parser.Parse(invertedSquare);
+
+    // Assert
+    ASSERT_FALSE(exprPower);
+}
+
+TEST(BackendTest, PowerShouldParseCorrectly4)
+{
+    // Arrange
+    Parser parser;
+    std::string powerString = "2.0^x";
+
+    // Act
+    auto exprPower = parser.Parse(powerString);
+
+    // Assert
+    auto constant = std::make_shared<Constant>(2.0);
+    auto x = std::make_shared<BaseX>();
+
+    Power referencePower(constant, x);
+
+    ASSERT_TRUE(exprPower);
+    EXPECT_EQ(*exprPower, referencePower);
+}
+
+TEST(BackendTest, PowerShouldParseCorrectly5)
+{
+    // Arrange
+    Parser parser;
+    std::string powerString = "-(2.0^x)";
+
+    // Act
+    auto exprPower = parser.Parse(powerString);
+
+    // Assert
+    auto constant = std::make_shared<Constant>(2.0);
+    auto x = std::make_shared<BaseX>();
+
+    auto powerTerm = std::make_shared<Power>(constant, x);
+    Sum expectedPower({Sum::Summand(Sum::Sign::Minus, powerTerm)});
+
+    ASSERT_TRUE(exprPower);
+    EXPECT_EQ(*exprPower, expectedPower);
+}
+
+TEST(BackendTest, LessSimplePowerShouldParseCorrectly)
+{
+    // Arrange
+    Parser parser;
+    std::string powerString = "-((2.0*x)^(x+1.0))";
+
+    // Act
+    auto exprProduct = parser.Parse(powerString);
+
+    // Assert
+    auto constant1 = std::make_shared<Constant>(1.0);
+    auto constant2 = std::make_shared<Constant>(2.0);
+    auto x = std::make_shared<BaseX>();
+
+    auto bracketProduct = std::make_shared<Product>(std::vector<Product::Factor>{Product::Factor(Product::Exponent::Positive, constant2), Product::Factor(Product::Exponent::Positive, x)});
+
+    auto bracketSum = std::make_shared<Sum>(std::vector<Sum::Summand>{Sum::Summand(Sum::Sign::Plus, x), Sum::Summand(Sum::Sign::Plus, constant1)});
+
+    auto powerTerm = std::make_shared<Power>(bracketProduct, bracketSum);
+
+    Sum expectedPower({Sum::Summand(Sum::Sign::Minus, powerTerm)});
+
+    ASSERT_TRUE(exprProduct);
+    EXPECT_EQ(*exprProduct, expectedPower);
+}
+
+TEST(BackendTest, PowerTowerShouldParseCorrectly)
+{
+    // Arrange
+    Parser parser;
+    std::string powerString = "3.0^x^2.0";
+
+    // Act
+    auto exprProduct = parser.Parse(powerString);
+
+    // Assert
+    auto constant1 = std::make_shared<Constant>(3.0);
+    auto constant2 = std::make_shared<Constant>(2.0);
+    auto x = std::make_shared<BaseX>();
+
+    auto upperPower = std::make_shared<Power>(x, constant2);
+
+    Power expectedPower(constant1, upperPower);
+
+    ASSERT_TRUE(exprProduct);
+    EXPECT_EQ(*exprProduct, expectedPower);
 }
 
 TEST(BackendTest, ParseabilityShouldBeEvaluatedCorrectly)

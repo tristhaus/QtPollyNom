@@ -38,6 +38,12 @@ namespace Backend {
          */
         static const std::regex InputValidationRegex;
 
+        static const std::string PlusString;
+        static const std::string MinusString;
+        static const std::string TimesString;
+        static const std::string DivideString;
+        static const std::string PowerString;
+
     public:
         /*!
          * \brief Initializes a new instance.
@@ -45,7 +51,7 @@ namespace Backend {
         Parser();
 
         /*!
-         * \brief Parse creates an \Ref expression from a string, if possible.
+         * \brief Parse creates an \ref expression from a string, if possible.
          * \param input The string to parse.
          * \return A pointer to the expression or a nullptr.
          */
@@ -68,6 +74,7 @@ namespace Backend {
         std::shared_ptr<Expression> ParseToConstant(const std::string & input) const;
         std::shared_ptr<Expression> ParseToSum(std::vector<std::string> & tokens, std::vector<std::string> & ops) const;
         std::shared_ptr<Expression> ParseToProduct(std::vector<std::string> & tokens, std::vector<std::string> & ops) const;
+        std::shared_ptr<Expression> ParseToPower(std::vector<std::string> & tokens, std::vector<std::string> & ops) const;
     };
 
 }

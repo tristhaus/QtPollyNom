@@ -26,6 +26,7 @@
 #include "constant.h"
 #include "sum.h"
 #include "product.h"
+#include "power.h"
 
 namespace Backend {
 
@@ -71,7 +72,13 @@ namespace Backend {
     }
 
     // This must be adjusted any time another math function is added to the game.
-    const std::regex Parser::InputValidationRegex("^[-0-9.,+/*()xX]+$", std::regex_constants::ECMAScript);
+    const std::regex Parser::InputValidationRegex("^[-+/*^()0-9.,xX]+$", std::regex_constants::ECMAScript);
+
+    const std::string Parser::PlusString = "+";
+    const std::string Parser::MinusString = "-";
+    const std::string Parser::TimesString = "*";
+    const std::string Parser::DivideString = "/";
+    const std::string Parser::PowerString = "^";
 
     bool Parser::ValidateInput(const std::string & input) const
     {
@@ -252,11 +259,8 @@ namespace Backend {
         auto opsEnd = ops.end();
 
         // First case: plus and minus
-        static const std::string plusString("+");
-        static const std::string minusString("-");
-
-        auto findPlus = std::find(opsBegin, opsEnd, plusString);
-        auto findMinus = std::find(opsBegin, opsEnd, minusString);
+        auto findPlus = std::find(opsBegin, opsEnd, PlusString);
+        auto findMinus = std::find(opsBegin, opsEnd, MinusString);
 
         if (findPlus != opsEnd || findMinus != opsEnd)
         {
@@ -264,11 +268,8 @@ namespace Backend {
         }
 
         // Second case: multiply and divide
-        static const std::string timesString("*");
-        static const std::string divideString("/");
-
-        auto findTimes = std::find(opsBegin, opsEnd, timesString);
-        auto findDivide = std::find(opsBegin, opsEnd, divideString);
+        auto findTimes = std::find(opsBegin, opsEnd, TimesString);
+        auto findDivide = std::find(opsBegin, opsEnd, DivideString);
 
         if (findTimes != opsEnd || findDivide != opsEnd)
         {
@@ -276,7 +277,11 @@ namespace Backend {
         }
 
         // Third case: power expressions
-        // TO COME LATER
+        auto findPower = std::find(opsBegin, opsEnd, PowerString);
+        if (findPower != opsEnd)
+        {
+            return this->ParseToPower(tokens, ops);
+        }
 
         // Fourth case: functions
         // TO COME LATER
@@ -286,9 +291,9 @@ namespace Backend {
 
     void Parser::Tokenize(const std::string & input, std::vector<std::string> & tokens, std::vector<std::string> & ops) const
     {
-        std::function<bool(char)> isOperatorChar = [](char c)
+        static std::function<bool(char)> isOperatorChar = [](char c)
         {
-            return c == '-' || c == '+' || c == '*' || c == '/';
+            return c == '-' || c == '+' || c == '*' || c == '/' || c == '^';
         };
 
         std::string token;
@@ -444,6 +449,45 @@ namespace Backend {
         }
 
         return std::make_shared<Product>(targetList);
+    }
+
+    std::shared_ptr<Expression> Parser::ParseToPower(std::vector<std::string>& tokens, std::vector<std::string>& ops) const
+    {
+        auto opsBegin = ops.begin();
+        auto opsEnd = ops.end();
+        auto findPlus = std::find(opsBegin, opsEnd, PlusString);
+        auto findMinus = std::find(opsBegin, opsEnd, MinusString);
+        auto findTimes = std::find(opsBegin, opsEnd, TimesString);
+        auto findDivide = std::find(opsBegin, opsEnd, DivideString);
+
+        if (findPlus != opsEnd || findMinus != opsEnd || findTimes != opsEnd || findDivide != opsEnd)
+        {
+            return nullptr;
+        }
+
+        auto baseToken = tokens[0];
+        tokens.erase(tokens.begin());
+        auto baseExpression = this->InternalParse(baseToken);
+        if (!baseExpression)
+        {
+            return nullptr;
+        }
+
+        auto exponentToken = tokens[0];
+        tokens.erase(tokens.begin());
+        for (unsigned long int index = 1; index < ops.size(); index++)
+        {
+            exponentToken += ops[index] + tokens[0];
+            tokens.erase(tokens.begin());
+        }
+
+        auto exponentExpression = this->InternalParse(exponentToken);
+        if (!exponentExpression)
+        {
+            return nullptr;
+        }
+
+        return std::make_shared<Power>(baseExpression, exponentExpression);
     }
 
 }
