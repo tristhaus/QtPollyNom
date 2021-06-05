@@ -36,6 +36,7 @@ HEADERS += \
         tst_evaluator.h \
         tst_game.h \
         tst_parser.h \
+        tst_power.h \
         tst_product.h \
         tst_randomdotgenerator.h \
         tst_sum.h

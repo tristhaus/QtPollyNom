@@ -26,6 +26,7 @@ HEADERS += \
     $$PWD/constant.h \
     $$PWD/mathhelper.h \
     $$PWD/parser.h \
+    $$PWD/power.h \
     $$PWD/product.h \
     $$PWD/randomdotgenerator.h \
     $$PWD/sum.h
@@ -38,6 +39,7 @@ SOURCES += \
     $$PWD/constant.cpp \
     $$PWD/mathhelper.cpp \
     $$PWD/parser.cpp \
+    $$PWD/power.cpp \
     $$PWD/product.cpp \
     $$PWD/randomdotgenerator.cpp \
     $$PWD/sum.cpp
