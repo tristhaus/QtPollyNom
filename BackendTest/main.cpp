@@ -28,6 +28,7 @@
 #include "tst_dot.h"
 #include "tst_randomdotgenerator.h"
 #include "tst_game.h"
+#include "tst_printingtest.h"
 
 #include <gtest/gtest.h>
 

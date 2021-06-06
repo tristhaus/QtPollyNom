@@ -28,6 +28,7 @@
 #include "../Backend/product.h"
 #include "../Backend/power.h"
 #include "../Backend/parser.h"
+#include "testexpressionbuilder.h"
 
 using namespace testing;
 using namespace Backend;
@@ -528,6 +529,134 @@ TEST(BackendTest, PowerTowerShouldParseCorrectly)
 
     ASSERT_TRUE(exprProduct);
     EXPECT_EQ(*exprProduct, expectedPower);
+}
+
+TEST(BackendTest, ComplexExpression01ShouldRoundtripCorrectly)
+{
+    // Arrange
+    Parser parser;
+    auto reference = TestExpressionBuilder::Build01();
+    auto optional = reference->Print();
+    std::string string = optional.value_or("irrelevant");
+
+    // Act
+    auto expr = parser.Parse(string);
+
+    // Assert
+    ASSERT_TRUE(optional.has_value());
+    EXPECT_EQ(*expr, *reference);
+}
+
+TEST(BackendTest, ComplexExpression02ShouldRoundtripCorrectly)
+{
+    // Arrange
+    Parser parser;
+    auto reference = TestExpressionBuilder::Build02();
+    auto optional = reference->Print();
+    std::string string = optional.value_or("irrelevant");
+
+    // Act
+    auto expr = parser.Parse(string);
+
+    // Assert
+    ASSERT_TRUE(optional.has_value());
+    EXPECT_EQ(*expr, *reference);
+}
+
+TEST(BackendTest, ComplexExpression03ShouldRoundtripCorrectly)
+{
+    // Arrange
+    Parser parser;
+    auto reference = TestExpressionBuilder::Build03();
+    auto optional = reference->Print();
+    std::string string = optional.value_or("irrelevant");
+
+    // Act
+    auto expr = parser.Parse(string);
+
+    // Assert
+    ASSERT_TRUE(optional.has_value());
+    EXPECT_EQ(*expr, *reference);
+}
+
+TEST(BackendTest, ComplexExpression04ShouldRoundtripCorrectly)
+{
+    // Arrange
+    Parser parser;
+    auto reference = TestExpressionBuilder::Build04();
+    auto optional = reference->Print();
+    std::string string = optional.value_or("irrelevant");
+
+    // Act
+    auto expr = parser.Parse(string);
+
+    // Assert
+    ASSERT_TRUE(optional.has_value());
+    EXPECT_EQ(*expr, *reference);
+}
+
+TEST(BackendTest, ComplexExpression05ShouldRoundtripCorrectly)
+{
+    // Arrange
+    Parser parser;
+    auto reference = TestExpressionBuilder::Build05();
+    auto optional = reference->Print();
+    std::string string = optional.value_or("irrelevant");
+
+    // Act
+    auto expr = parser.Parse(string);
+
+    // Assert
+    ASSERT_TRUE(optional.has_value());
+    EXPECT_EQ(*expr, *reference);
+}
+
+TEST(BackendTest, ComplexExpression06ShouldRoundtripCorrectly)
+{
+    // Arrange
+    Parser parser;
+    auto reference = TestExpressionBuilder::Build06();
+    auto optional = reference->Print();
+    std::string string = optional.value_or("irrelevant");
+
+    // Act
+    auto expr = parser.Parse(string);
+
+    // Assert
+    ASSERT_TRUE(optional.has_value());
+    EXPECT_EQ(*expr, *reference);
+}
+
+TEST(BackendTest, ComplexExpression07ShouldRoundtripCorrectly)
+{
+    // Arrange
+    Parser parser;
+    auto reference = TestExpressionBuilder::Build07();
+    auto optional = reference->Print();
+    std::string string = optional.value_or("irrelevant");
+
+    // Act
+    auto expr = parser.Parse(string);
+
+    // Assert
+    ASSERT_TRUE(optional.has_value());
+    EXPECT_EQ(*expr, *reference);
+}
+
+TEST(BackendTest, ComplexExpression08ShouldRoundtripCorrectly)
+{
+    // Arrange
+    Parser parser;
+    auto reference = TestExpressionBuilder::Build08();
+    auto optional = reference->Print();
+    std::string string = optional.value_or("irrelevant");
+
+    // Act
+    auto expr = parser.Parse(string);
+
+    // Assert
+    ASSERT_TRUE(optional.has_value());
+    EXPECT_EQ(*expr, *reference);
 }
 
 TEST(BackendTest, ParseabilityShouldBeEvaluatedCorrectly)
