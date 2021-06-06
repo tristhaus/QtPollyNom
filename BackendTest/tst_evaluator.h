@@ -27,6 +27,7 @@
 #include "../Backend/constant.h"
 #include "../Backend/basex.h"
 #include "../Backend/product.h"
+#include "../Backend/power.h"
 
 using namespace Backend;
 using namespace testing;
@@ -130,6 +131,42 @@ TEST(BackendTest, ForOneOverXEvaluatorShallCreateTwoLists)
     EXPECT_GE(graph[0].second.size(), 1);
     EXPECT_GE(graph[1].first.size(), 1);
     EXPECT_GE(graph[1].second.size(), 1);
+}
+
+TEST(BackendTest, EvaluatorShallNotCreateEmptyBranchesAlongValidOnes)
+{
+    // Arrange
+    auto constant = std::make_shared<Constant>(2.0);
+    auto baseX = std::make_shared<BaseX>();
+    auto power = std::make_shared<Power>(constant, baseX);
+
+    Evaluator evaluator(power, -10.5, 10.5, 1000.0);
+
+    // Act
+    auto graph = evaluator.Evaluate();
+
+    // Assert
+    ASSERT_EQ(graph.size(), 1);
+    EXPECT_GE(graph[0].first.size(), 1);
+    EXPECT_GE(graph[0].second.size(), 1);
+}
+
+TEST(BackendTest, EvaluatorShallCreateOneEmptyBranchIfFunctionDomainDisjoint)
+{
+    // Arrange
+    auto c1 = std::make_shared<Constant>(-100.0);
+    auto c2 = std::make_shared<Constant>(1/2);
+    auto power = std::make_shared<Power>(c1, c2);
+
+    Evaluator evaluator(power, -10.5, 10.5, 1000.0);
+
+    // Act
+    auto graph = evaluator.Evaluate();
+
+    // Assert
+    ASSERT_EQ(graph.size(), 1);
+    EXPECT_GE(graph[0].first.size(), 0);
+    EXPECT_GE(graph[0].second.size(), 0);
 }
 
 #endif // TST_EVALUATOR_H

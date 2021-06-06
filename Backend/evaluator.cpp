@@ -63,8 +63,10 @@ namespace Backend {
 
         while (x < this->maxX)
         {
-            graphData.emplace_back(std::make_pair(std::vector<double>(),std::vector<double>()));
-            auto & branch = graphData.back();
+            if(graphData.size() == 0 || !graphData.back().first.empty())
+            {
+                graphData.emplace_back(std::make_pair(std::vector<double>(),std::vector<double>()));
+            }
 
             // look for interval
             double xInCurrentInterval = lastXinPreviousInterval;
@@ -73,11 +75,7 @@ namespace Backend {
             {
                 xInCurrentInterval += this->LargeIncrement;
                 auto result = this->expression->Evaluate(xInCurrentInterval);
-                if (result.has_value())
-                {
-                    this->AddCompletePointToCurrentBranch(xInCurrentInterval, result.value());
-                    foundInterval = true;
-                }
+                foundInterval = result.has_value();
             }
 
             // maybe the function is not defined anywhere in our window
@@ -95,10 +93,22 @@ namespace Backend {
             this->WorkAnInterval(forwardX, x, xInCurrentInterval, lastXinCurrentInterval);
 
             // finish up interval
-            if (!branch.first.empty())
+            lastXinPreviousInterval = lastXinCurrentInterval;
+        }
+
+        while(graphData.size() > 1)
+        {
+            auto is_empty = [](std::pair<std::vector<double>, std::vector<double>> branch){ return branch.first.empty(); };
+            auto begin = graphData.begin();
+            auto end = graphData.end();
+            auto findIt = std::find_if(begin, end, is_empty);
+
+            if(findIt == end)
             {
-                lastXinPreviousInterval = lastXinCurrentInterval;
+                break;
             }
+
+            graphData.erase(findIt);
         }
     }
 
@@ -162,7 +172,7 @@ namespace Backend {
     void Evaluator::EnsureAtLeastOneBranch()
     {
         if(graphData.empty()){
-            graphData.emplace_back(std::make_pair(std::vector<double>(),std::vector<double>()));
+            graphData.emplace_back(std::make_pair(std::vector<double>(), std::vector<double>()));
         }
     }
 
