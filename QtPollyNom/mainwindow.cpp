@@ -39,6 +39,11 @@ MainWindow::MainWindow(QWidget *parent)
     this->InitializePlot();
 
     connect(ui->calcButton, &QPushButton::clicked, this, &MainWindow::OnCalcButtonClicked);
+    connect(ui->funcLineEdit0, &QLineEdit::returnPressed, this, &MainWindow::OnReturnKeyPressed);
+    connect(ui->funcLineEdit1, &QLineEdit::returnPressed, this, &MainWindow::OnReturnKeyPressed);
+    connect(ui->funcLineEdit2, &QLineEdit::returnPressed, this, &MainWindow::OnReturnKeyPressed);
+    connect(ui->funcLineEdit3, &QLineEdit::returnPressed, this, &MainWindow::OnReturnKeyPressed);
+    connect(ui->funcLineEdit4, &QLineEdit::returnPressed, this, &MainWindow::OnReturnKeyPressed);
     connect(&gameUpdateFutureWatcher, &QFutureWatcher<void>::finished, this, &MainWindow::OnGameUpdateFinished);
     connect(&waitTimer, &QTimer::timeout, this, &MainWindow::OnWaitTimerFinished);
 }
@@ -197,7 +202,7 @@ void MainWindow::UpdateGui()
     ui->plot->replot();
 }
 
-void MainWindow::OnCalcButtonClicked()
+void MainWindow::StartCalculation()
 {
     SetGameIsBusy(true);
 
@@ -214,6 +219,16 @@ void MainWindow::OnCalcButtonClicked()
     this->gameUpdateFutureWatcher.setFuture(updateFuture);
 
     this->waitTimer.start();
+}
+
+void MainWindow::OnCalcButtonClicked()
+{
+    this->StartCalculation();
+}
+
+void MainWindow::OnReturnKeyPressed()
+{
+    this->StartCalculation();
 }
 
 void MainWindow::OnGameUpdateFinished()

@@ -56,6 +56,7 @@ public:
 
 private slots:
     void OnCalcButtonClicked();
+    void OnReturnKeyPressed();
     void OnGameUpdateFinished();
     void OnWaitTimerFinished();
     void OnWaitingMessageBoxButtonClicked();
@@ -67,5 +68,6 @@ private:
     void DrawGraphs();
     void SetGameIsBusy(bool isBusy);
     void UpdateGui();
+    void StartCalculation();
 };
 #endif // MAINWINDOW_H
