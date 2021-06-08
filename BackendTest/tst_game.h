@@ -47,7 +47,7 @@ TEST(BackendTest, GameShallUpdateCorrectlySingleStep)
     auto graphs = game.GetGraphs();
 
     // Assert
-    ASSERT_EQ(dots.size(), 5);
+    ASSERT_EQ(5, dots.size());
     EXPECT_TRUE(dots[0]->IsActive());
     EXPECT_TRUE(dots[1]->IsActive());
     EXPECT_TRUE(dots[2]->IsActive());
@@ -87,7 +87,7 @@ TEST(BackendTest, GameShallUpdateCorrectlyMultiStep)
     auto dots1 = game.GetDots();
 
     // Assert 1
-    ASSERT_EQ(dots1.size(), 5);
+    ASSERT_EQ(5, dots1.size());
     EXPECT_TRUE(dots1[0]->IsActive());
     EXPECT_TRUE(dots1[1]->IsActive());
     EXPECT_FALSE(dots1[2]->IsActive());
@@ -99,7 +99,7 @@ TEST(BackendTest, GameShallUpdateCorrectlyMultiStep)
     auto dots2 = game.GetDots();
 
     // Assert 2
-    ASSERT_EQ(dots2.size(), 5);
+    ASSERT_EQ(5, dots2.size());
     EXPECT_TRUE(dots1[0]->IsActive());
     EXPECT_TRUE(dots1[1]->IsActive());
     EXPECT_TRUE(dots1[2]->IsActive());

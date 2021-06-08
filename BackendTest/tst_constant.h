@@ -37,7 +37,7 @@ TEST(BackendTest, ConstantShallEvaluateCorrectly)
     // Assert
     ASSERT_TRUE(result1.has_value());
 
-    EXPECT_DOUBLE_EQ(result1.value(), 4.8);
+    EXPECT_DOUBLE_EQ(4.8, result1.value());
 }
 
 TEST(BackendTest, ConstantShallPrintCorrectly)
@@ -51,7 +51,7 @@ TEST(BackendTest, ConstantShallPrintCorrectly)
     // Assert
     ASSERT_TRUE(result1.has_value());
 
-    EXPECT_STREQ(result1.value().c_str(), "-4.800000");
+    EXPECT_STREQ("-4.800000", result1.value().c_str());
 }
 
 #endif // TST_CONSTANT_H

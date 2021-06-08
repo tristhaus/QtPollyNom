@@ -56,12 +56,12 @@ TEST(BackendTest, SimpleCasesShouldParseCorrectly)
     BaseX referenceX;
     Constant referenceConstant(30.5);
 
-    EXPECT_EQ(*exprX, referenceX);
+    EXPECT_EQ(referenceX, *exprX);
     EXPECT_FALSE(exprInvalid);
-    EXPECT_EQ(*exprNumber, referenceConstant);
+    EXPECT_EQ(referenceConstant, *exprNumber);
     EXPECT_FALSE(exprInvalidNumber);
-    EXPECT_EQ(*exprBracedX, referenceX);
-    EXPECT_EQ(*exprDoubleBracedX, referenceX);
+    EXPECT_EQ(referenceX, *exprBracedX);
+    EXPECT_EQ(referenceX, *exprDoubleBracedX);
 }
 
 TEST(BackendTest, SingleSummandShouldParseToConstant)
@@ -79,8 +79,8 @@ TEST(BackendTest, SingleSummandShouldParseToConstant)
     Constant referencePositive(+1.1);
     Constant referenceNegative(-2.2);
 
-    EXPECT_EQ(*exprPositive, referencePositive);
-    EXPECT_EQ(*exprNegative, referenceNegative);
+    EXPECT_EQ(referencePositive, *exprPositive);
+    EXPECT_EQ(referenceNegative, *exprNegative);
 }
 
 TEST(BackendTest, SingleXShouldParseToSum)
@@ -99,9 +99,9 @@ TEST(BackendTest, SingleXShouldParseToSum)
     Sum referenceNegativeX = Sum({Sum::Summand(Sum::Sign::Minus, referencePositiveX)});
 
     ASSERT_TRUE(exprPositive);
-    EXPECT_EQ(*exprPositive, *referencePositiveX);
+    EXPECT_EQ(*referencePositiveX, *exprPositive);
     ASSERT_TRUE(exprNegative);
-    EXPECT_EQ(*exprNegative, referenceNegativeX);
+    EXPECT_EQ(referenceNegativeX, *exprNegative);
 }
 
 TEST(BackendTest, SimpleSumShouldParseCorrectly1)
@@ -119,7 +119,7 @@ TEST(BackendTest, SimpleSumShouldParseCorrectly1)
     Sum referenceSum = Sum({Sum::Summand(Sum::Sign::Plus, constant1), Sum::Summand(Sum::Sign::Plus, constant2)});
 
     ASSERT_TRUE(exprSum);
-    EXPECT_EQ(*exprSum, referenceSum);
+    EXPECT_EQ(referenceSum, *exprSum);
 }
 
 TEST(BackendTest, SimpleSumShouldParseCorrectly2)
@@ -137,7 +137,7 @@ TEST(BackendTest, SimpleSumShouldParseCorrectly2)
     Sum referenceSum = Sum({Sum::Summand(Sum::Sign::Plus, constant1), Sum::Summand(Sum::Sign::Minus, constant2)});
 
     ASSERT_TRUE(exprSum);
-    EXPECT_EQ(*exprSum, referenceSum);
+    EXPECT_EQ(referenceSum, *exprSum);
 }
 
 TEST(BackendTest, SimpleSumShouldParseCorrectly3)
@@ -155,7 +155,7 @@ TEST(BackendTest, SimpleSumShouldParseCorrectly3)
     Sum referenceSum = Sum({Sum::Summand(Sum::Sign::Plus, constant1), Sum::Summand(Sum::Sign::Plus, constant2)});
 
     ASSERT_TRUE(exprSum);
-    EXPECT_EQ(*exprSum, referenceSum);
+    EXPECT_EQ(referenceSum, *exprSum);
 }
 
 TEST(BackendTest, SimpleSumShouldParseCorrectly4)
@@ -174,7 +174,7 @@ TEST(BackendTest, SimpleSumShouldParseCorrectly4)
     Sum referenceSum = Sum({Sum::Summand(Sum::Sign::Plus, constant1), Sum::Summand(Sum::Sign::Plus, constant2), Sum::Summand(Sum::Sign::Minus, x)});
 
     ASSERT_TRUE(exprSum);
-    EXPECT_EQ(*exprSum, referenceSum);
+    EXPECT_EQ(referenceSum, *exprSum);
 }
 
 TEST(BackendTest, SimpleSumShouldParseCorrectly5)
@@ -197,7 +197,7 @@ TEST(BackendTest, SimpleSumShouldParseCorrectly5)
     Sum referenceSum = Sum({Sum::Summand(Sum::Sign::Plus, constant1), Sum::Summand(Sum::Sign::Minus, innerBracket), Sum::Summand(Sum::Sign::Plus, constant3)});
 
     ASSERT_TRUE(exprSum);
-    EXPECT_EQ(*exprSum, referenceSum);
+    EXPECT_EQ(referenceSum, *exprSum);
 }
 
 TEST(BackendTest, SimpleProductShouldParseCorrectly1)
@@ -216,7 +216,7 @@ TEST(BackendTest, SimpleProductShouldParseCorrectly1)
     Product referenceProduct = Product({Product::Factor(Product::Exponent::Positive, constant1), Product::Factor(Product::Exponent::Positive, constant2)});
 
     ASSERT_TRUE(exprProduct);
-    EXPECT_EQ(*exprProduct, referenceProduct);
+    EXPECT_EQ(referenceProduct, *exprProduct);
 }
 
 TEST(BackendTest, SimpleProductShouldParseCorrectly2)
@@ -235,7 +235,7 @@ TEST(BackendTest, SimpleProductShouldParseCorrectly2)
     Product referenceProduct = Product({Product::Factor(Product::Exponent::Positive, constant1), Product::Factor(Product::Exponent::Negative, constant2)});
 
     ASSERT_TRUE(exprProduct);
-    EXPECT_EQ(*exprProduct, referenceProduct);
+    EXPECT_EQ(referenceProduct, *exprProduct);
 }
 
 TEST(BackendTest, SimpleProductShouldParseCorrectly3)
@@ -254,7 +254,7 @@ TEST(BackendTest, SimpleProductShouldParseCorrectly3)
     Product referenceProduct = Product({Product::Factor(Product::Exponent::Positive, constant1), Product::Factor(Product::Exponent::Positive, constant2)});
 
     ASSERT_TRUE(exprProduct);
-    EXPECT_EQ(*exprProduct, referenceProduct);
+    EXPECT_EQ(referenceProduct, *exprProduct);
 }
 
 TEST(BackendTest, SimpleProductShouldParseCorrectly4)
@@ -273,7 +273,7 @@ TEST(BackendTest, SimpleProductShouldParseCorrectly4)
     Product referenceProduct = Product({Product::Factor(Product::Exponent::Positive, constant1), Product::Factor(Product::Exponent::Positive, constant2), Product::Factor(Product::Exponent::Negative, x)});
 
     ASSERT_TRUE(exprProduct);
-    EXPECT_EQ(*exprProduct, referenceProduct);
+    EXPECT_EQ(referenceProduct, *exprProduct);
 }
 
 TEST(BackendTest, SimpleProductShouldParseCorrectly5)
@@ -296,7 +296,7 @@ TEST(BackendTest, SimpleProductShouldParseCorrectly5)
     Product referenceProduct = Product({Product::Factor(Product::Exponent::Positive, constant1), Product::Factor(Product::Exponent::Negative, innerBracket), Product::Factor(Product::Exponent::Positive, constant3)});
 
     ASSERT_TRUE(exprProduct);
-    EXPECT_EQ(*exprProduct, referenceProduct);
+    EXPECT_EQ(referenceProduct, *exprProduct);
 }
 
 TEST(BackendTest, ProductSumMixShouldParseCorrectly1)
@@ -318,7 +318,7 @@ TEST(BackendTest, ProductSumMixShouldParseCorrectly1)
     Sum referenceSum = Sum({Sum::Summand(Sum::Sign::Plus, product), Sum::Summand(Sum::Sign::Plus, constant2)});
 
     ASSERT_TRUE(exprProduct);
-    EXPECT_EQ(*exprProduct, referenceSum);
+    EXPECT_EQ(referenceSum, *exprProduct);
 }
 
 TEST(BackendTest, ProductSumMixShouldParseCorrectly2)
@@ -340,7 +340,7 @@ TEST(BackendTest, ProductSumMixShouldParseCorrectly2)
     Sum referenceSum = Sum({Sum::Summand(Sum::Sign::Plus, product), Sum::Summand(Sum::Sign::Plus, constant2)});
 
     ASSERT_TRUE(exprProduct);
-    EXPECT_EQ(*exprProduct, referenceSum);
+    EXPECT_EQ(referenceSum, *exprProduct);
 }
 
 TEST(BackendTest, ProductSumMixShouldParseCorrectly3)
@@ -365,7 +365,7 @@ TEST(BackendTest, ProductSumMixShouldParseCorrectly3)
     Sum referenceSum = Sum({Sum::Summand(Sum::Sign::Plus, product), Sum::Summand(Sum::Sign::Plus, constant2)});
 
     ASSERT_TRUE(exprProduct);
-    EXPECT_EQ(*exprProduct, referenceSum);
+    EXPECT_EQ(referenceSum, *exprProduct);
 }
 
 TEST(BackendTest, ProductSumMixShouldParseCorrectly4)
@@ -390,7 +390,7 @@ TEST(BackendTest, ProductSumMixShouldParseCorrectly4)
     Sum referenceSum = Sum({Sum::Summand(Sum::Sign::Plus, product), Sum::Summand(Sum::Sign::Plus, constant2)});
 
     ASSERT_TRUE(exprProduct);
-    EXPECT_EQ(*exprProduct, referenceSum);
+    EXPECT_EQ(referenceSum, *exprProduct);
 }
 
 TEST(BackendTest, PowerShouldParseCorrectly1)
@@ -409,7 +409,7 @@ TEST(BackendTest, PowerShouldParseCorrectly1)
     Power referencePower(x, constant);
 
     ASSERT_TRUE(exprPower);
-    EXPECT_EQ(*exprPower, referencePower);
+    EXPECT_EQ(referencePower, *exprPower);
 }
 
 TEST(BackendTest, PowerShouldParseCorrectly2)
@@ -428,7 +428,7 @@ TEST(BackendTest, PowerShouldParseCorrectly2)
     Power referencePower(x, constant);
 
     ASSERT_TRUE(exprPower);
-    EXPECT_EQ(*exprPower, referencePower);
+    EXPECT_EQ(referencePower, *exprPower);
 }
 
 TEST(BackendTest, PowerShouldParseCorrectly3)
@@ -460,7 +460,7 @@ TEST(BackendTest, PowerShouldParseCorrectly4)
     Power referencePower(constant, x);
 
     ASSERT_TRUE(exprPower);
-    EXPECT_EQ(*exprPower, referencePower);
+    EXPECT_EQ(referencePower, *exprPower);
 }
 
 TEST(BackendTest, PowerShouldParseCorrectly5)
@@ -477,10 +477,10 @@ TEST(BackendTest, PowerShouldParseCorrectly5)
     auto x = std::make_shared<BaseX>();
 
     auto powerTerm = std::make_shared<Power>(constant, x);
-    Sum expectedPower({Sum::Summand(Sum::Sign::Minus, powerTerm)});
+    Sum referencePower({Sum::Summand(Sum::Sign::Minus, powerTerm)});
 
     ASSERT_TRUE(exprPower);
-    EXPECT_EQ(*exprPower, expectedPower);
+    EXPECT_EQ(referencePower, *exprPower);
 }
 
 TEST(BackendTest, LessSimplePowerShouldParseCorrectly)
@@ -503,10 +503,10 @@ TEST(BackendTest, LessSimplePowerShouldParseCorrectly)
 
     auto powerTerm = std::make_shared<Power>(bracketProduct, bracketSum);
 
-    Sum expectedPower({Sum::Summand(Sum::Sign::Minus, powerTerm)});
+    Sum referencePower({Sum::Summand(Sum::Sign::Minus, powerTerm)});
 
     ASSERT_TRUE(exprProduct);
-    EXPECT_EQ(*exprProduct, expectedPower);
+    EXPECT_EQ(referencePower, *exprProduct);
 }
 
 TEST(BackendTest, PowerTowerShouldParseCorrectly)
@@ -525,10 +525,10 @@ TEST(BackendTest, PowerTowerShouldParseCorrectly)
 
     auto upperPower = std::make_shared<Power>(x, constant2);
 
-    Power expectedPower(constant1, upperPower);
+    Power referencePower(constant1, upperPower);
 
     ASSERT_TRUE(exprProduct);
-    EXPECT_EQ(*exprProduct, expectedPower);
+    EXPECT_EQ(referencePower, *exprProduct);
 }
 
 TEST(BackendTest, ComplexExpression01ShouldRoundtripCorrectly)
@@ -544,7 +544,7 @@ TEST(BackendTest, ComplexExpression01ShouldRoundtripCorrectly)
 
     // Assert
     ASSERT_TRUE(optional.has_value());
-    EXPECT_EQ(*expr, *reference);
+    EXPECT_EQ(*reference, *expr);
 }
 
 TEST(BackendTest, ComplexExpression02ShouldRoundtripCorrectly)
@@ -560,7 +560,7 @@ TEST(BackendTest, ComplexExpression02ShouldRoundtripCorrectly)
 
     // Assert
     ASSERT_TRUE(optional.has_value());
-    EXPECT_EQ(*expr, *reference);
+    EXPECT_EQ(*reference, *expr);
 }
 
 TEST(BackendTest, ComplexExpression03ShouldRoundtripCorrectly)
@@ -576,7 +576,7 @@ TEST(BackendTest, ComplexExpression03ShouldRoundtripCorrectly)
 
     // Assert
     ASSERT_TRUE(optional.has_value());
-    EXPECT_EQ(*expr, *reference);
+    EXPECT_EQ(*reference, *expr);
 }
 
 TEST(BackendTest, ComplexExpression04ShouldRoundtripCorrectly)
@@ -592,7 +592,7 @@ TEST(BackendTest, ComplexExpression04ShouldRoundtripCorrectly)
 
     // Assert
     ASSERT_TRUE(optional.has_value());
-    EXPECT_EQ(*expr, *reference);
+    EXPECT_EQ(*reference, *expr);
 }
 
 TEST(BackendTest, ComplexExpression05ShouldRoundtripCorrectly)
@@ -608,7 +608,7 @@ TEST(BackendTest, ComplexExpression05ShouldRoundtripCorrectly)
 
     // Assert
     ASSERT_TRUE(optional.has_value());
-    EXPECT_EQ(*expr, *reference);
+    EXPECT_EQ(*reference, *expr);
 }
 
 TEST(BackendTest, ComplexExpression06ShouldRoundtripCorrectly)
@@ -624,7 +624,7 @@ TEST(BackendTest, ComplexExpression06ShouldRoundtripCorrectly)
 
     // Assert
     ASSERT_TRUE(optional.has_value());
-    EXPECT_EQ(*expr, *reference);
+    EXPECT_EQ(*reference, *expr);
 }
 
 TEST(BackendTest, ComplexExpression07ShouldRoundtripCorrectly)
@@ -640,7 +640,7 @@ TEST(BackendTest, ComplexExpression07ShouldRoundtripCorrectly)
 
     // Assert
     ASSERT_TRUE(optional.has_value());
-    EXPECT_EQ(*expr, *reference);
+    EXPECT_EQ(*reference, *expr);
 }
 
 TEST(BackendTest, ComplexExpression08ShouldRoundtripCorrectly)
@@ -656,7 +656,7 @@ TEST(BackendTest, ComplexExpression08ShouldRoundtripCorrectly)
 
     // Assert
     ASSERT_TRUE(optional.has_value());
-    EXPECT_EQ(*expr, *reference);
+    EXPECT_EQ(*reference, *expr);
 }
 
 TEST(BackendTest, ParseabilityShouldBeEvaluatedCorrectly)

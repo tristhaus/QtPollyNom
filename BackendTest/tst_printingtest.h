@@ -37,8 +37,7 @@ TEST(BackendTest, Expression01ShallPrintCorrectly)
 
     // Assert
     ASSERT_TRUE(optional.has_value());
-
-    EXPECT_STREQ(optional.value().c_str(), "2.000000*x");
+    EXPECT_STREQ("2.000000*x", optional.value().c_str());
 }
 
 TEST(BackendTest, Expression02ShallPrintCorrectly)
@@ -51,8 +50,7 @@ TEST(BackendTest, Expression02ShallPrintCorrectly)
 
     // Assert
     ASSERT_TRUE(optional.has_value());
-
-    EXPECT_STREQ(optional.value().c_str(), "2.000000*x^3.000000/(x-2.000000^x)");
+    EXPECT_STREQ("2.000000*x^3.000000/(x-2.000000^x)", optional.value().c_str());
 }
 
 TEST(BackendTest, Expression03ShallPrintCorrectly)
@@ -65,8 +63,7 @@ TEST(BackendTest, Expression03ShallPrintCorrectly)
 
     // Assert
     ASSERT_TRUE(optional.has_value());
-
-    EXPECT_STREQ(optional.value().c_str(), "2.000000*(x+1.000000)");
+    EXPECT_STREQ("2.000000*(x+1.000000)", optional.value().c_str());
 }
 
 TEST(BackendTest, Expression04ShallPrintCorrectly)
@@ -79,8 +76,7 @@ TEST(BackendTest, Expression04ShallPrintCorrectly)
 
     // Assert
     ASSERT_TRUE(optional.has_value());
-
-    EXPECT_STREQ(optional.value().c_str(), "(x+1.000000)^2.000000");
+    EXPECT_STREQ("(x+1.000000)^2.000000", optional.value().c_str());
 }
 
 TEST(BackendTest, Expression05ShallPrintCorrectly)
@@ -93,8 +89,7 @@ TEST(BackendTest, Expression05ShallPrintCorrectly)
 
     // Assert
     ASSERT_TRUE(optional.has_value());
-
-    EXPECT_STREQ(optional.value().c_str(), "(x+1.000000)^(x/3.000000)");
+    EXPECT_STREQ("(x+1.000000)^(x/3.000000)", optional.value().c_str());
 }
 
 TEST(BackendTest, Expression06ShallPrintCorrectly)
@@ -107,8 +102,7 @@ TEST(BackendTest, Expression06ShallPrintCorrectly)
 
     // Assert
     ASSERT_TRUE(optional.has_value());
-
-    EXPECT_STREQ(optional.value().c_str(), "x-1.000000+2.000000-3.000000");
+    EXPECT_STREQ("x-1.000000+2.000000-3.000000", optional.value().c_str());
 }
 
 TEST(BackendTest, Expression07ShallPrintCorrectly)
@@ -121,8 +115,7 @@ TEST(BackendTest, Expression07ShallPrintCorrectly)
 
     // Assert
     ASSERT_TRUE(optional.has_value());
-
-    EXPECT_STREQ(optional.value().c_str(), "x+1.000000-2.000000+3.000000");
+    EXPECT_STREQ("x+1.000000-2.000000+3.000000", optional.value().c_str());
 }
 
 TEST(BackendTest, Expression08ShallPrintCorrectly)
@@ -135,8 +128,7 @@ TEST(BackendTest, Expression08ShallPrintCorrectly)
 
     // Assert
     ASSERT_TRUE(optional.has_value());
-
-    EXPECT_STREQ(optional.value().c_str(), "x+1.000000-4.000000+7.000000");
+    EXPECT_STREQ("x+1.000000-4.000000+7.000000", optional.value().c_str());
 }
 
 #endif // TST_PRINTINGTEST_H

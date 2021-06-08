@@ -39,8 +39,8 @@ TEST(BackendTest, BaseXShallEvaluateCorrectly)
     ASSERT_TRUE(result1.has_value());
     ASSERT_TRUE(result2.has_value());
 
-    EXPECT_DOUBLE_EQ(result1.value(), 0.0);
-    EXPECT_DOUBLE_EQ(result2.value(), -4.5);
+    EXPECT_DOUBLE_EQ(0.0, result1.value());
+    EXPECT_DOUBLE_EQ(-4.5, result2.value());
 }
 
 TEST(BackendTest, BaseXShallPrintCorrectly)
@@ -54,7 +54,7 @@ TEST(BackendTest, BaseXShallPrintCorrectly)
     // Assert
     ASSERT_TRUE(result1.has_value());
 
-    EXPECT_STREQ(result1.value().c_str(), "x");
+    EXPECT_STREQ("x", result1.value().c_str());
 }
 
 #endif // TST_BASEX_H

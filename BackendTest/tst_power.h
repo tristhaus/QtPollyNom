@@ -129,8 +129,8 @@ TEST(BackendTest, PowerShallPrintCorrectly)
     ASSERT_TRUE(result1.has_value());
     ASSERT_TRUE(result2.has_value());
 
-    EXPECT_STREQ(result1.value().c_str(), "x^3.000000");
-    EXPECT_STREQ(result2.value().c_str(), "(x-3.000000)^(x/2.000000)");
+    EXPECT_STREQ("x^3.000000", result1.value().c_str());
+    EXPECT_STREQ("(x-3.000000)^(x/2.000000)", result2.value().c_str());
 }
 
 #endif // TST_POWER_H

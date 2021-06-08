@@ -52,8 +52,8 @@ TEST(BackendTest, ProductShallEvaluateCorrectly)
     ASSERT_TRUE(result1.has_value());
     ASSERT_TRUE(result2.has_value());
 
-    EXPECT_DOUBLE_EQ(result1.value(), 0.0);
-    EXPECT_DOUBLE_EQ(result2.value(), 16.875);
+    EXPECT_DOUBLE_EQ(0.0, result1.value());
+    EXPECT_DOUBLE_EQ(16.875, result2.value());
 }
 
 TEST(BackendTest, ProductShallEvaluateUndefinedDivision)
@@ -74,7 +74,7 @@ TEST(BackendTest, ProductShallEvaluateUndefinedDivision)
     EXPECT_FALSE(result2.has_value());
     ASSERT_TRUE(result3.has_value());
 
-    EXPECT_DOUBLE_EQ(result3.value(), -1.0e9);
+    EXPECT_DOUBLE_EQ(-1.0e9, result3.value());
 }
 
 TEST(BackendTest, ProductShallPrintCorrectly)
@@ -98,7 +98,7 @@ TEST(BackendTest, ProductShallPrintCorrectly)
     // Assert
     ASSERT_TRUE(result1.has_value());
 
-    EXPECT_STREQ(result1.value().c_str(), "x/2.000000*(x-3.000000)");
+    EXPECT_STREQ("x/2.000000*(x-3.000000)", result1.value().c_str());
 }
 
 #endif // TST_PRODUCT_H

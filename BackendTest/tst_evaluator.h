@@ -90,10 +90,10 @@ TEST(BackendTest, EvaluatorShallCorrectlySortPoints)
         compare = current;
     }
 
-    EXPECT_DOUBLE_EQ(result.second[0], 1.0);
-    EXPECT_DOUBLE_EQ(result.second[1], 2.25);
-    EXPECT_DOUBLE_EQ(result.second[2], 4.0);
-    EXPECT_DOUBLE_EQ(result.second[3], 9.0);
+    EXPECT_DOUBLE_EQ(1.0, result.second[0]);
+    EXPECT_DOUBLE_EQ(2.25, result.second[1]);
+    EXPECT_DOUBLE_EQ(4.0, result.second[2]);
+    EXPECT_DOUBLE_EQ(9.0, result.second[3]);
 }
 
 TEST(BackendTest, ForXSquaredEvaluatorShallCreateOneList)
@@ -108,7 +108,7 @@ TEST(BackendTest, ForXSquaredEvaluatorShallCreateOneList)
     auto graph = evaluator.Evaluate();
 
     // Assert
-    ASSERT_EQ(graph.size() , 1);
+    ASSERT_EQ(1, graph.size());
     EXPECT_GE(graph[0].first.size(), 1);
     EXPECT_GE(graph[0].second.size(), 1);
 }
@@ -126,7 +126,7 @@ TEST(BackendTest, ForOneOverXEvaluatorShallCreateTwoLists)
     auto graph = evaluator.Evaluate();
 
     // Assert
-    ASSERT_EQ(graph.size() , 2);
+    ASSERT_EQ(2, graph.size() );
     EXPECT_GE(graph[0].first.size(), 1);
     EXPECT_GE(graph[0].second.size(), 1);
     EXPECT_GE(graph[1].first.size(), 1);
@@ -146,7 +146,7 @@ TEST(BackendTest, EvaluatorShallNotCreateEmptyBranchesAlongValidOnes)
     auto graph = evaluator.Evaluate();
 
     // Assert
-    ASSERT_EQ(graph.size(), 1);
+    ASSERT_EQ(1, graph.size());
     EXPECT_GE(graph[0].first.size(), 1);
     EXPECT_GE(graph[0].second.size(), 1);
 }
@@ -164,7 +164,7 @@ TEST(BackendTest, EvaluatorShallCreateOneEmptyBranchIfFunctionDomainDisjoint)
     auto graph = evaluator.Evaluate();
 
     // Assert
-    ASSERT_EQ(graph.size(), 1);
+    ASSERT_EQ(1, graph.size());
     EXPECT_GE(graph[0].first.size(), 0);
     EXPECT_GE(graph[0].second.size(), 0);
 }

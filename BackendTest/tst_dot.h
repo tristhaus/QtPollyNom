@@ -188,14 +188,14 @@ TEST(BackendTest, DotsShallCorrectlyHandleTrivialBorderCases)
     }
 
     // Assert
-    EXPECT_EQ(result[0], reference[0]);
-    EXPECT_EQ(result[1], reference[1]);
-    EXPECT_EQ(result[2], reference[2]);
-    EXPECT_EQ(result[3], reference[3]);
-    EXPECT_EQ(result[4], reference[4]);
-    EXPECT_EQ(result[5], reference[5]);
-    EXPECT_EQ(result[6], reference[6]);
-    EXPECT_EQ(result[7], reference[7]);
+    EXPECT_EQ(reference[0], result[0]);
+    EXPECT_EQ(reference[1], result[1]);
+    EXPECT_EQ(reference[2], result[2]);
+    EXPECT_EQ(reference[3], result[3]);
+    EXPECT_EQ(reference[4], result[4]);
+    EXPECT_EQ(reference[5], result[5]);
+    EXPECT_EQ(reference[6], result[6]);
+    EXPECT_EQ(reference[7], result[7]);
 }
 
 TEST(BackendTest, EvaluatorAndDotsShallCorrectlyHandleSingularity)

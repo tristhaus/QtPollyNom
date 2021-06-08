@@ -44,8 +44,8 @@ TEST(BackendTest, SumShallEvaluateCorrectly)
     ASSERT_TRUE(result1.has_value());
     ASSERT_TRUE(result2.has_value());
 
-    EXPECT_DOUBLE_EQ(result1.value(), -3.0);
-    EXPECT_DOUBLE_EQ(result2.value(), -7.5);
+    EXPECT_DOUBLE_EQ(-3.0, result1.value());
+    EXPECT_DOUBLE_EQ(-7.5, result2.value());
 }
 
 TEST(BackendTest, SumShallPrintCorrectly)
@@ -62,7 +62,7 @@ TEST(BackendTest, SumShallPrintCorrectly)
     // Assert
     ASSERT_TRUE(result1.has_value());
 
-    EXPECT_STREQ(result1.value().c_str(), "x-3.000000");
+    EXPECT_STREQ("x-3.000000", result1.value().c_str());
 }
 
 #endif // TST_SUM_H
