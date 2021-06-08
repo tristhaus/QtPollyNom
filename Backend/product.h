@@ -87,6 +87,10 @@ namespace Backend
         std::vector<Factor> factors;
 
     public:
+        /*!
+         * \brief Initializes a new instance holding the supplied factors.
+         * \param factors The factors making up the product.
+         */
         Product(std::vector<Factor> factors);
         virtual ~Product();
         Product(const Product&) = delete;
