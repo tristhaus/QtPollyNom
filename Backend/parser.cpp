@@ -27,11 +27,41 @@
 #include "sum.h"
 #include "product.h"
 #include "power.h"
+#include "functions.h"
 
 namespace Backend {
 
+    const std::string Parser::PlusString = "+";
+    const std::string Parser::MinusString = "-";
+    const std::string Parser::TimesString = "*";
+    const std::string Parser::DivideString = "/";
+    const std::string Parser::PowerString = "^";
+
+    // This must be adjusted any time another math function is added to the game.
+    const std::regex Parser::InputValidationRegex("^[-+/*^()0-9.,cinosxX]+$", std::regex_constants::ECMAScript);
+
     Parser::Parser()
     {
+    }
+
+    bool Parser::Register(std::string name, CreateFunction createFunction)
+    {
+        auto & functions = Parser::GetRegisteredFunctions();
+
+        auto it = functions.find(name);
+        if (it == functions.end())
+        {
+            functions.emplace(name, createFunction);
+            return true;
+        }
+
+        return false;
+    }
+
+    std::map<std::string, CreateFunction>& Parser::GetRegisteredFunctions()
+    {
+        static std::map<std::string, CreateFunction> theFunctions;
+        return theFunctions;
     }
 
     std::shared_ptr<Expression> Parser::Parse(const std::string & input) const
@@ -70,15 +100,6 @@ namespace Backend {
 
         return std::regex_replace(input, re, "");
     }
-
-    // This must be adjusted any time another math function is added to the game.
-    const std::regex Parser::InputValidationRegex("^[-+/*^()0-9.,xX]+$", std::regex_constants::ECMAScript);
-
-    const std::string Parser::PlusString = "+";
-    const std::string Parser::MinusString = "-";
-    const std::string Parser::TimesString = "*";
-    const std::string Parser::DivideString = "/";
-    const std::string Parser::PowerString = "^";
 
     bool Parser::ValidateInput(const std::string & input) const
     {
@@ -284,7 +305,10 @@ namespace Backend {
         }
 
         // Fourth case: functions
-        // TO COME LATER
+        if(tokens.size() == 1)
+        {
+            return this->ParseToFunction(tokens);
+        }
 
         return nullptr;
     }
@@ -488,6 +512,33 @@ namespace Backend {
         }
 
         return std::make_shared<Power>(baseExpression, exponentExpression);
+    }
+
+    std::shared_ptr<Expression> Parser::ParseToFunction(std::vector<std::string>& tokens) const
+    {
+        auto functionToken = tokens[0];
+        tokens.erase(tokens.begin());
+        auto index = functionToken.find('(');
+        auto name = functionToken.substr(0, index);
+
+        auto argumentToken = functionToken.substr(index);
+        auto argument = this->InternalParse(argumentToken);
+
+        if(!argument)
+        {
+            return nullptr;
+        }
+
+        auto & functions = Parser::GetRegisteredFunctions();
+
+        auto createFunction = functions.find(name);
+
+        if(createFunction == functions.end())
+        {
+            return nullptr;
+        }
+
+        return (*createFunction).second(argument);
     }
 
 }

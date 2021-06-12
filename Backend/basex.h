@@ -67,7 +67,8 @@ namespace Backend {
 
         /*!
          * \reimp
-         */virtual bool operator!=(const Expression &other) const;
+         */
+        virtual bool operator!=(const Expression &other) const;
     };
 
 }

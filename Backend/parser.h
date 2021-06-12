@@ -21,9 +21,12 @@
 
 #include <memory>
 #include <regex>
+#include <map>
 #include "expression.h"
 
 namespace Backend {
+
+    typedef std::shared_ptr<Expression> (*CreateFunction)(std::shared_ptr<Expression>) ;
 
     /*!
      * \class Parser
@@ -64,7 +67,26 @@ namespace Backend {
          */
         bool IsParseable(const std::string & input) const;
 
+        /*!
+         * \brief Register registers a function to create an expression representing
+         *        a mathematical function under the given human-readable name.
+         * \param name The human-readable name of the function, e.g. "sin".
+         * \param createFunction Pointer to a function to create an expression
+         *        representing the mathematical function.
+         * \return A dummy bool such that the function can be used in static initialization.
+         */
+        static bool Register(std::string name, CreateFunction createFunction);
+
     private:
+        /*!
+         * \brief GetRegisteredFunctions Gets the class-static map of registered functions for the parser.
+         *
+         * By doing it this way, we avoid the static initialization fiasco,
+         * because the map returned is actually method-static, initialized on first access.
+         *
+         * \return The registration map.
+         */
+        static std::map<std::string, CreateFunction> & GetRegisteredFunctions();
         std::string PrepareInput(const std::string & input) const;
         bool ValidateInput(const std::string & input) const;
         unsigned long long FindMatchingBrace(const std::string & input, unsigned long long pos) const;
@@ -75,6 +97,7 @@ namespace Backend {
         std::shared_ptr<Expression> ParseToSum(std::vector<std::string> & tokens, std::vector<std::string> & ops) const;
         std::shared_ptr<Expression> ParseToProduct(std::vector<std::string> & tokens, std::vector<std::string> & ops) const;
         std::shared_ptr<Expression> ParseToPower(std::vector<std::string> & tokens, std::vector<std::string> & ops) const;
+        std::shared_ptr<Expression> ParseToFunction(std::vector<std::string>& tokens) const;
     };
 
 }

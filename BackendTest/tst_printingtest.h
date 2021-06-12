@@ -23,6 +23,7 @@
 #include <gmock/gmock-matchers.h>
 #include "../Backend/expression.h"
 #include "testexpressionbuilder.h"
+#include "../Backend/functions.h"
 
 using namespace testing;
 using namespace Backend;
@@ -129,6 +130,21 @@ TEST(BackendTest, Expression08ShallPrintCorrectly)
     // Assert
     ASSERT_TRUE(optional.has_value());
     EXPECT_STREQ("x+1.000000-4.000000+7.000000", optional.value().c_str());
+}
+
+TEST(BackendTest, FunctionsShallPrintCorrectly)
+{
+    // Arrange
+    auto x = std::make_shared<BaseX>();
+    auto sine = std::make_shared<Sine>(x);
+    auto expression = std::make_shared<Cosine>(sine);
+
+    // Act
+    auto optional = expression->Print();
+
+    // Assert
+    ASSERT_TRUE(optional.has_value());
+    EXPECT_STREQ("cos(sin(x))", optional.value().c_str());
 }
 
 #endif // TST_PRINTINGTEST_H

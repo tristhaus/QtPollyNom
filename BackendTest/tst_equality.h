@@ -27,6 +27,7 @@
 #include "../Backend/sum.h"
 #include "../Backend/product.h"
 #include "../Backend/power.h"
+#include "../Backend/functions.h"
 
 using namespace testing;
 using namespace Backend;
@@ -382,6 +383,31 @@ TEST(BackendTest, EqualityShallWorkCorrectlyForRecursivePowers)
 
     ASSERT_EQ(*q3, *q4);
     ASSERT_NE(*q3, *q5);
+}
+
+TEST(BackendTest, EqualityShallWorkCorrectlyForFunctions)
+{
+    // Arrange
+    std::shared_ptr<Expression> x1 = std::make_shared<BaseX>();
+    std::shared_ptr<Expression> c = std::make_shared<Constant>(3.0);
+
+    std::shared_ptr<Expression> f1 = std::make_shared<Sine>(x1);   // sin(x)
+    std::shared_ptr<Expression> f2 = std::make_shared<Sine>(x1);   // sin(x)
+    std::shared_ptr<Expression> f3 = std::make_shared<Sine>(c);    // sin(3.0)
+    std::shared_ptr<Expression> f4 = std::make_shared<Cosine>(x1); // cos(x)
+
+    // Act, Assert
+    ASSERT_TRUE(*f1 == *f2);
+    ASSERT_FALSE(*f1 == *f3);
+    ASSERT_FALSE(*f1 == *f4);
+
+    ASSERT_FALSE(*f1 != *f2);
+    ASSERT_TRUE(*f1 != *f3);
+    ASSERT_TRUE(*f1 != *f4);
+
+    ASSERT_EQ(*f1, *f2);
+    ASSERT_NE(*f1, *f3);
+    ASSERT_NE(*f1, *f4);
 }
 
 #endif // TST_EQUALITY_H

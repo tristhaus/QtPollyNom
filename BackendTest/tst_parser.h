@@ -28,6 +28,7 @@
 #include "../Backend/product.h"
 #include "../Backend/power.h"
 #include "../Backend/parser.h"
+#include "../Backend/functions.h"
 #include "testexpressionbuilder.h"
 
 using namespace testing;
@@ -529,6 +530,41 @@ TEST(BackendTest, PowerTowerShouldParseCorrectly)
 
     ASSERT_TRUE(exprProduct);
     EXPECT_EQ(referencePower, *exprProduct);
+}
+
+TEST(BackendTest, FunctionsTowerShouldParseCorrectly)
+{
+    // Arrange
+    Parser parser;
+    std::string functionString = "cos(x+sin(x))";
+
+    // Act
+    auto exprFunction = parser.Parse(functionString);
+
+    // Assert
+    auto x = std::make_shared<BaseX>();
+    auto sine = std::make_shared<Sine>(x);
+    auto sum = std::make_shared<Sum>(std::vector<Sum::Summand>{Sum::Summand(Sum::Sign::Plus, x), Sum::Summand(Sum::Sign::Plus, sine)});
+    auto referenceExpression = std::make_shared<Cosine>(sum);
+
+    ASSERT_TRUE(exprFunction);
+    EXPECT_EQ(*referenceExpression, *exprFunction);
+}
+
+TEST(BackendTest, InvalidFunctionsShouldFailToParse)
+{
+    // Arrange
+    Parser parser;
+    std::string functionString1 = "cis(x+sin(x))";
+    std::string functionString2 = "z(x+sin(x))";
+
+    // Act
+    auto exprFunction1 = parser.Parse(functionString1);
+    auto exprFunction2 = parser.Parse(functionString2);
+
+    // Assert
+    EXPECT_FALSE(exprFunction1);
+    EXPECT_FALSE(exprFunction2);
 }
 
 TEST(BackendTest, ComplexExpression01ShouldRoundtripCorrectly)
