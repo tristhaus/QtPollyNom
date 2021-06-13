@@ -28,6 +28,8 @@
 #include "../Backend/basex.h"
 #include "../Backend/product.h"
 #include "../Backend/sum.h"
+#include "../Backend/functions.h"
+#include "../Backend/power.h"
 
 using namespace Backend;
 using namespace testing;
@@ -222,6 +224,30 @@ TEST(BackendTest, EvaluatorAndDotsShallCorrectlyHandleSingularity)
     // Assert
     EXPECT_TRUE(dots[0]->IsActive());
     EXPECT_FALSE(dots[1]->IsActive());
+}
+
+TEST(BackendTest, ForTangentDotShallCorrectlyDetermineBeingHitBasedOnGraph)
+{
+    // Arrange
+    auto baseX = std::make_shared<BaseX>();
+    auto c = std::make_shared<Constant>(2.0);
+    auto power = std::make_shared<Power>(baseX, c);
+    auto tangent = std::make_shared<Tangent>(power);
+
+    Evaluator evaluator(tangent, 2.0, 3.0, 1000.0);
+
+    std::vector<std::shared_ptr<Dot>> dots;
+    dots.push_back(std::make_shared<Dot>(2.886304, 8.042162, true));
+
+    // Act
+    auto graphData = evaluator.Evaluate();
+    for(auto dotIterator = dots.begin(); dotIterator != dots.end(); ++dotIterator)
+    {
+        (*dotIterator)->CheckForHit(tangent, graphData);
+    }
+
+    // Assert
+    EXPECT_TRUE(dots[0]->IsActive());
 }
 
 #endif // TST_DOT_H

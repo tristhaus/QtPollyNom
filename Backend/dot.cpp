@@ -62,10 +62,6 @@ namespace Backend {
     void Dot::CheckForHit(const std::shared_ptr<Expression> expression, const std::vector<std::pair<std::vector<double>, std::vector<double>>> graphData)
     {
             bool dotIsHit = false;
-            auto searchPredicate = [&](std::pair<std::vector<double>, std::vector<double>> branch){ auto x = this->GetCoordinates().first; return !branch.first.empty() && branch.first.front() <= x && branch.first.back() >= x; };
-
-            auto relevantBranch = std::find_if(graphData.begin(), graphData.end(), searchPredicate);
-
             auto xDot = this->GetCoordinates().first;
             auto yDot = this->GetCoordinates().second;
             auto rDot = this->GetRadius();
@@ -75,17 +71,20 @@ namespace Backend {
                 return SquareDistance(x, y, xDot, yDot) <= (rDot * rDot);
             };
 
-            if(relevantBranch != graphData.end())
+            auto graphDataIt = graphData.begin();
+            auto graphDataEnd = graphData.end();
+
+            for(; graphDataIt != graphDataEnd; ++graphDataIt)
             {
-                auto xBegin = relevantBranch->first.begin();
-                auto xEnd = relevantBranch->first.end();
+                auto xBegin = graphDataIt->first.begin();
+                auto xEnd = graphDataIt->first.end();
                 auto xIt = std::lower_bound(xBegin, xEnd, xDot - this->GetRadius());
 
-                auto yIt = relevantBranch->second.begin() + (xIt - xBegin);
+                auto yIt = graphDataIt->second.begin() + (xIt - xBegin);
 
                 auto xIntervalEnd = std::upper_bound(xBegin, xEnd, xDot + this->GetRadius());
 
-                for(; xIt != xIntervalEnd; ++xIt, ++yIt)
+                for(; xIt != xIntervalEnd && xIt != xEnd; ++xIt, ++yIt)
                 {
                     if(isInsideDot(*xIt, *yIt))
                     {
