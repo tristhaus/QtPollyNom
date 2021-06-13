@@ -28,6 +28,7 @@
 #include "../Backend/basex.h"
 #include "../Backend/product.h"
 #include "../Backend/power.h"
+#include "../Backend/functions.h"
 
 using namespace Backend;
 using namespace testing;
@@ -167,6 +168,35 @@ TEST(BackendTest, EvaluatorShallCreateOneEmptyBranchIfFunctionDomainDisjoint)
     ASSERT_EQ(1, graph.size());
     EXPECT_GE(graph[0].first.size(), 0);
     EXPECT_GE(graph[0].second.size(), 0);
+}
+
+TEST(BackendTest, ForTangentEvaluatorShallCreateCorrectNumberOfBranches)
+{
+    // Arrange
+    auto baseX = std::make_shared<BaseX>();
+    auto tangent = std::make_shared<Tangent>(baseX);
+    Evaluator evaluator(tangent, -10.5, 10.5, 9999.0);
+
+    // Act
+    auto graphData = evaluator.Evaluate();
+
+    // Assert
+    EXPECT_EQ(7, graphData.size());
+}
+
+TEST(BackendTest, ForLogarithmEvaluatorShallCreateCorrectBranch)
+{
+    // Arrange
+    auto baseX = std::make_shared<BaseX>();
+    auto ln = std::make_shared<NaturalLogarithm>(baseX);
+    Evaluator evaluator(ln, -10.5, 10.5, 9999.0);
+
+    // Act
+    auto graphData = evaluator.Evaluate();
+
+    // Assert
+    ASSERT_EQ(1, graphData.size());
+    EXPECT_LE(0.0, graphData[0].first[0]);
 }
 
 #endif // TST_EVALUATOR_H
