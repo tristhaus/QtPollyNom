@@ -87,6 +87,7 @@ namespace Backend {
          * \return The registration map.
          */
         static std::map<std::string, CreateFunction> & GetRegisteredFunctions();
+        std::regex GetValidationRegex() const;
         std::string PrepareInput(const std::string & input) const;
         bool ValidateInput(const std::string & input) const;
         unsigned long long FindMatchingBrace(const std::string & input, unsigned long long pos) const;

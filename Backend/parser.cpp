@@ -20,6 +20,7 @@
 #include <algorithm>
 #include <string>
 #include <functional>
+#include <set>
 
 #include "parser.h"
 #include "basex.h"
@@ -36,9 +37,6 @@ namespace Backend {
     const std::string Parser::TimesString = "*";
     const std::string Parser::DivideString = "/";
     const std::string Parser::PowerString = "^";
-
-    // This must be adjusted any time another math function is added to the game.
-    const std::regex Parser::InputValidationRegex("^[-+/*^()0-9.,abceilnopstxX]+$", std::regex_constants::ECMAScript);
 
     Parser::Parser()
     {
@@ -58,10 +56,49 @@ namespace Backend {
         return false;
     }
 
-    std::map<std::string, CreateFunction>& Parser::GetRegisteredFunctions()
+    std::map<std::string, CreateFunction> & Parser::GetRegisteredFunctions()
     {
         static std::map<std::string, CreateFunction> theFunctions;
         return theFunctions;
+    }
+
+    std::regex Parser::GetValidationRegex() const
+    {
+        // This must be adjusted if another math operator is added to the game.
+        std::string regexString("^[-+/*^()0-9.,");
+
+        // allow independent variable
+        std::set<char> allowedLetters {'x', 'X'};
+
+        // grab from all function names all letters
+        auto & registrationMap = Parser::GetRegisteredFunctions();
+        auto registrationMapIt = registrationMap.begin();
+        auto registrationMapEnd = registrationMap.end();
+
+        for(; registrationMapIt != registrationMapEnd; ++registrationMapIt)
+        {
+            auto functionName = registrationMapIt->first;
+            auto functionNameIt = functionName.begin();
+            auto functionNameEnd = functionName.end();
+
+            for(; functionNameIt != functionNameEnd; ++functionNameIt)
+            {
+                allowedLetters.insert(*functionNameIt);
+            }
+        }
+
+        // extend regex by the collection of letters
+        auto allowedLettersIt = allowedLetters.begin();
+        auto allowedLettersEnd = allowedLetters.end();
+
+        for(; allowedLettersIt != allowedLettersEnd; ++allowedLettersIt)
+        {
+            regexString += *allowedLettersIt;
+        }
+
+        regexString.append("]+$");
+
+        return std::regex(regexString.c_str(), std::regex_constants::ECMAScript);
     }
 
     std::shared_ptr<Expression> Parser::Parse(const std::string & input) const
@@ -103,8 +140,9 @@ namespace Backend {
 
     bool Parser::ValidateInput(const std::string & input) const
     {
-        // check unsupported characters
-        if(!std::regex_match(input, Parser::InputValidationRegex))
+        // check unsupported characters. The regex should not change after startup
+        static auto inputValidationRegex = this->GetValidationRegex();
+        if(!std::regex_match(input, inputValidationRegex))
         {
             return false;
         }
