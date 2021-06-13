@@ -33,6 +33,22 @@ using namespace testing;
 #define _USE_MATH_DEFINES
 #include <math.h>
 
+TEST(BackendTest, AbsoluteValueShallEvaluateCorrectly)
+{
+    // Arrange
+    auto baseX = std::make_shared<BaseX>();
+    auto tangent = std::make_shared<AbsoluteValue>(baseX);
+
+    // Act
+    auto optional = tangent->Evaluate(-2.0);
+    double value = optional.value_or(-99.0);
+
+    // Assert
+    ASSERT_TRUE(optional.has_value());
+
+    EXPECT_NEAR(value, 2.0, 1e-6);
+}
+
 TEST(BackendTest, SineShallEvaluateCorrectly)
 {
     // Arrange
@@ -63,6 +79,54 @@ TEST(BackendTest, CosineShallEvaluateCorrectly)
     ASSERT_TRUE(optional.has_value());
 
     EXPECT_NEAR(value, 0.5, 1e-6);
+}
+
+TEST(BackendTest, TangentShallEvaluateCorrectly)
+{
+    // Arrange
+    auto baseX = std::make_shared<BaseX>();
+    auto tangent = std::make_shared<Tangent>(baseX);
+
+    // Act
+    auto optional = tangent->Evaluate(M_PI/4.0);
+    double value = optional.value_or(-99.0);
+
+    // Assert
+    ASSERT_TRUE(optional.has_value());
+
+    EXPECT_NEAR(value, 1.0, 1e-6);
+}
+
+TEST(BackendTest, NaturalExponentialShallEvaluateCorrectly)
+{
+    // Arrange
+    auto baseX = std::make_shared<BaseX>();
+    auto tangent = std::make_shared<NaturalExponential>(baseX);
+
+    // Act
+    auto optional = tangent->Evaluate(1.0);
+    double value = optional.value_or(-99.0);
+
+    // Assert
+    ASSERT_TRUE(optional.has_value());
+
+    EXPECT_NEAR(value, 2.718281828459045, 1e-6);
+}
+
+TEST(BackendTest, NaturalLogarithmShallEvaluateCorrectly)
+{
+    // Arrange
+    auto baseX = std::make_shared<BaseX>();
+    auto tangent = std::make_shared<NaturalLogarithm>(baseX);
+
+    // Act
+    auto optional = tangent->Evaluate(2.718281828459045);
+    double value = optional.value_or(-99.0);
+
+    // Assert
+    ASSERT_TRUE(optional.has_value());
+
+    EXPECT_NEAR(value, 1.0, 1e-6);
 }
 
 #endif // TST_FUNCTIONS_H

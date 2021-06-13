@@ -532,7 +532,7 @@ TEST(BackendTest, PowerTowerShouldParseCorrectly)
     EXPECT_EQ(referencePower, *exprProduct);
 }
 
-TEST(BackendTest, FunctionsTowerShouldParseCorrectly)
+TEST(BackendTest, FunctionsShouldParseCorrectly)
 {
     // Arrange
     Parser parser;
@@ -546,6 +546,28 @@ TEST(BackendTest, FunctionsTowerShouldParseCorrectly)
     auto sine = std::make_shared<Sine>(x);
     auto sum = std::make_shared<Sum>(std::vector<Sum::Summand>{Sum::Summand(Sum::Sign::Plus, x), Sum::Summand(Sum::Sign::Plus, sine)});
     auto referenceExpression = std::make_shared<Cosine>(sum);
+
+    ASSERT_TRUE(exprFunction);
+    EXPECT_EQ(*referenceExpression, *exprFunction);
+}
+
+TEST(BackendTest, FunctionsTowerShouldParseCorrectly)
+{
+    // Arrange
+    Parser parser;
+    std::string functionString = "abs(sin(cos(tan(exp(ln(x))))))";
+
+    // Act
+    auto exprFunction = parser.Parse(functionString);
+
+    // Assert
+    auto x = std::make_shared<BaseX>();
+    auto ln = std::make_shared<NaturalLogarithm>(x);
+    auto exp = std::make_shared<NaturalExponential>(ln);
+    auto tan = std::make_shared<Tangent>(exp);
+    auto cos = std::make_shared<Cosine>(tan);
+    auto sin = std::make_shared<Sine>(cos);
+    auto referenceExpression = std::make_shared<AbsoluteValue>(sin);
 
     ASSERT_TRUE(exprFunction);
     EXPECT_EQ(*referenceExpression, *exprFunction);

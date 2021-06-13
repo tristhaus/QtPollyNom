@@ -136,15 +136,19 @@ TEST(BackendTest, FunctionsShallPrintCorrectly)
 {
     // Arrange
     auto x = std::make_shared<BaseX>();
-    auto sine = std::make_shared<Sine>(x);
-    auto expression = std::make_shared<Cosine>(sine);
+    auto ln = std::make_shared<NaturalLogarithm>(x);
+    auto exp = std::make_shared<NaturalExponential>(ln);
+    auto tan = std::make_shared<Tangent>(exp);
+    auto cos = std::make_shared<Cosine>(tan);
+    auto sin = std::make_shared<Sine>(cos);
+    auto expression = std::make_shared<AbsoluteValue>(sin);
 
     // Act
     auto optional = expression->Print();
 
     // Assert
     ASSERT_TRUE(optional.has_value());
-    EXPECT_STREQ("cos(sin(x))", optional.value().c_str());
+    EXPECT_STREQ("abs(sin(cos(tan(exp(ln(x))))))", optional.value().c_str());
 }
 
 #endif // TST_PRINTINGTEST_H

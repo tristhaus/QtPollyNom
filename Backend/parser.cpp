@@ -38,7 +38,7 @@ namespace Backend {
     const std::string Parser::PowerString = "^";
 
     // This must be adjusted any time another math function is added to the game.
-    const std::regex Parser::InputValidationRegex("^[-+/*^()0-9.,cinosxX]+$", std::regex_constants::ECMAScript);
+    const std::regex Parser::InputValidationRegex("^[-+/*^()0-9.,abceilnopstxX]+$", std::regex_constants::ECMAScript);
 
     Parser::Parser()
     {

@@ -174,8 +174,16 @@ namespace Backend\
 
 // the actual function creation
 
+CREATE_FUNCTION(AbsoluteValue, "abs", std::fabs(x));
+
 CREATE_FUNCTION(Sine, "sin", std::sin(x));
 
 CREATE_FUNCTION(Cosine, "cos", std::cos(x));
+
+CREATE_FUNCTION(Tangent, "tan", std::tan(x));
+
+CREATE_FUNCTION(NaturalExponential, "exp", std::exp(x));
+
+CREATE_FUNCTION(NaturalLogarithm, "ln", std::log(x));
 
 #endif // FUNCTIONS_H
