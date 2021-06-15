@@ -19,7 +19,6 @@
 #include <QtConcurrent>
 
 #include "mainwindow.h"
-#include "ui_mainwindow.h"
 
 #include <vector>
 #include <iterator>
@@ -30,6 +29,7 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    this->numberOfFunctionInputs = ui->funcLineEdit.size();
 
     this->waitTimer.setSingleShot(true);
     this->waitTimer.setInterval(500);
@@ -39,11 +39,12 @@ MainWindow::MainWindow(QWidget *parent)
     this->InitializePlot();
 
     connect(ui->calcButton, &QPushButton::clicked, this, &MainWindow::OnCalcButtonClicked);
-    connect(ui->funcLineEdit0, &QLineEdit::returnPressed, this, &MainWindow::OnReturnKeyPressed);
-    connect(ui->funcLineEdit1, &QLineEdit::returnPressed, this, &MainWindow::OnReturnKeyPressed);
-    connect(ui->funcLineEdit2, &QLineEdit::returnPressed, this, &MainWindow::OnReturnKeyPressed);
-    connect(ui->funcLineEdit3, &QLineEdit::returnPressed, this, &MainWindow::OnReturnKeyPressed);
-    connect(ui->funcLineEdit4, &QLineEdit::returnPressed, this, &MainWindow::OnReturnKeyPressed);
+
+    for(size_t i = 0; i<this->numberOfFunctionInputs; ++i)
+    {
+        connect(ui->funcLineEdit[i], &QLineEdit::returnPressed, this, &MainWindow::OnReturnKeyPressed);
+    }
+
     connect(&gameUpdateFutureWatcher, &QFutureWatcher<void>::finished, this, &MainWindow::OnGameUpdateFinished);
     connect(&waitTimer, &QTimer::timeout, this, &MainWindow::OnWaitTimerFinished);
 }
@@ -185,11 +186,10 @@ void MainWindow::DrawGraphs()
 void MainWindow::SetGameIsBusy(bool isBusy)
 {
     this->ui->calcButton->setDisabled(isBusy);
-    this->ui->funcLineEdit0->setDisabled(isBusy);
-    this->ui->funcLineEdit1->setDisabled(isBusy);
-    this->ui->funcLineEdit2->setDisabled(isBusy);
-    this->ui->funcLineEdit3->setDisabled(isBusy);
-    this->ui->funcLineEdit4->setDisabled(isBusy);
+    for(size_t i = 0; i<this->numberOfFunctionInputs; ++i)
+    {
+        this->ui->funcLineEdit[i]->setDisabled(isBusy);
+    }
 }
 
 void MainWindow::UpdateGui()
@@ -207,11 +207,11 @@ void MainWindow::StartCalculation()
     SetGameIsBusy(true);
 
     std::vector<std::string> funcStrings;
-    funcStrings.emplace_back(this->ui->funcLineEdit0->text().toLocal8Bit().constData());
-    funcStrings.emplace_back(this->ui->funcLineEdit1->text().toLocal8Bit().constData());
-    funcStrings.emplace_back(this->ui->funcLineEdit2->text().toLocal8Bit().constData());
-    funcStrings.emplace_back(this->ui->funcLineEdit3->text().toLocal8Bit().constData());
-    funcStrings.emplace_back(this->ui->funcLineEdit4->text().toLocal8Bit().constData());
+
+    for(size_t i = 0; i<this->numberOfFunctionInputs; ++i)
+    {
+        funcStrings.emplace_back(this->ui->funcLineEdit[i]->text().toLocal8Bit().constData());
+    }
 
     QFuture<void> updateFuture = QtConcurrent::run([=](){
         this->gamePoc.Update(funcStrings);

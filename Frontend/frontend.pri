@@ -24,8 +24,5 @@ SOURCES += \
     $$PWD/mainwindow.cpp \
     $$PWD/qcustomplot.cpp
 
-FORMS += \
-    $$PWD/mainwindow.ui
-
 TRANSLATIONS += \
     $$PWD/QtPollyNom_en_001.ts
