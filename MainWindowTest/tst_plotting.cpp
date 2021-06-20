@@ -29,8 +29,9 @@ public:
     ~MainWindowTest();
 
 private slots:
-    void TestConstruction();
+    void ConstructionShallWorkCompletely();
     void CalcButtonShallTriggerPlotting();
+    void EnterKeyShallTriggerPlotting();
 };
 
 MainWindowTest::MainWindowTest()
@@ -41,7 +42,7 @@ MainWindowTest::~MainWindowTest()
 {
 }
 
-void MainWindowTest::TestConstruction()
+void MainWindowTest::ConstructionShallWorkCompletely()
 {
     // Arrange, Act
     MainWindow mw;
@@ -86,6 +87,30 @@ void MainWindowTest::CalcButtonShallTriggerPlotting()
     ui->funcLineEdit[2]->clear();
     QTest::keyClicks(ui->funcLineEdit[2], function);
     QTest::mouseClick(ui->calcButton, Qt::LeftButton);
+
+    spy.wait();
+
+    // Assert
+    QVERIFY2(spy.count() == 1, "spy did not register signal");
+    QVERIFY2(ui->plot->graphCount() > 0, "no graph found");
+}
+
+void MainWindowTest::EnterKeyShallTriggerPlotting()
+{
+    // Arrange
+    MainWindow mw;
+    auto ui = mw.ui;
+
+    QString function = "sin(x)\r";
+
+    // spy needed such that events actually happen
+    QSignalSpy spy(&(mw.gameUpdateFutureWatcher), &QFutureWatcher<void>::finished);
+
+    QVERIFY2(ui->plot->graphCount() == 0, "graphs found that should not be there");
+
+    // Act
+    ui->funcLineEdit[2]->clear();
+    QTest::keyClicks(ui->funcLineEdit[2], function);
 
     spy.wait();
 
