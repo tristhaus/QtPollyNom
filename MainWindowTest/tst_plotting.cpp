@@ -29,24 +29,69 @@ public:
     ~MainWindowTest();
 
 private slots:
-    void test_case1();
-
+    void TestConstruction();
+    void CalcButtonShallTriggerPlotting();
 };
 
 MainWindowTest::MainWindowTest()
 {
-
 }
 
 MainWindowTest::~MainWindowTest()
 {
-
 }
 
-void MainWindowTest::test_case1()
+void MainWindowTest::TestConstruction()
 {
+    // Arrange, Act
     MainWindow mw;
-    auto bla = mw.centralWidget();
+    auto ui = mw.ui;
+
+    // Assert
+    QVERIFY2(ui->menubar, "menu bar not created");
+    QVERIFY2(ui->statusbar, "status bar not created");
+    QVERIFY2(ui->centralwidget, "central widget not created");
+    QVERIFY2(ui->verticalLayout, "vert layout not created");
+    QVERIFY2(ui->verticalLayout_2, "vert layout 2 not created");
+    QVERIFY2(ui->verticalLayout_3, "vert layout 3 not created");
+    QVERIFY2(ui->plot, "plot not created");
+    QVERIFY2(ui->inputFrame0, "input frame0 not created");
+    QVERIFY2(ui->inputFrame1, "input frame1 not created");
+    QVERIFY2(ui->calcButton, "calc button not created");
+
+    QVERIFY2(ui->funcLayout.size() == ui->funcLabel.size() && ui->funcLayout.size() == ui->funcLineEdit.size(), "sizes do not match");
+
+    for(size_t i = 0; i < ui->funcLabel.size(); ++i)
+    {
+        QVERIFY2(ui->funcLabel[i], "func label not created");
+        QVERIFY2(ui->funcLayout[i], "func layout not created");
+        QVERIFY2(ui->funcLineEdit[i], "func line edit not created");
+    }
+}
+
+void MainWindowTest::CalcButtonShallTriggerPlotting()
+{
+    // Arrange
+    MainWindow mw;
+    auto ui = mw.ui;
+
+    QString function = "sin(x)";
+
+    // spy needed such that events actually happen
+    QSignalSpy spy(&(mw.gameUpdateFutureWatcher), &QFutureWatcher<void>::finished);
+
+    QVERIFY2(ui->plot->graphCount() == 0, "graphs found that should not be there");
+
+    // Act
+    ui->funcLineEdit[2]->clear();
+    QTest::keyClicks(ui->funcLineEdit[2], function);
+    QTest::mouseClick(ui->calcButton, Qt::LeftButton);
+
+    spy.wait();
+
+    // Assert
+    QVERIFY2(spy.count() == 1, "spy did not register signal");
+    QVERIFY2(ui->plot->graphCount() > 0, "no graph found");
 }
 
 QTEST_MAIN(MainWindowTest)

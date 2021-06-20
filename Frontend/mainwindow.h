@@ -205,9 +205,13 @@ namespace Ui
 }
 QT_END_NAMESPACE
 
+class MainWindowTest;
+
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
+
+    friend MainWindowTest;
 
 private:
     Ui::MainWindow *ui;
