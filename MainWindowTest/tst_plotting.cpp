@@ -32,6 +32,8 @@ private slots:
     void ConstructionShallWorkCompletely();
     void CalcButtonShallTriggerPlotting();
     void EnterKeyShallTriggerPlotting();
+    void EnteredFunctionsShallCreateCorrectNumberOfPlots_data();
+    void EnteredFunctionsShallCreateCorrectNumberOfPlots();
 };
 
 MainWindowTest::MainWindowTest()
@@ -117,6 +119,62 @@ void MainWindowTest::EnterKeyShallTriggerPlotting()
     // Assert
     QVERIFY2(spy.count() == 1, "spy did not register signal");
     QVERIFY2(ui->plot->graphCount() > 0, "no graph found");
+}
+
+void MainWindowTest::EnteredFunctionsShallCreateCorrectNumberOfPlots_data()
+{
+    QTest::addColumn<QString>("function1");
+    QTest::addColumn<QString>("function2");
+    QTest::addColumn<int>("expectedNumberOfGraphs");
+
+    QTest::newRow("std sin")           << "sin(x)"    << ""        << 1;
+    QTest::newRow("1/x")               << "1/x"       << ""        << 2;
+    QTest::newRow("1/x & x")           << "1/x"       << "x"       << 3;
+    QTest::newRow("2 std sin")         << "sin(x)"    << "sin(x)"  << 2;
+    QTest::newRow("std tan")           << "tan(x)"    << ""        << 7;
+    QTest::newRow("sqrt")              << "(x)^(0.5)" << ""        << 1;
+    QTest::newRow("x to the xth")      << "x^x"       << ""        << 1;
+    QTest::newRow("invalid")           << "csic(x)"   << ""        << 0;
+    QTest::newRow("sin & invalid")     << "sin(x)"    << "csic(x)" << 1;
+    QTest::newRow("log out of domain") << "ln(x-20)"  << ""        << 0;
+}
+
+void MainWindowTest::EnteredFunctionsShallCreateCorrectNumberOfPlots()
+{
+    // Arrange
+    MainWindow mw;
+    auto ui = mw.ui;
+
+    QFETCH(QString, function1);
+    QFETCH(QString, function2);
+    QFETCH(int, expectedNumberOfGraphs);
+
+    // spy needed such that events actually happen
+    QSignalSpy spy(&(mw.gameUpdateFutureWatcher), &QFutureWatcher<void>::finished);
+
+    QVERIFY2(ui->plot->graphCount() == 0, "graphs found that should not be there");
+
+    // Act
+    for(size_t i = 0; i < ui->funcLineEdit.size(); ++i)
+    {
+        ui->funcLineEdit[i]->clear();
+    }
+
+    QTest::keyClicks(ui->funcLineEdit[0], function1);
+    QTest::keyClicks(ui->funcLineEdit[1], function2);
+    QTest::mouseClick(ui->calcButton, Qt::LeftButton);
+
+    spy.wait();
+
+    // Assert
+    int actualNumberOfGraphs = ui->plot->graphCount();
+
+    QVERIFY2(spy.count() == 1, "spy did not register signal");
+    QVERIFY2(expectedNumberOfGraphs == actualNumberOfGraphs,
+             qPrintable(QString("function1 '%1', function2 '%2', expectedNumberOfGraphs %3, actualNumberOfGraphs %4")
+                        .arg(function1, function2)
+                        .arg(expectedNumberOfGraphs)
+                        .arg(actualNumberOfGraphs)));
 }
 
 QTEST_MAIN(MainWindowTest)

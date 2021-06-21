@@ -172,6 +172,11 @@ void MainWindow::DrawGraphs()
         {
             auto& branch = graph[branchIndex];
 
+            if(branch.first.empty())
+            {
+                continue;
+            }
+
             QVector<double> dataX(branch.first.begin(), branch.first.end());
             QVector<double> dataY(branch.second.begin(), branch.second.end());
 
