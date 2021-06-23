@@ -34,6 +34,10 @@ private slots:
     void EnterKeyShallTriggerPlotting();
     void EnteredFunctionsShallCreateCorrectNumberOfPlots_data();
     void EnteredFunctionsShallCreateCorrectNumberOfPlots();
+#ifdef _DEBUG
+    void SlowCalculationShallTriggerDialogAndWaitingForCompletionShallYieldGraphs();
+    void SlowCalculationShallTriggerDialogAndCancelShallYieldNoGraph();
+#endif
 };
 
 MainWindowTest::MainWindowTest()
@@ -176,6 +180,96 @@ void MainWindowTest::EnteredFunctionsShallCreateCorrectNumberOfPlots()
                         .arg(expectedNumberOfGraphs)
                         .arg(actualNumberOfGraphs)));
 }
+
+#ifdef _DEBUG
+void MainWindowTest::SlowCalculationShallTriggerDialogAndWaitingForCompletionShallYieldGraphs()
+{
+    // Arrange
+    MainWindow mw;
+    auto ui = mw.ui;
+
+    QString function = "sin(x)";
+    QString slow = "slow";
+
+    // spy needed such that events actually happen
+    QSignalSpy spyUpdate(&(mw.gameUpdateFutureWatcher), &QFutureWatcher<void>::finished);
+    QSignalSpy spyTimer(&(mw.waitTimer), &QTimer::timeout);
+
+    QVERIFY2(ui->plot->graphCount() == 0, "graphs found that should not be there");
+
+    // Act
+    ui->funcLineEdit[0]->clear();
+    ui->funcLineEdit[1]->clear();
+    QTest::keyClicks(ui->funcLineEdit[0], function);
+    QTest::keyClicks(ui->funcLineEdit[1], slow);
+    QTest::mouseClick(ui->calcButton, Qt::LeftButton);
+
+    bool waitingMessageBoxFound = false;
+    bool waitingMessageBoxHasOneButton = false;
+    auto interval = mw.waitTimer.interval();
+    QTimer::singleShot(interval * 1.2, [&]()
+    {
+        waitingMessageBoxFound = mw.waitingMessageBox != nullptr;
+        waitingMessageBoxHasOneButton = mw.waitingMessageBox->buttons().count() == 1 && mw.waitingMessageBox->buttons().first() != nullptr;
+    });
+
+    spyTimer.wait();
+    spyUpdate.wait();
+
+    // Assert
+    QVERIFY2(spyUpdate.count() == 1, "spyUpdate did not register signal");
+    QVERIFY2(spyTimer.count() == 1, "spyTimer did not register signal");
+    QVERIFY2(waitingMessageBoxFound, "waitingMessageBox not found");
+    QVERIFY2(waitingMessageBoxHasOneButton, "waitingMessageBox does not have exactly one button");
+    QVERIFY2(ui->plot->graphCount() > 0, "no graph found");
+}
+
+void MainWindowTest::SlowCalculationShallTriggerDialogAndCancelShallYieldNoGraph()
+{
+    // Arrange
+    MainWindow mw;
+    auto ui = mw.ui;
+
+    QString function = "sin(x)";
+    QString slow = "slow";
+
+    // spy needed such that events actually happen
+    QSignalSpy spyUpdate(&(mw.gameUpdateFutureWatcher), &QFutureWatcher<void>::finished);
+    QSignalSpy spyTimer(&(mw.waitTimer), &QTimer::timeout);
+
+    QVERIFY2(ui->plot->graphCount() == 0, "graphs found that should not be there");
+
+    // Act
+    ui->funcLineEdit[0]->clear();
+    ui->funcLineEdit[1]->clear();
+    QTest::keyClicks(ui->funcLineEdit[0], function);
+    QTest::keyClicks(ui->funcLineEdit[1], slow);
+    QTest::mouseClick(ui->calcButton, Qt::LeftButton);
+
+    bool waitingMessageBoxFound = false;
+    bool waitingMessageBoxHasOneButton = false;
+    auto interval = mw.waitTimer.interval();
+    QTimer::singleShot(interval * 1.2, [&]()
+    {
+        waitingMessageBoxFound = mw.waitingMessageBox != nullptr;
+        waitingMessageBoxHasOneButton = mw.waitingMessageBox->buttons().count() == 1 && mw.waitingMessageBox->buttons().first() != nullptr;
+        if(waitingMessageBoxFound && waitingMessageBoxHasOneButton)
+        {
+            QTest::mouseClick(mw.waitingMessageBox->buttons().first(), Qt::LeftButton);
+        }
+    });
+
+    spyTimer.wait();
+    spyUpdate.wait();
+
+    // Assert
+    QVERIFY2(spyUpdate.count() == 1, "spyUpdate did not register signal");
+    QVERIFY2(spyTimer.count() == 1, "spyTimer did not register signal");
+    QVERIFY2(waitingMessageBoxFound, "waitingMessageBox not found");
+    QVERIFY2(waitingMessageBoxHasOneButton, "waitingMessageBox does not have exactly one button");
+    QVERIFY2(ui->plot->graphCount() == 0, "graph found");
+}
+#endif
 
 QTEST_MAIN(MainWindowTest)
 
