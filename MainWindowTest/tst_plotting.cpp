@@ -38,6 +38,8 @@ private slots:
     void SlowCalculationShallTriggerDialogAndWaitingForCompletionShallYieldGraphs();
     void SlowCalculationShallTriggerDialogAndCancelShallYieldNoGraph();
 #endif
+    void AfterCalculationUIShallRefocusCorrectlyToLineEdit();
+    void AfterCalculationUIShallRefocusCorrectlyToButton();
 };
 
 MainWindowTest::MainWindowTest()
@@ -270,6 +272,69 @@ void MainWindowTest::SlowCalculationShallTriggerDialogAndCancelShallYieldNoGraph
     QVERIFY2(ui->plot->graphCount() == 0, "graph found");
 }
 #endif
+
+void MainWindowTest::AfterCalculationUIShallRefocusCorrectlyToLineEdit()
+{
+    // Arrange
+    MainWindow mw;
+    auto ui = mw.ui;
+
+    QString function = "sin(x)\r";
+    const size_t index = 2;
+
+    // spy needed such that events actually happen
+    QSignalSpy spyUpdate(&(mw.gameUpdateFutureWatcher), &QFutureWatcher<void>::finished);
+
+    // without this, focus testing is not possible
+    QApplication::setActiveWindow(&mw);
+
+    // Act
+    for(size_t i = 0; i < ui->funcLineEdit.size(); ++i)
+    {
+        ui->funcLineEdit[i]->clear();
+    }
+
+    QTest::mouseClick(ui->funcLineEdit[index], Qt::LeftButton);
+    bool hasFocusBeforeCalculation = ui->funcLineEdit[2]->hasFocus();
+    QTest::keyClicks(ui->funcLineEdit[index], function);
+
+    spyUpdate.wait();
+
+    // Assert
+    QVERIFY2(spyUpdate.count() == 1, "spyUpdate did not register signal");
+    QVERIFY2(hasFocusBeforeCalculation, "relevant line edit does not have focus before calcuation");
+    QVERIFY2(ui->funcLineEdit[index]->hasFocus(), "relevant line edit does not have focus after calcuation");
+}
+
+void MainWindowTest::AfterCalculationUIShallRefocusCorrectlyToButton()
+{
+    // Arrange
+    MainWindow mw;
+    auto ui = mw.ui;
+
+    QString function = "sin(x)";
+
+    // spy needed such that events actually happen
+    QSignalSpy spyUpdate(&(mw.gameUpdateFutureWatcher), &QFutureWatcher<void>::finished);
+
+    // without this, focus testing is not possible
+    QApplication::setActiveWindow(&mw);
+
+    // Act
+    for(size_t i = 0; i < ui->funcLineEdit.size(); ++i)
+    {
+        ui->funcLineEdit[i]->clear();
+    }
+
+    QTest::keyClicks(ui->funcLineEdit[3], function);
+    QTest::mouseClick(ui->calcButton, Qt::LeftButton);
+
+    spyUpdate.wait();
+
+    // Assert
+    QVERIFY2(spyUpdate.count() == 1, "spyUpdate did not register signal");
+    QVERIFY2(ui->calcButton->hasFocus(), "button does not have focus after calcuation");
+}
 
 QTEST_MAIN(MainWindowTest)
 

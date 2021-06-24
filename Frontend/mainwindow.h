@@ -217,6 +217,14 @@ private:
     Ui::MainWindow *ui;
     size_t numberOfFunctionInputs;
 
+    /*!
+     * \brief focusIndicator indicates the focus before a calculation
+     *
+     * 0 to numberOfFunctionInputs-1 indicates the lineEdits
+     * -1 indicates the button
+     */
+    int focusIndicator;
+
     Backend::GamePoc gamePoc;
     QFutureWatcher<void> gameUpdateFutureWatcher;
     QTimer waitTimer;

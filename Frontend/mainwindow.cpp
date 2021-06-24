@@ -27,6 +27,7 @@
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
+    , focusIndicator(-2)
 {
     ui->setupUi(this);
     this->numberOfFunctionInputs = ui->funcLineEdit.size();
@@ -190,10 +191,39 @@ void MainWindow::DrawGraphs()
 
 void MainWindow::SetGameIsBusy(bool isBusy)
 {
+    if(isBusy)
+    {
+        if(this->ui->calcButton->hasFocus())
+        {
+            this->focusIndicator = -1;
+        }
+
+        for(size_t i = 0; i<this->numberOfFunctionInputs; ++i)
+        {
+            if(isBusy && this->ui->funcLineEdit[i]->hasFocus())
+            {
+                this->focusIndicator = static_cast<int>(i);
+                break;
+            }
+        }
+    }
+
     this->ui->calcButton->setDisabled(isBusy);
     for(size_t i = 0; i<this->numberOfFunctionInputs; ++i)
     {
         this->ui->funcLineEdit[i]->setDisabled(isBusy);
+    }
+
+    if(!isBusy)
+    {
+        if(this->focusIndicator >= 0)
+        {
+            this->ui->funcLineEdit[this->focusIndicator]->setFocus(Qt::FocusReason::PopupFocusReason);
+        }
+        else if(this->focusIndicator == -1)
+        {
+            this->ui->calcButton->setFocus(Qt::FocusReason::PopupFocusReason);
+        }
     }
 }
 
