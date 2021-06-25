@@ -12,6 +12,12 @@ Currently, this is an alpha-stage demo of what QtPollyNom shall become. A pre-re
 
 I am currently not looking for contributors since this is primarily a showcase. This may change at a later stage.
 
+In order to compile the [frontend tests](/MainWindowTest/), you need to define one of two preprocessor constants
+ * `_SKIP_LONG_TEST` if you wish to skip the long-running tests
+ * `_USE_LONG_TEST` if you wish to execute those tests
+
+ The simplest thing in Qt Creator is to add an additional argument to the qmake step like `"DEFINES+=_USE_LONG_TEST"`.
+
 ## License
 
 All source code licensed under GPL v3 (see LICENSE for terms).

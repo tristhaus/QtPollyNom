@@ -16,6 +16,12 @@
  *
  */
 
+#if defined(_SKIP_LONG_TEST)
+#elif defined(_USE_LONG_TEST)
+#else
+#error "you need to make a choice between using or skipping long tests, -D_USE_LONG_TEST -D_SKIP_LONG_TEST"
+#endif
+
 #include <QtTest>
 
 #include "../Frontend/mainwindow.h"
@@ -35,8 +41,10 @@ private slots:
     void EnteredFunctionsShallCreateCorrectNumberOfPlots_data();
     void EnteredFunctionsShallCreateCorrectNumberOfPlots();
 #ifdef _DEBUG
+#if defined(_USE_LONG_TEST)
     void SlowCalculationShallTriggerDialogAndWaitingForCompletionShallYieldGraphs();
     void SlowCalculationShallTriggerDialogAndCancelShallYieldNoGraph();
+#endif
 #endif
     void AfterCalculationUIShallRefocusCorrectlyToLineEdit();
     void AfterCalculationUIShallRefocusCorrectlyToButton();
@@ -184,6 +192,8 @@ void MainWindowTest::EnteredFunctionsShallCreateCorrectNumberOfPlots()
 }
 
 #ifdef _DEBUG
+#if defined(_USE_LONG_TEST)
+
 void MainWindowTest::SlowCalculationShallTriggerDialogAndWaitingForCompletionShallYieldGraphs()
 {
     // Arrange
@@ -271,6 +281,8 @@ void MainWindowTest::SlowCalculationShallTriggerDialogAndCancelShallYieldNoGraph
     QVERIFY2(waitingMessageBoxHasOneButton, "waitingMessageBox does not have exactly one button");
     QVERIFY2(ui->plot->graphCount() == 0, "graph found");
 }
+
+#endif
 #endif
 
 void MainWindowTest::AfterCalculationUIShallRefocusCorrectlyToLineEdit()
