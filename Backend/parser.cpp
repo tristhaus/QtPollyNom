@@ -407,6 +407,11 @@ namespace Backend {
 
     std::shared_ptr<Expression> Parser::ParseToSum(std::vector<std::string> & tokens, std::vector<std::string> & ops) const
     {
+        if(tokens.size() != ops.size() + 1)
+        {
+            return nullptr;
+        }
+
         std::vector<Sum::Summand> targetList;
 
         Sum::Sign sign = Sum::Sign::Plus;
@@ -461,6 +466,11 @@ namespace Backend {
 
     std::shared_ptr<Expression> Parser::ParseToProduct(std::vector<std::string> & tokens, std::vector<std::string> & ops) const
     {
+        if(tokens.size() != ops.size() + 1)
+        {
+            return nullptr;
+        }
+
         std::vector<Product::Factor> targetList;
 
         Product::Exponent sign = Product::Exponent::Positive;
@@ -515,6 +525,11 @@ namespace Backend {
 
     std::shared_ptr<Expression> Parser::ParseToPower(std::vector<std::string>& tokens, std::vector<std::string>& ops) const
     {
+        if(tokens.size() != ops.size() + 1)
+        {
+            return nullptr;
+        }
+
         auto opsBegin = ops.begin();
         auto opsEnd = ops.end();
         auto findPlus = std::find(opsBegin, opsEnd, PlusString);
@@ -559,19 +574,19 @@ namespace Backend {
         auto index = functionToken.find('(');
         auto name = functionToken.substr(0, index);
 
-        auto argumentToken = functionToken.substr(index);
-        auto argument = this->InternalParse(argumentToken);
-
-        if(!argument)
-        {
-            return nullptr;
-        }
-
         auto & functions = Parser::GetRegisteredFunctions();
 
         auto createFunction = functions.find(name);
 
         if(createFunction == functions.end())
+        {
+            return nullptr;
+        }
+
+        auto argumentToken = functionToken.substr(index);
+        auto argument = this->InternalParse(argumentToken);
+
+        if(!argument)
         {
             return nullptr;
         }

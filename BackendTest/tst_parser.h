@@ -727,6 +727,13 @@ TEST(BackendTest, ParseabilityShouldBeEvaluatedCorrectly)
     std::string invalidNumber = "030.50.0";
     std::string bracedX = "(X)";
     std::string doubleBracedX = "((X))";
+    std::string completeSum = "1+x+2";
+    std::string incompleteSum = "1+x+";
+    std::string completeProduct = "1/x";
+    std::string incompleteProduct = "1/";
+    std::string completePower = "1^x";
+    std::string incompletePower = "1^";
+    std::string malformed = "(x)x";
 
     // Act
     auto resultX = parser.IsParseable(x);
@@ -735,17 +742,28 @@ TEST(BackendTest, ParseabilityShouldBeEvaluatedCorrectly)
     auto resultInvalidNumber = parser.IsParseable(invalidNumber);
     auto resultBracedX = parser.IsParseable(bracedX);
     auto resultDoubleBracedX = parser.IsParseable(doubleBracedX);
+    auto resultCompleteSum = parser.IsParseable(completeSum);
+    auto resultIncompleteSum = parser.IsParseable(incompleteSum);
+    auto resultCompleteProduct = parser.IsParseable(completeProduct);
+    auto resultIncompleteProduct = parser.IsParseable(incompleteProduct);
+    auto resultCompletePower = parser.IsParseable(completePower);
+    auto resultIncompletePower = parser.IsParseable(incompletePower);
+    auto resultMalformed = parser.IsParseable(malformed);
 
     // Assert
-    BaseX referenceX;
-    Constant referenceConstant(30.5);
-
     EXPECT_TRUE(resultX);
     EXPECT_FALSE(resultInvalid);
     EXPECT_TRUE(resultNumber);
     EXPECT_FALSE(resultInvalidNumber);
     EXPECT_TRUE(resultBracedX);
     EXPECT_TRUE(resultDoubleBracedX);
+    EXPECT_TRUE(resultCompleteSum);
+    EXPECT_FALSE(resultIncompleteSum);
+    EXPECT_TRUE(resultCompleteProduct);
+    EXPECT_FALSE(resultIncompleteProduct);
+    EXPECT_TRUE(resultCompletePower);
+    EXPECT_FALSE(resultIncompletePower);
+    EXPECT_FALSE(resultMalformed);
 }
 
 #endif // TST_PARSER_H
