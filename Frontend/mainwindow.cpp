@@ -41,9 +41,11 @@ MainWindow::MainWindow(QWidget *parent)
 
     connect(ui->calcButton, &QPushButton::clicked, this, &MainWindow::OnCalcButtonClicked);
 
-    for(size_t i = 0; i<this->numberOfFunctionInputs; ++i)
+    for(size_t i = 0; i < this->numberOfFunctionInputs; ++i)
     {
+        ui->funcLineEdit[i]->setPalette(this->parseablePalette);
         connect(ui->funcLineEdit[i], &QLineEdit::returnPressed, this, &MainWindow::OnReturnKeyPressed);
+        connect(ui->funcLineEdit[i], &QLineEdit::textEdited, this, &MainWindow::OnFuncLineEditTextEdited);
     }
 
     connect(&gameUpdateFutureWatcher, &QFutureWatcher<void>::finished, this, &MainWindow::OnGameUpdateFinished);
@@ -69,17 +71,25 @@ void MainWindow::InitializePlot()
     ui->plot->replot();
 }
 
-void MainWindow::SetupColors(){
+void MainWindow::SetupColors()
+{
     this->graphColors.push_back(QColor(0x00, 0x00, 0x00)); // Black
     this->graphColors.push_back(QColor(0x00, 0x00, 0xFF)); // Blue
     this->graphColors.push_back(QColor(0x94, 0x00, 0xD3)); // DarkViolet
     this->graphColors.push_back(QColor(0xA5, 0x2A, 0x2A)); // Brown
     this->graphColors.push_back(QColor(0xB0, 0xE0, 0xE6)); // PowderBlue
 
+    QColor lightPink = QColor(0xFF, 0xB6, 0xC1);
+
     this->activeGoodDotColor = QColor(0xAD, 0xD8, 0xE6);   // LightBlue
     this->inactiveGoodDotColor = QColor(0x00, 0x00, 0x8B); // DarkBlue
     this->activeBadDotColor = QColor(0xFF, 0x45, 0x00);    // OrangeRed
-    this->inactiveBadDotColor = QColor(0xFF, 0xB6, 0xC1);  // LightPink
+    this->inactiveBadDotColor = lightPink;
+
+    this->parseablePalette.setColor(QPalette::Base, Qt::white);
+    this->parseablePalette.setColor(QPalette::Text, Qt::black);
+    this->nonParseablePalette.setColor(QPalette::Base, lightPink);
+    this->nonParseablePalette.setColor(QPalette::Text, Qt::black);
 }
 
 void MainWindow::DrawDots()
@@ -239,7 +249,7 @@ void MainWindow::UpdateGui()
 
 void MainWindow::StartCalculation()
 {
-    SetGameIsBusy(true);
+    this->SetGameIsBusy(true);
 
     std::vector<std::string> funcStrings;
 
@@ -264,6 +274,25 @@ void MainWindow::OnCalcButtonClicked()
 void MainWindow::OnReturnKeyPressed()
 {
     this->StartCalculation();
+}
+
+void MainWindow::OnFuncLineEditTextEdited()
+{
+    auto funcLineEdit = dynamic_cast<QLineEdit*>(QObject::sender());
+    auto funcString = std::string(funcLineEdit->text().toLocal8Bit().constData());
+
+    bool isParseable = funcString.empty() || this->game.IsParseable(funcString);
+
+#ifdef _DEBUG
+    if(funcString == "slow")
+    {
+        isParseable = true;
+    }
+#endif
+
+    QPalette & palette = isParseable ? this->parseablePalette : this->nonParseablePalette;
+
+    funcLineEdit->setPalette(palette);
 }
 
 void MainWindow::OnGameUpdateFinished()

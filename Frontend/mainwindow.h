@@ -238,6 +238,8 @@ private:
     QColor inactiveGoodDotColor;
     QColor activeBadDotColor;
     QColor inactiveBadDotColor;
+    QPalette parseablePalette;
+    QPalette nonParseablePalette;
 
 public:
     MainWindow(QWidget *parent = nullptr);
@@ -249,6 +251,7 @@ private slots:
     void OnGameUpdateFinished();
     void OnWaitTimerFinished();
     void OnWaitingMessageBoxButtonClicked();
+    void OnFuncLineEditTextEdited();
 
 private:
     void InitializePlot();

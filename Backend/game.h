@@ -63,6 +63,13 @@ namespace Backend {
         void Update(const std::vector<std::string> & funcStrings);
 
         /*!
+         * \brief IsParseable indicates whether the supplied string can parse to an expression.
+         * \param input The string to check for parseability.
+         * \return true if the argument is parseable, false otherwise.
+         */
+        bool IsParseable(const std::string & input) const;
+
+        /*!
          * \brief Gets the sorted data calculated in the update representing the graphs of the functions.
          * \return The graph data in a graph.branch.(xy).data-coordinate hierarchy.
          */

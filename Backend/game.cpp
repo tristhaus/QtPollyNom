@@ -37,6 +37,11 @@ namespace Backend {
         this->CreateGraphs();
     }
 
+    bool Game::IsParseable(const std::string& input) const
+    {
+        return this->parser.IsParseable(input);
+    }
+
     const std::vector<std::vector<std::pair<std::vector<double>, std::vector<double>>>>& Game::GetGraphs() const
     {
         return graphs;
