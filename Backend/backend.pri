@@ -21,10 +21,10 @@ HEADERS += \
     $$PWD/dotgenerator.h \
     $$PWD/evaluator.h \
     $$PWD/functions.h \
-    $$PWD/gamepoc.h \
     $$PWD/expression.h \
     $$PWD/basex.h \
     $$PWD/constant.h \
+    $$PWD/game.h \
     $$PWD/mathhelper.h \
     $$PWD/parser.h \
     $$PWD/power.h \
@@ -36,9 +36,9 @@ SOURCES += \
     $$PWD/dot.cpp \
     $$PWD/evaluator.cpp \
     $$PWD/functions.cpp \
-    $$PWD/gamepoc.cpp \
     $$PWD/basex.cpp \
     $$PWD/constant.cpp \
+    $$PWD/game.cpp \
     $$PWD/mathhelper.cpp \
     $$PWD/parser.cpp \
     $$PWD/power.cpp \

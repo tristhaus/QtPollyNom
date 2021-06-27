@@ -16,8 +16,8 @@
  *
  */
 
-#ifndef GAMEPOC_H
-#define GAMEPOC_H
+#ifndef GAME_H
+#define GAME_H
 
 #include <vector>
 #include <memory>
@@ -29,17 +29,16 @@
 namespace Backend {
 
     /*!
-     * \class GamePoc
-     * \brief The GamePoc class represents a Proof-of-Concept regarding the evaluation
-     *        of functions into graph data.
-     *
-     * Because it is a POC, the documentation is sparse.
+     * \class Game
+     * \brief The Game class represents an active game.
+     *        It evaluates functions into graph data and handles dots.
      */
-    class GamePoc final
+    class Game final
     {
     private:
         std::vector<std::shared_ptr<Dot>> dots;
-        std::vector<std::string> funcStrings;
+        std::vector<std::string> updateFuncStrings;
+        std::vector<std::string> funcStringsEvaluated;
         std::vector<std::vector<std::pair<std::vector<double>, std::vector<double>>>> graphs;
 
         Parser parser;
@@ -50,15 +49,15 @@ namespace Backend {
          * \brief Initializes a new instance using the supplied dot generator.
          * \param dotGenerator The generator to use in creation of a new game.
          */
-        GamePoc(std::shared_ptr<DotGenerator> dotGenerator = std::make_shared<RandomDotGenerator>(8, 2));
-        ~GamePoc() = default;
-        GamePoc(const GamePoc&) = delete;
-        GamePoc(GamePoc&&) = delete;
-        GamePoc& operator=(const GamePoc&) = delete;
-        GamePoc& operator=(GamePoc&&) = delete;
+        Game(std::shared_ptr<DotGenerator> dotGenerator = std::make_shared<RandomDotGenerator>(8, 2));
+        ~Game() = default;
+        Game(const Game&) = delete;
+        Game(Game&&) = delete;
+        Game& operator=(const Game&) = delete;
+        Game& operator=(Game&&) = delete;
 
         /*!
-         * \brief Simulates the evaluation of the functions supplied by the user.
+         * \brief Evaluates the functions supplied by the user.
          * \param funcStrings The user-supplied string representations of functions.
          */
         void Update(const std::vector<std::string> & funcStrings);
@@ -83,7 +82,9 @@ namespace Backend {
     private:
         void CreateItems();
         void CreateGraphs();
-        void PushEmptyGraph();
+        void PutEmptyGraphAtIndex(unsigned long int index);
+        void PutGraphAtIndex(unsigned long index, std::vector<std::pair<std::vector<double>, std::vector<double> > > graph);
+        void SaveFunctionAtIndex(unsigned long index, std::string funcString);
         void CreateDots();
         void CheckDots(std::shared_ptr<Expression> expression, std::vector<std::pair<std::vector<double>, std::vector<double>>> graphData);
         void ResetDots();
@@ -91,4 +92,4 @@ namespace Backend {
 
 }
 
-#endif // GAMEPOC_H
+#endif // GAME_H

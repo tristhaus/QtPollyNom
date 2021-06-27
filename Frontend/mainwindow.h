@@ -35,7 +35,7 @@
 #include <QtWidgets/QWidget>
 #include <vector>
 #include "qcustomplot.h"
-#include "../Backend/gamepoc.h"
+#include "../Backend/game.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui
@@ -225,7 +225,7 @@ private:
      */
     int focusIndicator;
 
-    Backend::GamePoc gamePoc;
+    Backend::Game game;
     QFutureWatcher<void> gameUpdateFutureWatcher;
     QTimer waitTimer;
 

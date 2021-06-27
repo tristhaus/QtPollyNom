@@ -21,7 +21,7 @@
 
 #include <gtest/gtest.h>
 #include <gmock/gmock-matchers.h>
-#include "../Backend/gamepoc.h"
+#include "../Backend/game.h"
 #include "fixeddotgenerator.h"
 
 using namespace testing;
@@ -30,7 +30,7 @@ using namespace Backend;
 TEST(BackendTest, GameShallUpdateCorrectlySingleStep)
 {
     // Arrange
-    GamePoc game(std::make_shared<FixedDotGenerator>());
+    Game game(std::make_shared<FixedDotGenerator>());
 
     std::vector<std::string> exprStrings =
     {
@@ -62,7 +62,7 @@ TEST(BackendTest, GameShallUpdateCorrectlySingleStep)
 TEST(BackendTest, GameShallUpdateCorrectlyMultiStep)
 {
     // Arrange
-    GamePoc game(std::make_shared<FixedDotGenerator>());
+    Game game(std::make_shared<FixedDotGenerator>());
 
     std::vector<std::string> exprStrings1 =
     {
@@ -81,6 +81,8 @@ TEST(BackendTest, GameShallUpdateCorrectlyMultiStep)
         std::string(""),
         std::string("")
     };
+
+    std::vector<std::string> exprStrings3(exprStrings1);
 
     // Act 1
     game.Update(exprStrings1);
@@ -105,6 +107,18 @@ TEST(BackendTest, GameShallUpdateCorrectlyMultiStep)
     EXPECT_TRUE(dots1[2]->IsActive());
     EXPECT_FALSE(dots1[3]->IsActive());
     EXPECT_FALSE(dots1[4]->IsActive());
+
+    // Act 3
+    game.Update(exprStrings3);
+    auto dots3 = game.GetDots();
+
+    // Assert 1
+    ASSERT_EQ(5, dots3.size());
+    EXPECT_TRUE(dots3[0]->IsActive());
+    EXPECT_TRUE(dots3[1]->IsActive());
+    EXPECT_FALSE(dots3[2]->IsActive());
+    EXPECT_FALSE(dots3[3]->IsActive());
+    EXPECT_FALSE(dots3[4]->IsActive());
 }
 
 #endif // TST_GAME_H

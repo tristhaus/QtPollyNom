@@ -96,7 +96,7 @@ void MainWindow::DrawDots()
     this->dotCurves.clear();
 
     // get dots and get ready to iterate
-    auto dots = this->gamePoc.GetDots();
+    auto dots = this->game.GetDots();
 
     auto dotsIterator = dots.begin();
     auto dotsEnd = dots.end();
@@ -160,7 +160,7 @@ void MainWindow::DrawDots()
 
 void MainWindow::DrawGraphs()
 {
-    auto& graphs = this->gamePoc.GetGraphs();
+    auto& graphs = this->game.GetGraphs();
 
     ui->plot->clearGraphs();
 
@@ -249,7 +249,7 @@ void MainWindow::StartCalculation()
     }
 
     QFuture<void> updateFuture = QtConcurrent::run([=](){
-        this->gamePoc.Update(funcStrings);
+        this->game.Update(funcStrings);
     });
     this->gameUpdateFutureWatcher.setFuture(updateFuture);
 
@@ -301,6 +301,6 @@ void MainWindow::OnWaitTimerFinished()
 void MainWindow::OnWaitingMessageBoxButtonClicked()
 {
     this->gameUpdateFutureWatcher.cancel();
-    this->gamePoc.Clear();
+    this->game.Clear();
     this->UpdateGui();
 }
