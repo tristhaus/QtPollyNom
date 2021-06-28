@@ -717,53 +717,79 @@ TEST(BackendTest, ComplexExpression08ShouldRoundtripCorrectly)
     EXPECT_EQ(*reference, *expr);
 }
 
-TEST(BackendTest, ParseabilityShouldBeEvaluatedCorrectly)
+struct TestFunctionResult
+{
+    std::string testname;
+    std::string text;
+    bool expectedParseability;
+    friend std::ostream& operator<<(std::ostream& os, const TestFunctionResult& obj)
+    {
+        return os
+                << "testname: " << obj.testname
+                << " text: " << obj.text
+                << " expectedParseability: " << (obj.expectedParseability ? "true" : "false");
+    }
+};
+
+class ParseabilityTest : public testing::TestWithParam<TestFunctionResult>
+{
+};
+
+INSTANTIATE_TEST_SUITE_P(BackendTest, ParseabilityTest,
+    testing::Values(
+    TestFunctionResult{std::string("Empty"), std::string(""), false},
+    TestFunctionResult{std::string("X"), std::string("X"), true},
+    TestFunctionResult{std::string("Y"), std::string("Y"), false},
+    TestFunctionResult{std::string("Number"), std::string(" +030.500 "), true},
+    TestFunctionResult{std::string("Invalid number"), std::string("030.50.0"), false},
+    TestFunctionResult{std::string("Braced X"), std::string("(X)"), true},
+    TestFunctionResult{std::string("Double braced X"), std::string("((X))"), true},
+    TestFunctionResult{std::string("Complete sum"), std::string("1+x+2"), true},
+    TestFunctionResult{std::string("Incomplete sum"), std::string("1+x+"), false},
+    TestFunctionResult{std::string("Complete product"), std::string("1/x"), true},
+    TestFunctionResult{std::string("Incomplete product"), std::string("1/"), false},
+    TestFunctionResult{std::string("Complete power"), std::string("1^x"), true},
+    TestFunctionResult{std::string("Incomplete power"), std::string("1^"), false},
+    TestFunctionResult{std::string("Malformed"), std::string("(x)x"), false},
+    TestFunctionResult{std::string("Function no argument"), std::string("sin()"), false},
+    TestFunctionResult{std::string("Number with space"), std::string("1 .0"), true},
+    TestFunctionResult{std::string("Double x 1"), std::string("x x"), false},
+    TestFunctionResult{std::string("Double x 2"), std::string("xx"), false},
+    TestFunctionResult{std::string("Braced double x"), std::string("(x x)"), false},
+    TestFunctionResult{std::string("Open brace"), std::string("("), false},
+    TestFunctionResult{std::string("Close brace"), std::string(")"), false},
+    TestFunctionResult{std::string("Just braces"), std::string("()"), false},
+    TestFunctionResult{std::string("Missing operator"), std::string("4x"), false}
+));
+
+TEST_P(ParseabilityTest, CheckingForParseabilityShouldNotCrashAndYieldCorrectResult)
 {
     // Arrange
     Parser parser;
-    std::string x = "X";
-    std::string y = "Y";
-    std::string number = " +030.500 ";
-    std::string invalidNumber = "030.50.0";
-    std::string bracedX = "(X)";
-    std::string doubleBracedX = "((X))";
-    std::string completeSum = "1+x+2";
-    std::string incompleteSum = "1+x+";
-    std::string completeProduct = "1/x";
-    std::string incompleteProduct = "1/";
-    std::string completePower = "1^x";
-    std::string incompletePower = "1^";
-    std::string malformed = "(x)x";
+    TestFunctionResult tfr = GetParam();
 
     // Act
-    auto resultX = parser.IsParseable(x);
-    auto resultInvalid = parser.IsParseable(y);
-    auto resultNumber = parser.IsParseable(number);
-    auto resultInvalidNumber = parser.IsParseable(invalidNumber);
-    auto resultBracedX = parser.IsParseable(bracedX);
-    auto resultDoubleBracedX = parser.IsParseable(doubleBracedX);
-    auto resultCompleteSum = parser.IsParseable(completeSum);
-    auto resultIncompleteSum = parser.IsParseable(incompleteSum);
-    auto resultCompleteProduct = parser.IsParseable(completeProduct);
-    auto resultIncompleteProduct = parser.IsParseable(incompleteProduct);
-    auto resultCompletePower = parser.IsParseable(completePower);
-    auto resultIncompletePower = parser.IsParseable(incompletePower);
-    auto resultMalformed = parser.IsParseable(malformed);
+    bool actualResult;
+
+    if(tfr.text == "")
+    {
+        actualResult = parser.IsParseable(tfr.text);
+    }
+    else
+    {
+        // simulate typing
+        for(size_t i = 1; i <= tfr.text.length(); ++i)
+        {
+            auto substr = tfr.text.substr(0, i);
+            actualResult = parser.IsParseable(substr);
+        }
+    }
 
     // Assert
-    EXPECT_TRUE(resultX);
-    EXPECT_FALSE(resultInvalid);
-    EXPECT_TRUE(resultNumber);
-    EXPECT_FALSE(resultInvalidNumber);
-    EXPECT_TRUE(resultBracedX);
-    EXPECT_TRUE(resultDoubleBracedX);
-    EXPECT_TRUE(resultCompleteSum);
-    EXPECT_FALSE(resultIncompleteSum);
-    EXPECT_TRUE(resultCompleteProduct);
-    EXPECT_FALSE(resultIncompleteProduct);
-    EXPECT_TRUE(resultCompletePower);
-    EXPECT_FALSE(resultIncompletePower);
-    EXPECT_FALSE(resultMalformed);
+    EXPECT_EQ(tfr.expectedParseability, actualResult)
+            << "testname: \"" << tfr.testname
+            << "\" text: \"" << tfr.text
+            << "\" expectedParseability: " << (tfr.expectedParseability ? "true" : "false");
 }
 
 #endif // TST_PARSER_H
