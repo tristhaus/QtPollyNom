@@ -29,6 +29,7 @@ CONFIG -= app_bundle
 
 HEADERS += \
         fixeddotgenerator.h \
+        subsetgenerator.h \
         testexpressionbuilder.h \
         tst_basex.h \
         tst_constant.h \
@@ -44,9 +45,11 @@ HEADERS += \
         tst_printingtest.h \
         tst_product.h \
         tst_randomdotgenerator.h \
+        tst_subsetgenerator.h \
         tst_sum.h
 
 SOURCES += \
         fixeddotgenerator.cpp \
         main.cpp \
+        subsetgenerator.cpp \
         testexpressionbuilder.cpp

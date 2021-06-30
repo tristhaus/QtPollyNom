@@ -16,6 +16,12 @@
  *
  */
 
+#if defined(_SKIP_LONG_TEST)
+#elif defined(_USE_LONG_TEST)
+#else
+#error "you need to make a choice between using or skipping long tests, -D_USE_LONG_TEST -D_SKIP_LONG_TEST"
+#endif
+
 #ifndef TST_PARSER_H
 #define TST_PARSER_H
 
@@ -30,6 +36,7 @@
 #include "../Backend/parser.h"
 #include "../Backend/functions.h"
 #include "testexpressionbuilder.h"
+#include "subsetgenerator.h"
 
 using namespace testing;
 using namespace Backend;
@@ -806,11 +813,27 @@ TEST_P(ParseabilityTest, CheckingForParseabilityShouldNotCrashAndYieldCorrectRes
     }
     else
     {
-        // simulate typing
-        for(size_t i = 1; i <= tfr.text.length(); ++i)
+#ifdef _SKIP_LONG_TEST
+        if(tfr.text.length() < 9)
+#else // _USE_LONG_TEST
+        if(tfr.text.length() < 16)
+#endif // _SKIP_LONG_TEST
         {
-            auto substr = tfr.text.substr(0, i);
-            actualResult = parser.IsParseable(substr);
+            // simulate typing - all subsets
+            SubsetGenerator generator(tfr.text);
+            while(generator.HasNext())
+            {
+                actualResult = parser.IsParseable(generator.GetNext());
+            }
+        }
+        else
+        {
+            // simulate typing - linearly
+            for(size_t i = 1; i <= tfr.text.length(); ++i)
+            {
+                auto substr = tfr.text.substr(0, i);
+                actualResult = parser.IsParseable(substr);
+            }
         }
     }
 

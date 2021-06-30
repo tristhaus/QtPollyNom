@@ -30,6 +30,7 @@
 #include "tst_game.h"
 #include "tst_printingtest.h"
 #include "tst_functions.h"
+#include "tst_subsetgenerator.h"
 
 #include <gtest/gtest.h>
 
