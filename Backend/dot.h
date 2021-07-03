@@ -86,8 +86,9 @@ namespace Backend {
          * \brief CheckForHit checks whether the dot is hit by the current expression and its graph data.
          * \param expression The current expression.
          * \param graphData The otherwise created graph data for the expression.
+         * \return true if the dot is hit by the expression/graph.
          */
-        void CheckForHit(const std::shared_ptr<Expression> expression, const std::vector<std::pair<std::vector<double>, std::vector<double>>> graphData);
+        bool CheckForHit(const std::shared_ptr<Expression> expression, const std::vector<std::pair<std::vector<double>, std::vector<double>>> graphData);
 
     private:
         /*!

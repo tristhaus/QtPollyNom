@@ -59,7 +59,7 @@ namespace Backend {
         isActive = false;
     }
 
-    void Dot::CheckForHit(const std::shared_ptr<Expression> expression, const std::vector<std::pair<std::vector<double>, std::vector<double>>> graphData)
+    bool Dot::CheckForHit(const std::shared_ptr<Expression> expression, const std::vector<std::pair<std::vector<double>, std::vector<double>>> graphData)
     {
             bool dotIsHit = false;
             auto xDot = this->GetCoordinates().first;
@@ -97,7 +97,7 @@ namespace Backend {
             if(dotIsHit)
             {
                 this->SetIsActive(true);
-                return;
+                return true;
             }
 
             const double localEpsilon = 1e-6;
@@ -117,7 +117,7 @@ namespace Backend {
                     if (isInsideDot(mid, midEvaluationResult.value()))
                     {
                         this->SetIsActive(true);
-                        break;
+                        return true;
                     }
                 }
 
@@ -127,7 +127,7 @@ namespace Backend {
                     if (isInsideDot(mid + increment, rightEvaluationResult.value()))
                     {
                         this->SetIsActive(true);
-                        break;
+                        return true;
                     }
                 }
 
@@ -137,7 +137,7 @@ namespace Backend {
                     if (isInsideDot(mid - increment, leftEvaluationResult.value()))
                     {
                         this->SetIsActive(true);
-                        break;
+                        return true;
                     }
                 }
 
@@ -193,6 +193,7 @@ namespace Backend {
                 mid = xDot + rDot * 0.75 * (rand - 0.5);
             }
 
+            return false;
     }
 
     /* static class member */ double Dot::GetRandom()

@@ -18,6 +18,7 @@
 
 #include <chrono>
 #include <thread>
+#include <algorithm>
 
 #include "game.h"
 #include "evaluator.h"
@@ -50,6 +51,50 @@ namespace Backend {
     const std::vector<std::shared_ptr<Dot>>& Game::GetDots() const
     {
         return dots;
+    }
+
+    int Game::GetScore() const
+    {
+        if(std::any_of(this->dots.begin(), this->dots.end(), [](auto dot){ return dot->IsActive() && !dot->IsGood(); }))
+        {
+            return -1;
+        }
+
+        int score(0);
+
+        std::vector<std::set<unsigned long int>> copy(this->dotHitBy);
+
+        while(std::any_of(copy.begin(), copy.end(), [&](std::set<unsigned long int> set){ return !set.empty(); }))
+        {
+            std::vector<int> counts;
+
+            std::for_each(copy.begin(), copy.end(), [&](std::set<unsigned long int> set)
+            {
+                std::for_each(set.begin(), set.end(), [&](unsigned long int index)
+                {
+                    while(counts.size() <= index)
+                    {
+                        counts.push_back(0);
+                    }
+
+                    ++counts[index];
+                });
+            });
+
+            auto index = static_cast<unsigned long int>(distance(counts.begin(), std::max_element(counts.begin(), counts.end())));
+
+            score += static_cast<int>(std::pow(2, counts[index])) - 1;
+
+            std::for_each(copy.begin(), copy.end(), [&](std::set<unsigned long int> & set)
+            {
+                if(set.find(index) != set.end())
+                {
+                    set.clear();
+                }
+            });
+        }
+
+        return score;
     }
 
     void Game::Clear()
@@ -102,7 +147,7 @@ namespace Backend {
                 this->SaveFunctionAtIndex(i, updateFuncStrings[i]);
             }
 
-            this->CheckDots(expression, this->graphs[i]);
+            this->CheckDots(i, expression, this->graphs[i]);
         }
     }
 
@@ -134,13 +179,21 @@ namespace Backend {
     void Game::CreateDots()
     {
         this->dots = this->dotGenerator->Generate();
+        this->dotHitBy = std::vector<std::set<unsigned long int>>(this->dots.size());
     }
 
-    void Game::CheckDots(std::shared_ptr<Expression> expression, std::vector<std::pair<std::vector<double>, std::vector<double>>> graphData)
+    void Game::CheckDots(unsigned long int graphIndex, std::shared_ptr<Expression> expression, std::vector<std::pair<std::vector<double>, std::vector<double>>> graphData)
     {
-        for(auto dotIterator = this->dots.begin(); dotIterator != this->dots.end(); ++dotIterator)
+        const auto dotCount = this->dots.size();
+        for(size_t dotIndex = 0; dotIndex < dotCount; ++dotIndex)
         {
-            (*dotIterator)->CheckForHit(expression, graphData);
+            auto & dot = this->dots[dotIndex];
+
+            bool wasHit = dot->CheckForHit(expression, graphData);
+            if(wasHit)
+            {
+                dotHitBy[dotIndex].insert(graphIndex);
+            }
         }
     }
 
@@ -150,6 +203,8 @@ namespace Backend {
         {
             (*dotIterator)->ResetIsActive();
         }
+
+        std::for_each(this->dotHitBy.begin(), this->dotHitBy.end(), [](std::set<unsigned long int> &set){ set.clear(); });
     }
 
 }

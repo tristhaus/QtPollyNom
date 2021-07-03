@@ -20,6 +20,7 @@
 #define GAME_H
 
 #include <vector>
+#include <set>
 #include <memory>
 #include "parser.h"
 #include "dot.h"
@@ -43,6 +44,7 @@ namespace Backend {
 
         Parser parser;
         std::shared_ptr<DotGenerator> dotGenerator;
+        std::vector<std::set<unsigned long int>> dotHitBy;
 
     public:
         /*!
@@ -82,6 +84,12 @@ namespace Backend {
         const std::vector<std::shared_ptr<Dot>>& GetDots() const;
 
         /*!
+         * \brief Gets the score from the dot hitting.
+         * \return The score, negative if a bad dot was hit.
+         */
+        int GetScore() const;
+
+        /*!
          * \brief Clears all input of the game.
          */
         void Clear();
@@ -93,7 +101,7 @@ namespace Backend {
         void PutGraphAtIndex(unsigned long index, std::vector<std::pair<std::vector<double>, std::vector<double> > > graph);
         void SaveFunctionAtIndex(unsigned long index, std::string funcString);
         void CreateDots();
-        void CheckDots(std::shared_ptr<Expression> expression, std::vector<std::pair<std::vector<double>, std::vector<double>>> graphData);
+        void CheckDots(unsigned long int graphIndex, std::shared_ptr<Expression> expression, std::vector<std::pair<std::vector<double>, std::vector<double>>> graphData);
         void ResetDots();
     };
 

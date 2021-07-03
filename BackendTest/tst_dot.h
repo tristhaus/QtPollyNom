@@ -250,4 +250,31 @@ TEST(BackendTest, ForTangentDotShallCorrectlyDetermineBeingHitBasedOnGraph)
     EXPECT_TRUE(dots[0]->IsActive());
 }
 
+TEST(BackendTest, DotShallCorrectlyDetermineBeingHitEvenAfterFirstHit)
+{
+    // Arrange
+    auto baseX = std::make_shared<BaseX>();
+    auto c = std::make_shared<Constant>(1.0);
+
+    Evaluator evaluatorX(baseX, -10.5, 10.5, 1000.0);
+    Evaluator evaluatorC(c, -10.5, 10.5, 1000.0);
+
+    std::vector<std::shared_ptr<Dot>> dots;
+    dots.push_back(std::make_shared<Dot>(1.0, 1.0, true));
+
+    // Act
+    auto graphDataX = evaluatorX.Evaluate();
+    auto graphDataC = evaluatorC.Evaluate();
+    auto resultX = dots[0]->CheckForHit(baseX, graphDataX);
+    auto isActiveAfterX = dots[0]->IsActive();
+    auto resultC = dots[0]->CheckForHit(c, graphDataC);
+    auto isActiveAfterC = dots[0]->IsActive();
+
+    // Assert
+    EXPECT_TRUE(resultX);
+    EXPECT_TRUE(isActiveAfterX);
+    EXPECT_TRUE(resultC);
+    EXPECT_TRUE(isActiveAfterC);
+}
+
 #endif // TST_DOT_H
