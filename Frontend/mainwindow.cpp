@@ -21,15 +21,24 @@
 #include "mainwindow.h"
 
 #include <vector>
+#include <sstream>
 #include <iterator>
 #include <functional>
+
+MainWindow::MainWindow(std::shared_ptr<Backend::DotGenerator> dotGenerator, QWidget *parent)
+    : MainWindow(parent)
+{
+    this->game = Backend::Game(dotGenerator);
+}
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
     , focusIndicator(-2)
+    , game()
 {
     ui->setupUi(this);
+
     this->numberOfFunctionInputs = ui->funcLineEdit.size();
 
     this->waitTimer.setSingleShot(true);
@@ -50,6 +59,8 @@ MainWindow::MainWindow(QWidget *parent)
 
     connect(&gameUpdateFutureWatcher, &QFutureWatcher<void>::finished, this, &MainWindow::OnGameUpdateFinished);
     connect(&waitTimer, &QTimer::timeout, this, &MainWindow::OnWaitTimerFinished);
+
+    this->windowTitlePrefix = this->windowTitle().toUtf8().constData();
 }
 
 MainWindow::~MainWindow()
@@ -199,6 +210,29 @@ void MainWindow::DrawGraphs()
     }
 }
 
+void MainWindow::UpdateWindowTitle()
+{
+    const char scoreText[] = "Score";
+
+    auto score = this->game.GetScore();
+
+    std::ostringstream stringStream;
+    stringStream << this->windowTitlePrefix << " - " << scoreText << ": ";
+
+    if(score < 0)
+    {
+        stringStream << "-∞";
+    }
+    else
+    {
+        stringStream << score;
+    }
+
+    std::string newTitle = stringStream.str();
+
+    this->setWindowTitle(QString::fromUtf8(newTitle.c_str()));
+}
+
 void MainWindow::SetGameIsBusy(bool isBusy)
 {
     if(isBusy)
@@ -243,6 +277,7 @@ void MainWindow::UpdateGui()
 
     this->DrawDots();
     this->DrawGraphs();
+    this->UpdateWindowTitle();
 
     ui->plot->replot();
 }

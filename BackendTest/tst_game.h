@@ -22,7 +22,7 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock-matchers.h>
 #include "../Backend/game.h"
-#include "fixeddotgenerator.h"
+#include "../TestHelper/fixeddotgenerator.h"
 
 using namespace testing;
 using namespace Backend;

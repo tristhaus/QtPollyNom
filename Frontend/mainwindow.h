@@ -36,6 +36,7 @@
 #include <vector>
 #include "qcustomplot.h"
 #include "../Backend/game.h"
+#include "../Backend/dotgenerator.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui
@@ -225,6 +226,8 @@ private:
      */
     int focusIndicator;
 
+    std::string windowTitlePrefix;
+
     Backend::Game game;
     QFutureWatcher<void> gameUpdateFutureWatcher;
     QTimer waitTimer;
@@ -242,6 +245,17 @@ private:
     QPalette nonParseablePalette;
 
 public:
+    /*!
+     * \brief Initializes a new instance using the supplied dot generator.
+     * \param dotGenerator The generator for dots to use.
+     * \param parent The QT-defined parent.
+     */
+    MainWindow(std::shared_ptr<Backend::DotGenerator> dotGenerator, QWidget *parent = nullptr);
+
+    /*!
+     * \brief Initializes a new instance and lets Game decide its own dot generator.
+     * \param parent The QT-defined parent.
+     */
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
@@ -258,6 +272,7 @@ private:
     void SetupColors();
     void DrawDots();
     void DrawGraphs();
+    void UpdateWindowTitle();
     void SetGameIsBusy(bool isBusy);
     void UpdateGui();
     void StartCalculation();

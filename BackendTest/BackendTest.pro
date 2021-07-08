@@ -17,6 +17,7 @@
 #
 
 include(../Backend/backend.pri)
+include(../TestHelper/TestHelper.pri)
 
 # you may need to change this
 GOOGLETEST_DIR = D:\\VSProject\\googletest
@@ -28,7 +29,6 @@ CONFIG += console c++11 thread
 CONFIG -= app_bundle
 
 HEADERS += \
-        fixeddotgenerator.h \
         subsetgenerator.h \
         testexpressionbuilder.h \
         tst_basex.h \
@@ -49,7 +49,6 @@ HEADERS += \
         tst_sum.h
 
 SOURCES += \
-        fixeddotgenerator.cpp \
         main.cpp \
         subsetgenerator.cpp \
         testexpressionbuilder.cpp

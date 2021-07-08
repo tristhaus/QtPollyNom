@@ -24,6 +24,8 @@ All source code licensed under GPL v3 (see LICENSE for terms).
 
 ## Attributions
 
+Graphical user interface built using [Qt](https://doc.qt.io/).
+
 Icon (axes and graph) attributed to: Icons made by [Pixel perfect](https://www.flaticon.com/authors/pixel-perfect) from [Flaticon](https://www.flaticon.com/)
 
 [QCustomPlot](https://www.qcustomplot.com/) library (Version 2.1.0) by Emanuel Eichhammer used under the [GPL v3](https://www.gnu.org/licenses/gpl-3.0.html).

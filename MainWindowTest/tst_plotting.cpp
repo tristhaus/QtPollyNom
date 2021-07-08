@@ -25,6 +25,7 @@
 #include <QtTest>
 
 #include "../Frontend/mainwindow.h"
+#include "../TestHelper/fixeddotgenerator.h"
 
 class MainWindowTest : public QObject
 {
@@ -48,6 +49,8 @@ private slots:
 #endif
     void AfterCalculationUIShallRefocusCorrectlyToLineEdit();
     void AfterCalculationUIShallRefocusCorrectlyToButton();
+    void AfterHittingGoodDotsUIShallCorrectlySetTitle();
+    void AfterHittingBadDotUIShallCorrectlySetTitle();
 };
 
 MainWindowTest::MainWindowTest()
@@ -346,6 +349,65 @@ void MainWindowTest::AfterCalculationUIShallRefocusCorrectlyToButton()
     // Assert
     QVERIFY2(spyUpdate.count() == 1, "spyUpdate did not register signal");
     QVERIFY2(ui->calcButton->hasFocus(), "button does not have focus after calcuation");
+}
+
+void MainWindowTest::AfterHittingGoodDotsUIShallCorrectlySetTitle()
+{
+    // Arrange
+    MainWindow mw(std::make_shared<FixedDotGenerator>());
+    auto ui = mw.ui;
+
+    QString function1 = "1/x";
+    QString function2 = "(x-3.0)*(x+4.0)";
+
+    // spy needed such that events actually happen
+    QSignalSpy spyUpdate(&(mw.gameUpdateFutureWatcher), &QFutureWatcher<void>::finished);
+
+    // Act
+    for(size_t i = 0; i < ui->funcLineEdit.size(); ++i)
+    {
+        ui->funcLineEdit[i]->clear();
+    }
+
+    QTest::keyClicks(ui->funcLineEdit[0], function1);
+    QTest::keyClicks(ui->funcLineEdit[1], function2);
+    QTest::mouseClick(ui->calcButton, Qt::LeftButton);
+
+    spyUpdate.wait();
+
+    // Assert
+    QRegularExpression verification(" 4$");
+    QVERIFY2(mw.windowTitle().contains(verification), "correct score was not part of the window title");
+}
+
+void MainWindowTest::AfterHittingBadDotUIShallCorrectlySetTitle()
+{
+    // Arrange
+    MainWindow mw(std::make_shared<FixedDotGenerator>());
+    auto ui = mw.ui;
+
+    QString function1 = "1/x";
+    QString function2 = "5.05";
+
+    // spy needed such that events actually happen
+    QSignalSpy spyUpdate(&(mw.gameUpdateFutureWatcher), &QFutureWatcher<void>::finished);
+
+    // Act
+    for(size_t i = 0; i < ui->funcLineEdit.size(); ++i)
+    {
+        ui->funcLineEdit[i]->clear();
+    }
+
+    QTest::keyClicks(ui->funcLineEdit[0], function1);
+    QTest::keyClicks(ui->funcLineEdit[1], function2);
+    QTest::mouseClick(ui->calcButton, Qt::LeftButton);
+
+    spyUpdate.wait();
+
+    // Assert
+    QRegularExpression verification("-∞");
+    auto thing = mw.windowTitle();
+    QVERIFY2(mw.windowTitle().contains(verification), "correct score was not part of the window title");
 }
 
 QTEST_MAIN(MainWindowTest)
