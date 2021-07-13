@@ -38,6 +38,7 @@ MainWindow::MainWindow(QWidget *parent)
     , game()
 {
     ui->setupUi(this);
+    this->UpdateWindowTitle();
 
     this->numberOfFunctionInputs = ui->funcLineEdit.size();
 
@@ -59,8 +60,6 @@ MainWindow::MainWindow(QWidget *parent)
 
     connect(&gameUpdateFutureWatcher, &QFutureWatcher<void>::finished, this, &MainWindow::OnGameUpdateFinished);
     connect(&waitTimer, &QTimer::timeout, this, &MainWindow::OnWaitTimerFinished);
-
-    this->windowTitlePrefix = this->windowTitle().toUtf8().constData();
 }
 
 MainWindow::~MainWindow()
@@ -212,25 +211,23 @@ void MainWindow::DrawGraphs()
 
 void MainWindow::UpdateWindowTitle()
 {
-    const char scoreText[] = "Score";
+    //: Arg 1 is the window title, Arg 2 is the numerical score
+    auto windowTitleTemplate = QCoreApplication::translate("MainWindow", "%1 - Score: %2", nullptr).arg(QCoreApplication::translate("MainWindow", "QtPollyNom", nullptr));
 
     auto score = this->game.GetScore();
 
-    std::ostringstream stringStream;
-    stringStream << this->windowTitlePrefix << " - " << scoreText << ": ";
+    QString newTitle;
 
     if(score < 0)
     {
-        stringStream << "-∞";
+        newTitle = windowTitleTemplate.arg(QString("-∞"));
     }
     else
     {
-        stringStream << score;
+        newTitle = windowTitleTemplate.arg(score);
     }
 
-    std::string newTitle = stringStream.str();
-
-    this->setWindowTitle(QString::fromUtf8(newTitle.c_str()));
+    this->setWindowTitle(newTitle);
 }
 
 void MainWindow::SetGameIsBusy(bool isBusy)
@@ -351,10 +348,10 @@ void MainWindow::OnWaitTimerFinished()
 
     this->waitingMessageBox = std::make_unique<QMessageBox>(
                 QMessageBox::Icon::NoIcon,
-                "Plotting",
-                "Waiting for plot to complete ...");
+                QCoreApplication::translate("MainWindow", "Plotting", nullptr),
+                QCoreApplication::translate("MainWindow", "Waiting for plot to complete ...", nullptr));
 
-    auto * button = new QPushButton("Stop waiting");
+    auto * button = new QPushButton(QCoreApplication::translate("MainWindow", "Stop waiting", nullptr));
     this->waitingMessageBox->addButton(button, QMessageBox::ButtonRole::NoRole);
 
     connect(&(*(this->waitingMessageBox)), &QMessageBox::buttonClicked, this, &MainWindow::OnWaitingMessageBoxButtonClicked);

@@ -192,13 +192,18 @@ namespace Ui
         void retranslateUi(QMainWindow *MainWindow)
         {
             MainWindow->setWindowTitle(QCoreApplication::translate("MainWindow", "QtPollyNom", nullptr));
-            funcLabel[0]->setText(QCoreApplication::translate("MainWindow", "Function 1:", nullptr));
-            funcLineEdit[0]->setText(QCoreApplication::translate("MainWindow", "1/x", nullptr));
-            funcLabel[1]->setText(QCoreApplication::translate("MainWindow", "Function 2:", nullptr));
-            funcLineEdit[1]->setText(QCoreApplication::translate("MainWindow", "(x-3.0)*(x+4.0)", nullptr));
-            funcLabel[2]->setText(QCoreApplication::translate("MainWindow", "Function 3:", nullptr));
-            funcLabel[3]->setText(QCoreApplication::translate("MainWindow", "Function 4:", nullptr));
-            funcLabel[4]->setText(QCoreApplication::translate("MainWindow", "Function 5:", nullptr));
+
+            //: Arg 1 is the 1-based number of the function
+            auto funcLabelTextTemplate = QCoreApplication::translate("MainWindow", "Function %1:", nullptr);
+
+            for(unsigned int i = 0; i<funcLabel.size(); ++i)
+            {
+                auto text = funcLabelTextTemplate.arg(i + 1);
+                funcLabel[i]->setText(text);
+            }
+
+            funcLineEdit[0]->setText(QString("1/x"));
+            funcLineEdit[1]->setText(QString("(x-3.0)*(x+4.0)"));
             calcButton->setText(QCoreApplication::translate("MainWindow", "Calc!", nullptr));
         }
 
@@ -225,8 +230,6 @@ private:
      * -1 indicates the button
      */
     int focusIndicator;
-
-    std::string windowTitlePrefix;
 
     Backend::Game game;
     QFutureWatcher<void> gameUpdateFutureWatcher;

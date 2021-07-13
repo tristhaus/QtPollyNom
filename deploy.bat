@@ -5,7 +5,7 @@ IF EXIST .\Deploy-Release (
 )
 md .\Deploy-Release
 
-windeployqt --dir .\Deploy-Release ..\build-QtPollyNomSuper-Desktop_Qt_6_0_3_MSVC2019_64bit-Release\QtPollyNom\release\QtPollyNom.exe
+windeployqt --dir .\Deploy-Release --no-translations ..\build-QtPollyNomSuper-Desktop_Qt_6_0_3_MSVC2019_64bit-Release\QtPollyNom\release\QtPollyNom.exe
 copy ..\build-QtPollyNomSuper-Desktop_Qt_6_0_3_MSVC2019_64bit-Release\QtPollyNom\release\QtPollyNom.exe .\Deploy-Release\
 copy .\LICENSE .\Deploy-Release\
 copy .\README.md .\Deploy-Release\
@@ -15,7 +15,7 @@ IF EXIST .\Deploy-Release-PDB (
 )
 md .\Deploy-Release-PDB
 
-windeployqt --pdb --dir .\Deploy-Release-PDB ..\build-QtPollyNomSuper-Desktop_Qt_6_0_3_MSVC2019_64bit-Release\QtPollyNom\release\QtPollyNom.exe
+windeployqt --pdb --dir .\Deploy-Release-PDB --no-translations ..\build-QtPollyNomSuper-Desktop_Qt_6_0_3_MSVC2019_64bit-Release\QtPollyNom\release\QtPollyNom.exe
 copy ..\build-QtPollyNomSuper-Desktop_Qt_6_0_3_MSVC2019_64bit-Release\QtPollyNom\release\QtPollyNom.exe .\Deploy-Release-PDB\
 copy ..\build-QtPollyNomSuper-Desktop_Qt_6_0_3_MSVC2019_64bit-Release\QtPollyNom\release\QtPollyNom.map .\Deploy-Release-PDB\
 copy ..\build-QtPollyNomSuper-Desktop_Qt_6_0_3_MSVC2019_64bit-Release\QtPollyNom\release\QtPollyNom.pdb .\Deploy-Release-PDB\

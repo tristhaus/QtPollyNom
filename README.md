@@ -16,7 +16,13 @@ In order to compile the [frontend tests](/MainWindowTest/), you need to define o
  * `_SKIP_LONG_TEST` if you wish to skip the long-running tests
  * `_USE_LONG_TEST` if you wish to execute those tests
 
- The simplest thing in Qt Creator is to add an additional argument to the qmake step like `"DEFINES+=_USE_LONG_TEST"`.
+The simplest thing in Qt Creator is to add an additional argument to the qmake step like `"DEFINES+=_USE_LONG_TEST"`.
+
+The project is now localized and you should build the translation to be included into the resource file of the frontend, which boils down to running `lrelease`. I suggest adding steps
+  * `/path/to/lupdate-pro.exe -noobsolete -locations none /path/to/QtPollyNomSuper.pro`
+  * `/path/to/lrelease-pro.exe /path/to/QtPollyNomSuper.pro`
+
+to the build process.
 
 ## License
 
