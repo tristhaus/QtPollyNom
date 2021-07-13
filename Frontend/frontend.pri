@@ -25,7 +25,8 @@ SOURCES += \
     $$PWD/qcustomplot.cpp
 
 TRANSLATIONS += \
-    $$PWD/QtPollyNom_en.ts
+    $$PWD/QtPollyNom_en.ts \
+    $$PWD/QtPollyNom_de.ts
 
 RESOURCES += \
     $$PWD/translations.qrc

@@ -17,6 +17,7 @@
 -->
 <RCC>
     <qresource prefix="/">
+        <file>QtPollyNom_de.qm</file>
         <file>QtPollyNom_en.qm</file>
     </qresource>
 </RCC>
