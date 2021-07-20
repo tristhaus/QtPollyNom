@@ -60,11 +60,32 @@ MainWindow::MainWindow(QWidget *parent)
 
     connect(&gameUpdateFutureWatcher, &QFutureWatcher<void>::finished, this, &MainWindow::OnGameUpdateFinished);
     connect(&waitTimer, &QTimer::timeout, this, &MainWindow::OnWaitTimerFinished);
+    connect(ui->aboutMenuAction, &QAction::triggered, this, &MainWindow::OnAboutMenuTriggered);
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
+}
+
+void MainWindow::OnAboutMenuTriggered()
+{
+    auto messageBoxTitleTemplate = QCoreApplication::translate("MainWindow", "About %1", nullptr);
+    auto messageBoxTitle = messageBoxTitleTemplate.arg(QCoreApplication::translate("MainWindow", "QtPollyNom", nullptr));
+
+    //: Arg 1 is a placeholder for the program name. Format is QT Rich Text.
+    auto messageBoxTextTemplate = QCoreApplication::translate("MainWindow", "A math teaching tool pretending to be a game.<br /><br />%1 Copyright (C) 2021 and later, tristhaus<br />This program comes with ABSOLUTELY NO WARRANTY.<br />This is free software, and you are welcome to redistribute it under certain conditions. See provided LICENSE file for details.<br /><br />Graphical user interface built using <a href=\"https://doc.qt.io/\">Qt</a>.<br />Icon (axes and graph) attributed to: Icons made by <a href=\"https://www.flaticon.com/authors/pixel-perfect\">Pixel perfect</a> from <a href=\"https://www.flaticon.com/\">Flaticon</a>.<br /><a href=\"https://www.qcustomplot.com/\">QCustomPlot</a> library (Version 2.1.0) by Emanuel Eichhammer used under the <a href=\"https://www.gnu.org/licenses/gpl-3.0.html\">GPL v3</a>.", nullptr);
+    auto messageBoxText = messageBoxTextTemplate.arg(QCoreApplication::translate("MainWindow", "QtPollyNom", nullptr));
+
+    auto box = std::make_unique<QMessageBox>(
+                    QMessageBox::Icon::NoIcon,
+                    messageBoxTitle,
+                    messageBoxText);
+
+    box->setTextFormat(Qt::RichText);
+    box->setTextInteractionFlags(Qt::TextBrowserInteraction);
+
+    box->exec();
 }
 
 void MainWindow::InitializePlot()

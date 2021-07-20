@@ -45,6 +45,7 @@ namespace Ui
     {
     public:
         QMenuBar *menubar;
+        QAction *aboutMenuAction;
         QStatusBar *statusbar;
         QWidget *centralwidget;
         QVBoxLayout *verticalLayout_2;
@@ -179,7 +180,12 @@ namespace Ui
             menubar = new QMenuBar(MainWindow);
             menubar->setObjectName(QString::fromUtf8("menubar"));
             menubar->setGeometry(QRect(0, 0, 600, 21));
+            //: Arg 1 is a placeholder for the program name
+            auto aboutActionLabelTemplate = QCoreApplication::translate("MainWindow", "About %1", nullptr);
+            auto aboutActionLabel = aboutActionLabelTemplate.arg(QCoreApplication::translate("MainWindow", "QtPollyNom", nullptr));
+            aboutMenuAction = menubar->addAction(aboutActionLabel);
             MainWindow->setMenuBar(menubar);
+
             statusbar = new QStatusBar(MainWindow);
             statusbar->setObjectName(QString::fromUtf8("statusbar"));
             MainWindow->setStatusBar(statusbar);
@@ -263,6 +269,7 @@ public:
     ~MainWindow();
 
 private slots:
+    void OnAboutMenuTriggered();
     void OnCalcButtonClicked();
     void OnReturnKeyPressed();
     void OnGameUpdateFinished();
