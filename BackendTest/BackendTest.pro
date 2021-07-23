@@ -37,6 +37,7 @@ HEADERS += \
         tst_equality.h \
         tst_evaluating.h \
         tst_evaluator.h \
+        tst_fixeddotgenerator.h \
         tst_functions.h \
         tst_fundamental.h \
         tst_game.h \

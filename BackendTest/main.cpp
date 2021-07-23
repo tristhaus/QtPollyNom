@@ -31,6 +31,7 @@
 #include "tst_printingtest.h"
 #include "tst_functions.h"
 #include "tst_subsetgenerator.h"
+#include "tst_fixeddotgenerator.h"
 
 #include <gtest/gtest.h>
 

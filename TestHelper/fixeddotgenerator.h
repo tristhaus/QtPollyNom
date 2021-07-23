@@ -29,16 +29,24 @@ using namespace Backend;
  */
 class FixedDotGenerator final : public DotGenerator
 {
+private:
+    unsigned short period;
+    unsigned short state;
+
 public:
     /*!
      * \brief Initializes a new instance.
      */
-    FixedDotGenerator() = default;
+    FixedDotGenerator(unsigned short period = 1);
 
     /*!
      * \reimp
      */
     virtual std::vector<std::shared_ptr<Dot>> Generate();
+
+private:
+    std::vector<std::shared_ptr<Dot>> GenerateSet0();
+    std::vector<std::shared_ptr<Dot>> GenerateSet1();
 };
 
 #endif // FIXEDDOTGENERATOR_H
