@@ -53,6 +53,9 @@ private slots:
     void AfterHittingGoodDotsUIShallCorrectlySetTitle();
     void AfterHittingBadDotUIShallCorrectlySetTitle();
     void NewGameButtonShallCreateNewGame();
+#if defined(_USE_LONG_TEST)
+    void AboutButtonShallTriggerDialogAndOKShallClose();
+#endif
 };
 
 MainWindowTest::MainWindowTest()
@@ -487,6 +490,58 @@ void MainWindowTest::NewGameButtonShallCreateNewGame()
 
     QVERIFY2(ui->plot->graphCount() == 0, "graphs found");
 }
+
+#if defined(_USE_LONG_TEST)
+void MainWindowTest::AboutButtonShallTriggerDialogAndOKShallClose()
+{
+    // Arrange
+    MainWindow mw;
+    auto ui = mw.ui;
+
+    // spy needed such that events actually happen
+    QSignalSpy spyAboutAction(ui->aboutMenuAction, &QAction::triggered);
+
+    QVERIFY2(ui->plot->graphCount() == 0, "graphs found that should not be there");
+
+    // Act
+    bool aboutMessageBoxFound = false;
+    bool aboutMessageBoxHasOneButton = false;
+    int interval = 1000;
+    QTimer::singleShot(interval, [&]()
+    {
+        aboutMessageBoxFound = mw.aboutMessageBox != nullptr;
+        aboutMessageBoxHasOneButton = mw.aboutMessageBox->buttons().count() == 1 && mw.aboutMessageBox->buttons().first() != nullptr;
+        if(aboutMessageBoxFound && aboutMessageBoxHasOneButton)
+        {
+            QTest::mouseClick(mw.aboutMessageBox->buttons().first(), Qt::LeftButton);
+        }
+    });
+
+    QMenuBar *menuBar = ui->menubar;
+    QVERIFY2(menuBar != nullptr, "menuBar not found");
+    if (menuBar != nullptr)
+    {
+        QList<QAction *> actions = menuBar->actions();
+        for(qsizetype i = 0; i < actions.size(); ++i)
+        {
+            auto & action = actions[i];
+            if (action->objectName() == QString::fromUtf8("about"))
+            {
+                action->trigger();
+                break;
+            }
+        }
+    }
+
+    spyAboutAction.wait();
+
+    // Assert
+    QVERIFY2(aboutMessageBoxFound, "aboutMessageBox not found");
+    QVERIFY2(aboutMessageBoxHasOneButton, "aboutMessageBox does not have exactly one button");
+
+    QVERIFY2(mw.aboutMessageBox == nullptr, "aboutMessageBox still reachable");
+}
+#endif
 
 QTEST_MAIN(MainWindowTest)
 

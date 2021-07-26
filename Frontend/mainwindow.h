@@ -190,6 +190,7 @@ namespace Ui
             auto aboutActionLabelTemplate = QCoreApplication::translate("MainWindow", "About %1", nullptr);
             auto aboutActionLabel = aboutActionLabelTemplate.arg(QCoreApplication::translate("MainWindow", "QtPollyNom", nullptr));
             aboutMenuAction = menubar->addAction(aboutActionLabel);
+            aboutMenuAction->setObjectName(QString::fromUtf8("about"));
             MainWindow->setMenuBar(menubar);
 
             statusbar = new QStatusBar(MainWindow);
@@ -248,6 +249,7 @@ private:
     QTimer waitTimer;
 
     std::unique_ptr<QMessageBox> waitingMessageBox;
+    std::unique_ptr<QMessageBox> aboutMessageBox;
 
     std::vector<QCPAbstractPlottable*> dotCurves;
 
