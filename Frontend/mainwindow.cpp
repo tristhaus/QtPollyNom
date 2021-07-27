@@ -378,6 +378,8 @@ void MainWindow::OnWaitTimerFinished()
     connect(&(*(this->waitingMessageBox)), &QMessageBox::buttonClicked, this, &MainWindow::OnWaitingMessageBoxButtonClicked);
 
     this->waitingMessageBox->exec();
+
+    this->waitingMessageBox.reset();
 }
 
 void MainWindow::OnWaitingMessageBoxButtonClicked()

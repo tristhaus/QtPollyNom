@@ -237,6 +237,8 @@ void MainWindowTest::SlowCalculationShallTriggerDialogAndWaitingForCompletionSha
     QVERIFY2(waitingMessageBoxFound, "waitingMessageBox not found");
     QVERIFY2(waitingMessageBoxHasOneButton, "waitingMessageBox does not have exactly one button");
     QVERIFY2(ui->plot->graphCount() > 0, "no graph found");
+
+    QVERIFY2(mw.waitingMessageBox == nullptr, "waitingMessageBox still reachable");
 }
 
 void MainWindowTest::SlowCalculationShallTriggerDialogAndCancelShallYieldNoGraph()
@@ -283,6 +285,8 @@ void MainWindowTest::SlowCalculationShallTriggerDialogAndCancelShallYieldNoGraph
     QVERIFY2(waitingMessageBoxFound, "waitingMessageBox not found");
     QVERIFY2(waitingMessageBoxHasOneButton, "waitingMessageBox does not have exactly one button");
     QVERIFY2(ui->plot->graphCount() == 0, "graph found");
+
+    QVERIFY2(mw.waitingMessageBox == nullptr, "waitingMessageBox still reachable");
 }
 
 #endif
