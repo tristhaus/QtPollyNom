@@ -59,6 +59,11 @@ namespace Backend {
         Game& operator=(Game&&) = default;
 
         /*!
+         * \brief Remake Resets the game and creates new dots from the dot generator.
+         */
+        void Remake();
+
+        /*!
          * \brief Evaluates the functions supplied by the user.
          * \param funcStrings The user-supplied string representations of functions.
          */
@@ -95,6 +100,7 @@ namespace Backend {
         void Clear();
 
     private:
+        void Init();
         void CreateItems();
         void CreateGraphs();
         void PutEmptyGraphAtIndex(unsigned long int index);

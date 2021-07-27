@@ -365,4 +365,51 @@ TEST(BackendTest, GameShallCorrectlyHandleOverlappingGraphs)
     EXPECT_EQ(15, score2);
 }
 
+TEST(BackendTest, GameRemakeShallCreateANewGame)
+{
+    // Arrange
+    Game game(std::make_shared<FixedDotGenerator>(2));
+
+    std::vector<std::string> exprStrings =
+    {
+        std::string("1/x"),
+        std::string("(x-3.0)*(x+4.0)"),
+        std::string(""),
+        std::string(""),
+        std::string("")
+    };
+
+    // Act
+    game.Update(exprStrings);
+    auto dots1 = game.GetDots();
+    auto graphs1 = game.GetGraphs();
+    game.Remake();
+    auto dots2 = game.GetDots();
+    auto graphs2 = game.GetGraphs();
+
+    // Assert
+    ASSERT_GT(graphs1.size(), 0);
+    ASSERT_GT(graphs1[0].size(), 0);
+    ASSERT_GT(graphs1[0][0].first.size(), 0);
+
+    const double tolerance = 1e-9;
+    for(unsigned int iter1 = 0; iter1 < dots1.size(); ++iter1)
+    {
+        auto & dot1 = dots1[iter1];
+        for(unsigned int iter2 = 0; iter2 < dots2.size(); ++iter2)
+        {
+            auto & dot2 = dots2[iter2];
+
+            auto evalFirst = abs(dot1->GetCoordinates().first - dot2->GetCoordinates().first) < tolerance;
+            auto evalSecond = abs(dot1->GetCoordinates().second - dot2->GetCoordinates().second) < tolerance;
+            auto evalRadius = abs(dot1->GetRadius() - dot2->GetRadius()) < tolerance;
+            auto evalKind = dot1->IsGood() == dot2->IsGood();
+            GTEST_ASSERT_FALSE(evalFirst && evalSecond && evalRadius && evalKind);
+        }
+    }
+
+    ASSERT_EQ(graphs2.size(), 0);
+    EXPECT_EQ(0, game.GetScore());
+}
+
 #endif // TST_GAME_H

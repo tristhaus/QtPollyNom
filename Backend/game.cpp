@@ -26,10 +26,21 @@
 
 namespace Backend {
 
+    void Backend::Game::Init()
+    {
+        this->CreateItems();
+        this->Clear();
+    }
+
     Game::Game(std::shared_ptr<DotGenerator> dotGenerator)
         : dotGenerator(dotGenerator)
     {
-        this->CreateItems();
+        this->Init();
+    }
+
+    void Game::Remake()
+    {
+        this->Init();
     }
 
     void Game::Update(const std::vector<std::string> & funcStrings)
