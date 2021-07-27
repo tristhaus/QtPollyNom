@@ -45,6 +45,7 @@ namespace Ui
     {
     public:
         QMenuBar *menubar;
+        QAction *newGameMenuAction;
         QAction *aboutMenuAction;
         QStatusBar *statusbar;
         QWidget *centralwidget;
@@ -180,6 +181,11 @@ namespace Ui
             menubar = new QMenuBar(MainWindow);
             menubar->setObjectName(QString::fromUtf8("menubar"));
             menubar->setGeometry(QRect(0, 0, 600, 21));
+
+            auto newGameActionLabel = QCoreApplication::translate("MainWindow", "New Game", nullptr);
+            newGameMenuAction = menubar->addAction(newGameActionLabel);
+            newGameMenuAction->setObjectName(QString::fromUtf8("newGame"));
+
             //: Arg 1 is a placeholder for the program name
             auto aboutActionLabelTemplate = QCoreApplication::translate("MainWindow", "About %1", nullptr);
             auto aboutActionLabel = aboutActionLabelTemplate.arg(QCoreApplication::translate("MainWindow", "QtPollyNom", nullptr));
@@ -269,13 +275,14 @@ public:
     ~MainWindow();
 
 private slots:
+    void OnNewGameMenuTriggered();
     void OnAboutMenuTriggered();
     void OnCalcButtonClicked();
     void OnReturnKeyPressed();
     void OnGameUpdateFinished();
     void OnWaitTimerFinished();
     void OnWaitingMessageBoxButtonClicked();
-    void OnFuncLineEditTextEdited();
+    void OnFuncLineEditTextChanged();
 
 private:
     void InitializePlot();

@@ -43,5 +43,9 @@
         <extracomment>Arg 1 is a placeholder for the program name. Format is QT Rich Text.</extracomment>
         <translation>A math teaching tool pretending to be a game.&lt;br /&gt;&lt;br /&gt;%1 Copyright (C) 2021 and later, tristhaus&lt;br /&gt;This program comes with ABSOLUTELY NO WARRANTY.&lt;br /&gt;This is free software, and you are welcome to redistribute it under certain conditions. See provided LICENSE file for details.&lt;br /&gt;&lt;br /&gt;Graphical user interface built using &lt;a href=&quot;https://doc.qt.io/&quot;&gt;Qt&lt;/a&gt;.&lt;br /&gt;Icon (axes and graph) attributed to: Icons made by &lt;a href=&quot;https://www.flaticon.com/authors/pixel-perfect&quot;&gt;Pixel perfect&lt;/a&gt; from &lt;a href=&quot;https://www.flaticon.com/&quot;&gt;Flaticon&lt;/a&gt;.&lt;br /&gt;&lt;a href=&quot;https://www.qcustomplot.com/&quot;&gt;QCustomPlot&lt;/a&gt; library (Version 2.1.0) by Emanuel Eichhammer used under the &lt;a href=&quot;https://www.gnu.org/licenses/gpl-3.0.html&quot;&gt;GPL v3&lt;/a&gt;.</translation>
     </message>
+    <message>
+        <source>New Game</source>
+        <translation>New Game</translation>
+    </message>
 </context>
 </TS>

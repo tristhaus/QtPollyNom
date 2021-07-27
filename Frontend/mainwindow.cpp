@@ -55,17 +55,33 @@ MainWindow::MainWindow(QWidget *parent)
     {
         ui->funcLineEdit[i]->setPalette(this->parseablePalette);
         connect(ui->funcLineEdit[i], &QLineEdit::returnPressed, this, &MainWindow::OnReturnKeyPressed);
-        connect(ui->funcLineEdit[i], &QLineEdit::textEdited, this, &MainWindow::OnFuncLineEditTextEdited);
+        connect(ui->funcLineEdit[i], &QLineEdit::textChanged, this, &MainWindow::OnFuncLineEditTextChanged);
     }
 
     connect(&gameUpdateFutureWatcher, &QFutureWatcher<void>::finished, this, &MainWindow::OnGameUpdateFinished);
     connect(&waitTimer, &QTimer::timeout, this, &MainWindow::OnWaitTimerFinished);
+    connect(ui->newGameMenuAction, &QAction::triggered, this, &MainWindow::OnNewGameMenuTriggered);
     connect(ui->aboutMenuAction, &QAction::triggered, this, &MainWindow::OnAboutMenuTriggered);
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
+}
+
+void MainWindow::OnNewGameMenuTriggered()
+{
+    // create new game
+    this->game.Remake();
+
+    // clear UI
+    for(size_t i = 0; i < this->numberOfFunctionInputs; ++i)
+    {
+        ui->funcLineEdit[i]->clear();
+    }
+
+    this->InitializePlot();
+    this->UpdateWindowTitle();
 }
 
 void MainWindow::OnAboutMenuTriggered()
@@ -329,7 +345,7 @@ void MainWindow::OnReturnKeyPressed()
     this->StartCalculation();
 }
 
-void MainWindow::OnFuncLineEditTextEdited()
+void MainWindow::OnFuncLineEditTextChanged()
 {
     auto funcLineEdit = dynamic_cast<QLineEdit*>(QObject::sender());
     auto funcString = std::string(funcLineEdit->text().toLocal8Bit().constData());

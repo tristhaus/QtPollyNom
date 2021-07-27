@@ -23,6 +23,7 @@
 #endif
 
 #include <QtTest>
+#include <QtWidgets/QMenuBar>
 
 #include "../Frontend/mainwindow.h"
 #include "../TestHelper/fixeddotgenerator.h"
@@ -51,6 +52,7 @@ private slots:
     void AfterCalculationUIShallRefocusCorrectlyToButton();
     void AfterHittingGoodDotsUIShallCorrectlySetTitle();
     void AfterHittingBadDotUIShallCorrectlySetTitle();
+    void NewGameButtonShallCreateNewGame();
 };
 
 MainWindowTest::MainWindowTest()
@@ -410,8 +412,80 @@ void MainWindowTest::AfterHittingBadDotUIShallCorrectlySetTitle()
 
     // Assert
     QRegularExpression verification("-∞");
-    auto thing = mw.windowTitle();
     QVERIFY2(mw.windowTitle().contains(verification), "correct score was not part of the window title");
+}
+
+void MainWindowTest::NewGameButtonShallCreateNewGame()
+{
+    // Arrange
+    MainWindow mw(std::make_shared<FixedDotGenerator>(2));
+    auto ui = mw.ui;
+
+    QString function1 = "1/x";
+    QString function2 = "(x-3.0)*(x+4.0)";
+
+    // spy needed such that events actually happen
+    QSignalSpy spyUpdate(&(mw.gameUpdateFutureWatcher), &QFutureWatcher<void>::finished);
+    QSignalSpy spyNewGameAction(ui->newGameMenuAction, &QAction::triggered);
+
+    // Act
+    for(size_t i = 0; i < ui->funcLineEdit.size(); ++i)
+    {
+        ui->funcLineEdit[i]->clear();
+    }
+
+    auto dots1 = mw.game.GetDots();
+
+    QTest::keyClicks(ui->funcLineEdit[0], function1);
+    QTest::keyClicks(ui->funcLineEdit[1], function2);
+    QTest::mouseClick(ui->calcButton, Qt::LeftButton);
+
+    spyUpdate.wait();
+
+    QMenuBar *menuBar = ui->menubar;
+    QVERIFY2(menuBar != nullptr, "menuBar not found");
+    if (menuBar != nullptr)
+    {
+        QList<QAction *> actions = menuBar->actions();
+        for(qsizetype i = 0; i < actions.size(); ++i)
+        {
+            auto & action = actions[i];
+            if (action->objectName() == QString::fromUtf8("newGame"))
+            {
+                action->trigger();
+                break;
+            }
+        }
+    }
+
+    auto dots2 = mw.game.GetDots();
+
+    // Assert
+    const double tolerance = 1e-9;
+    for(unsigned int iter1 = 0; iter1 < dots1.size(); ++iter1)
+    {
+        auto & dot1 = dots1[iter1];
+        for(unsigned int iter2 = 0; iter2 < dots2.size(); ++iter2)
+        {
+            auto & dot2 = dots2[iter2];
+
+            auto evalFirst = abs(dot1->GetCoordinates().first - dot2->GetCoordinates().first) < tolerance;
+            auto evalSecond = abs(dot1->GetCoordinates().second - dot2->GetCoordinates().second) < tolerance;
+            auto evalRadius = abs(dot1->GetRadius() - dot2->GetRadius()) < tolerance;
+            auto evalKind = dot1->IsGood() == dot2->IsGood();
+            QVERIFY2(!(evalFirst && evalSecond && evalRadius && evalKind), "dots match");
+        }
+    }
+
+    QRegularExpression verification(" 0$");
+    QVERIFY2(mw.windowTitle().contains(verification), "correct score was not part of the window title");
+
+    for(std::vector<QLineEdit>::size_type j = 0; j < ui->funcLineEdit.size(); ++j)
+    {
+        QVERIFY2(ui->funcLineEdit[j]->text().isEmpty(), "line edit not empty");
+    }
+
+    QVERIFY2(ui->plot->graphCount() == 0, "graphs found");
 }
 
 QTEST_MAIN(MainWindowTest)
