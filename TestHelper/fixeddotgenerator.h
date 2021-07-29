@@ -25,7 +25,7 @@ using namespace Backend;
 
 /*!
  * \brief The FixedDotGenerator class is a dot generator
- * that always creates the same dots.
+ * that creates the same dots over and over, depending on configuration.
  */
 class FixedDotGenerator final : public DotGenerator
 {
@@ -36,6 +36,8 @@ private:
 public:
     /*!
      * \brief Initializes a new instance.
+     * \param period The number of Generate() calls until the dots begin to repeat.
+     *        Current maximum is 2.
      */
     FixedDotGenerator(unsigned short period = 1);
 

@@ -24,6 +24,7 @@ FixedDotGenerator::FixedDotGenerator(unsigned short period)
 {
 }
 
+// the basic set
 std::vector<std::shared_ptr<Dot>> FixedDotGenerator::GenerateSet0()
 {
     std::vector<std::shared_ptr<Dot>> retval;
@@ -63,6 +64,8 @@ std::vector<std::shared_ptr<Dot>> FixedDotGenerator::Generate()
     case 1:
         retval = GenerateSet1();
         break;
+    default:
+        throw std::exception("programming mistake: period used in fixeddotgenerator is too large");
     }
 
     ++state;
