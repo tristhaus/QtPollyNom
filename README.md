@@ -35,3 +35,5 @@ Graphical user interface built using [Qt](https://doc.qt.io/).
 Icon (axes and graph) attributed to: Icons made by [Pixel perfect](https://www.flaticon.com/authors/pixel-perfect) from [Flaticon](https://www.flaticon.com/)
 
 [QCustomPlot](https://www.qcustomplot.com/) library (Version 2.1.0) by Emanuel Eichhammer used under the [GPL v3](https://www.gnu.org/licenses/gpl-3.0.html).
+
+JSON de/serialization via [rapidjson](https://rapidjson.org/) provided by THL A29 Limited, a Tencent company, and Milo Yip used under the [MIT license](http://opensource.org/licenses/MIT).
