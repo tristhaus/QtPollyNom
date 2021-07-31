@@ -22,6 +22,7 @@
 #include <vector>
 #include <set>
 #include <memory>
+#include "classes.h"
 #include "parser.h"
 #include "dot.h"
 #include "dotgenerator.h"
@@ -75,6 +76,12 @@ namespace Backend {
          * \return true if the argument is parseable, false otherwise.
          */
         bool IsParseable(const std::string & input) const;
+
+        /*!
+         * \brief Gets the functions contained.
+         * \return The functions.
+         */
+        const std::vector<std::string> GetFunctions() const;
 
         /*!
          * \brief Gets the sorted data calculated in the update representing the graphs of the functions.

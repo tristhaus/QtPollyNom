@@ -54,6 +54,11 @@ namespace Backend {
         return this->parser.IsParseable(input);
     }
 
+    const std::vector<std::string> Game::GetFunctions() const
+    {
+        return this->updateFuncStrings;
+    }
+
     const std::vector<std::vector<std::pair<std::vector<double>, std::vector<double>>>>& Game::GetGraphs() const
     {
         return graphs;

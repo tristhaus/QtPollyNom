@@ -33,6 +33,7 @@ HEADERS += \
         testexpressionbuilder.h \
         tst_basex.h \
         tst_constant.h \
+        tst_deserializer.h \
         tst_dot.h \
         tst_equality.h \
         tst_evaluating.h \

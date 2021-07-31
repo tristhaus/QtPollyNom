@@ -16,7 +16,11 @@
 #
 #
 
+INCLUDEPATH += $$PWD\..\Include
+
 HEADERS += \
+    $$PWD/classes.h \
+    $$PWD/deserializer.h \
     $$PWD/dot.h \
     $$PWD/dotgenerator.h \
     $$PWD/evaluator.h \
@@ -33,6 +37,7 @@ HEADERS += \
     $$PWD/sum.h
 
 SOURCES += \
+    $$PWD/deserializer.cpp \
     $$PWD/dot.cpp \
     $$PWD/evaluator.cpp \
     $$PWD/functions.cpp \
