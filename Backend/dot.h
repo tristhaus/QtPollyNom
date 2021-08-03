@@ -45,8 +45,9 @@ namespace Backend {
          * \param x The x coordinate of the dot center.
          * \param y The y coordinate of the dot center.
          * \param isGoodDot Value indicating whether the dot is a good dot (i.e. should be hit).
+         * \param radius The radius of the dot, which must not be negative.
          */
-        Dot(double x, double y, bool isGoodDot = true);
+        Dot(double x, double y, bool isGoodDot = true, double radius = 0.25);
         ~Dot() = default;
         Dot(const Dot&) = default;
         Dot(Dot&&) = default;

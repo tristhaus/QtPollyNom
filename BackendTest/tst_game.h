@@ -446,4 +446,55 @@ TEST(BackendTest, GameRemakeShallCreateANewGame)
     EXPECT_EQ(0, game.GetScore());
 }
 
+TEST(BackendTest, GameShallAcceptDots)
+{
+    // Arrange
+    Game game(std::make_shared<FixedDotGenerator>());
+
+    std::vector<std::string> exprStrings1 =
+    {
+        std::string("1/x"),
+        std::string("(x+8)*(x+4)*(x-1)"),
+        std::string("(x+4)*(x-1)*(x-4.95)"),
+        std::string(""),
+        std::string("")
+    };
+
+    std::vector<std::string> exprStrings2 =
+    {
+        std::string("-x"),
+        std::string(""),
+        std::string(""),
+        std::string(""),
+        std::string("")
+    };
+
+    std::vector<std::shared_ptr<Dot>> dots;
+    dots.emplace_back(std::make_shared<Dot>(-3.0, 3.0));
+    dots.emplace_back(std::make_shared<Dot>(2.0, -2.0));
+
+    // Act
+    game.Update(exprStrings1);
+    auto score1 = game.GetScore();
+
+    game.SetDots(dots);
+    game.Update(exprStrings1);
+    auto score2 = game.GetScore();
+
+    auto storedDots = game.GetDots();
+
+    game.Update(exprStrings2);
+    auto score3 = game.GetScore();
+
+    // Assert
+    EXPECT_EQ(8, score1);
+    EXPECT_EQ(0, score2);
+    ASSERT_EQ(2, storedDots.size());
+    EXPECT_EQ(-3.0, storedDots[0]->GetCoordinates().first);
+    EXPECT_EQ(3.0, storedDots[0]->GetCoordinates().second);
+    EXPECT_EQ(2.0, storedDots[1]->GetCoordinates().first);
+    EXPECT_EQ(-2.0, storedDots[1]->GetCoordinates().second);
+    EXPECT_EQ(3, score3);
+}
+
 #endif // TST_GAME_H

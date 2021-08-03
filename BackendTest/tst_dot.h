@@ -277,4 +277,21 @@ TEST(BackendTest, DotShallCorrectlyDetermineBeingHitEvenAfterFirstHit)
     EXPECT_TRUE(isActiveAfterC);
 }
 
+TEST(BackendTest, DotShallThrowOnNegativeRadius)
+{
+    try
+    {
+        Dot dot(0.4, 0.5, true, -1.0);
+        ASSERT_TRUE(false);
+    }
+    catch (std::exception&)
+    {
+        ASSERT_TRUE(true);
+    }
+    catch (...)
+    {
+        ASSERT_TRUE(false);
+    }
+}
+
 #endif // TST_DOT_H

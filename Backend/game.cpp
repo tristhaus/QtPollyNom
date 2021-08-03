@@ -64,6 +64,11 @@ namespace Backend {
         return graphs;
     }
 
+    void Game::SetDots(std::vector<std::shared_ptr<Dot>> newDots)
+    {
+        dots = newDots;
+    }
+
     const std::vector<std::shared_ptr<Dot>>& Game::GetDots() const
     {
         return dots;

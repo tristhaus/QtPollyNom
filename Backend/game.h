@@ -90,6 +90,12 @@ namespace Backend {
         const std::vector<std::vector<std::pair<std::vector<double>, std::vector<double>>>>& GetGraphs() const;
 
         /*!
+         * \brief Sets the dot information.
+         * \param newDots The dots to set.
+         */
+        void SetDots(std::vector<std::shared_ptr<Dot>> newDots);
+
+        /*!
          * \brief Gets the dot information.
          * \return The dot information.
          */

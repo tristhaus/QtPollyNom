@@ -23,10 +23,14 @@
 
 namespace Backend {
 
-    Dot::Dot(double x, double y, bool goodDot)
-        : x(x), y(y), radius(0.25),
+    Dot::Dot(double x, double y, bool goodDot, double radius)
+        : x(x), y(y), radius(radius),
           isActive(false), isGood(goodDot)
     {
+        if(radius < 0.0)
+        {
+            throw std::exception("negative radius not allowed");
+        }
     }
 
     void Dot::SetIsActive(bool active)
