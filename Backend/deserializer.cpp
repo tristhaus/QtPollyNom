@@ -19,11 +19,13 @@
 #define __STDC_WANT_LIB_EXT1__ 1
 
 #include <ctime>
+#include <cstring>
 #include "deserializer.h"
 #include "game.h"
 #include "rapidjson/document.h"
 #include "rapidjson/writer.h"
 #include "rapidjson/ostreamwrapper.h"
+#include "rapidjson/istreamwrapper.h"
 
 #undef __STDC_WANT_LIB_EXT1__
 
@@ -31,11 +33,6 @@ namespace Backend
 {
     DeSerializer::DeSerializer()
     {
-    }
-
-    std::string GetKindAsString(bool isGood)
-    {
-        return isGood ? "good" : "bad";
     }
 
     void DeSerializer::AddSerializationTime(rapidjson::Document & document, rapidjson::MemoryPoolAllocator<rapidjson::CrtAllocator> & allocator)
@@ -77,6 +74,27 @@ namespace Backend
         std::string gameDotKind = GetKindAsString(gameDot->IsGood());
         value.SetString(gameDotKind.c_str(), static_cast<rapidjson::SizeType>(gameDotKind.length()), allocator);
         serializationDot.AddMember(key, value, allocator);
+    }
+
+    std::string DeSerializer::GetKindAsString(const bool isGood)
+    {
+        return isGood ? ValueKindGood : ValueKindBad;
+    }
+
+    bool DeSerializer::TryParseKindFromString(const std::string string, bool & kind)
+    {
+        if(string.compare(ValueKindGood) == 0)
+        {
+            kind = true;
+            return true;
+        }
+        else if(string.compare(ValueKindBad) == 0)
+        {
+            kind = false;
+            return true;
+        }
+
+        return false;
     }
 
     void DeSerializer::Serialize(const Game & game, std::ostream & os)
@@ -132,6 +150,109 @@ namespace Backend
 
         rapidjson::Writer<rapidjson::OStreamWrapper> writer(osw);
         document.Accept(writer);
+    }
+
+    std::pair<bool, std::string> MakeError(std::string error)
+    {
+        return std::make_pair<bool, std::string>(false, error.c_str());
+    }
+
+    std::pair<bool, std::string> DeSerializer::Deserialize(std::istream& is, Game& game)
+    {
+        rapidjson::IStreamWrapper isw(is);
+
+        rapidjson::Document document;
+        document.ParseStream(isw);
+
+        if(!(document.IsObject()))
+        {
+            return MakeError("did not parse to object");
+        }
+
+        if(!(document.HasMember(KeyDataVersion) && document[KeyDataVersion].IsString() && std::strcmp(document[KeyDataVersion].GetString(), "1") == 0))
+        {
+            return MakeError("no valid data version found");
+        }
+
+        if(!(document.HasMember(KeyDots) && document[KeyDots].IsArray()))
+        {
+            return MakeError("no valid dots member found");
+        }
+
+        auto & dots = document[KeyDots];
+        auto dotsIt = dots.Begin();
+        auto dotsEnd = dots.End();
+
+        std::vector<std::shared_ptr<Dot>> deserializedDots;
+
+        for(; dotsIt != dotsEnd; ++dotsIt)
+        {
+            if(!(dotsIt->HasMember(KeyX) && (*dotsIt)[KeyX].IsDouble()
+                 && dotsIt->HasMember(KeyY) && (*dotsIt)[KeyY].IsDouble()
+                 && dotsIt->HasMember(KeyKind) && (*dotsIt)[KeyKind].IsString()
+                 && dotsIt->HasMember(KeyRadius) && (*dotsIt)[KeyRadius].IsDouble()))
+            {
+                return MakeError("invalid dot found");
+            }
+
+            auto deserializedX = (*dotsIt)[KeyX].GetDouble();
+            auto deserializedY = (*dotsIt)[KeyY].GetDouble();
+            auto deserializedRadius = (*dotsIt)[KeyRadius].GetDouble();
+
+            if(deserializedRadius < 0.0)
+            {
+                return MakeError("radius of dot must be positive");
+            }
+
+            bool deserializedKind;
+            if(!TryParseKindFromString((*dotsIt)[KeyKind].GetString(), deserializedKind))
+            {
+                return MakeError("invalid kind in dot found");
+            }
+
+            auto deserializedDot = std::make_shared<Dot>(deserializedX, deserializedY, deserializedKind, deserializedRadius);
+
+            deserializedDots.push_back(deserializedDot);
+        }
+
+        if(!(document.HasMember(KeyFunctions) && document[KeyFunctions].IsArray()))
+        {
+            return MakeError("no valid functions member found");
+        }
+
+        auto & functions = document[KeyFunctions];
+        auto functionsIt = functions.Begin();
+        auto functionsEnd = functions.End();
+
+        std::vector<std::string> deserializedFunctions;
+
+        for(; functionsIt != functionsEnd; ++functionsIt)
+        {
+            if(!functionsIt->IsString())
+            {
+                return MakeError("function is not a string");
+            }
+
+            auto deserializedFunction = std::string(functionsIt->GetString());
+
+            deserializedFunctions.push_back(deserializedFunction);
+        }
+
+        while(deserializedFunctions.size() > 5)
+        {
+            deserializedFunctions.pop_back();
+        }
+
+        while(deserializedFunctions.size() < 5)
+        {
+            deserializedFunctions.push_back("");
+        }
+
+        game.Clear();
+        game.SetDots(deserializedDots);
+        game.Update(deserializedFunctions);
+
+        return std::make_pair<bool, std::string>(true, "");
     }
 
 }
