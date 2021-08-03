@@ -311,6 +311,40 @@ TEST(BackendTest, GameShallRepeatedlyAndCorrectlyCalculateScore)
     EXPECT_EQ(15, score2);
 }
 
+TEST(BackendTest, GameShallCorrectlyCalculateScoreForPermutatedFunctions)
+{
+    // Arrange
+    Game game(std::make_shared<FixedDotGenerator>());
+
+    std::vector<std::string> exprStrings1 =
+    {
+        std::string("1/x"),
+        std::string("(x-3.0)*(x+4.0)"),
+        std::string("(x+8)*(x+4)*(x-1)"),
+        std::string("(x+8)*(x+4)*(x-1)*(x-4.95)"),
+        std::string("")
+    };
+
+    std::vector<std::string> exprStrings2 =
+    {
+        std::string("(x+8)*(x+4)*(x-1)*(x-4.95)"),
+        std::string("(x+8)*(x+4)*(x-1)"),
+        std::string(""),
+        std::string("(x-3.0)*(x+4.0)"),
+        std::string("1/x")
+    };
+
+    // Act
+    game.Update(exprStrings1);
+    auto score1 = game.GetScore();
+    game.Update(exprStrings2);
+    auto score2 = game.GetScore();
+
+    // Assert
+    EXPECT_EQ(15, score1);
+    EXPECT_EQ(15, score2);
+}
+
 TEST(BackendTest, GameShallCorrectlyHandleOverlappingGraphs)
 {
     // Arrange
