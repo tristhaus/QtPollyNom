@@ -34,6 +34,7 @@ HEADERS += \
     $$PWD/power.h \
     $$PWD/product.h \
     $$PWD/randomdotgenerator.h \
+    $$PWD/repository.h \
     $$PWD/sum.h
 
 SOURCES += \
