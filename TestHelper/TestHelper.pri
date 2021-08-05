@@ -17,7 +17,9 @@
 #
 
 HEADERS += \
-    $$PWD/fixeddotgenerator.h
+    $$PWD/fixeddotgenerator.h \
+    $$PWD/memoryrepository.h
 
 SOURCES += \
-    $$PWD/fixeddotgenerator.cpp
+    $$PWD/fixeddotgenerator.cpp \
+    $$PWD/memoryrepository.cpp

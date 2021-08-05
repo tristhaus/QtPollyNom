@@ -21,6 +21,7 @@
 
 #include <string>
 #include "classes.h"
+#include "deserializer.h"
 
 namespace Backend
 {
@@ -31,8 +32,11 @@ namespace Backend
      */
     class Repository
     {
+    protected:
+        DeSerializer deserializer;
     public:
-        explicit Repository()
+        explicit Repository(DeSerializer deserializer)
+            : deserializer(deserializer)
         {
         }
         virtual ~Repository()

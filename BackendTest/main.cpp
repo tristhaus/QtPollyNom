@@ -33,6 +33,7 @@
 #include "tst_subsetgenerator.h"
 #include "tst_fixeddotgenerator.h"
 #include "tst_deserializer.h"
+#include "tst_memoryrepository.h"
 
 #include <gtest/gtest.h>
 

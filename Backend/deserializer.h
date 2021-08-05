@@ -46,7 +46,7 @@ namespace Backend
          * \brief Initializes a new instance.
          */
         DeSerializer();
-        DeSerializer(const DeSerializer&) = delete;
+        DeSerializer(const DeSerializer&) = default;
         DeSerializer(DeSerializer&&) = delete;
         DeSerializer& operator=(const DeSerializer&) = delete;
         DeSerializer& operator=(DeSerializer&&) = delete;

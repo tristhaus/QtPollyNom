@@ -42,6 +42,7 @@ HEADERS += \
         tst_functions.h \
         tst_fundamental.h \
         tst_game.h \
+        tst_memoryrepository.h \
         tst_parser.h \
         tst_power.h \
         tst_printingtest.h \
