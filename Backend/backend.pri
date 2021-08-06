@@ -21,6 +21,7 @@ INCLUDEPATH += $$PWD\..\Include
 HEADERS += \
     $$PWD/classes.h \
     $$PWD/deserializer.h \
+    $$PWD/diskrepository.h \
     $$PWD/dot.h \
     $$PWD/dotgenerator.h \
     $$PWD/evaluator.h \
@@ -39,6 +40,7 @@ HEADERS += \
 
 SOURCES += \
     $$PWD/deserializer.cpp \
+    $$PWD/diskrepository.cpp \
     $$PWD/dot.cpp \
     $$PWD/evaluator.cpp \
     $$PWD/functions.cpp \

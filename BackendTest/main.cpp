@@ -34,6 +34,7 @@
 #include "tst_fixeddotgenerator.h"
 #include "tst_deserializer.h"
 #include "tst_memoryrepository.h"
+#include "tst_diskrepository.h"
 
 #include <gtest/gtest.h>
 
