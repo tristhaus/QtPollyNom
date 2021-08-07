@@ -31,15 +31,15 @@ namespace Backend
     class DeSerializer final
     {
     private:
-        constexpr static const char * const KeyDataVersion = u8"dataVersion";
-        constexpr static const char * const KeyX = u8"x";
-        constexpr static const char * const KeyY = u8"y";
-        constexpr static const char * const KeyRadius = u8"radius";
-        constexpr static const char * const KeyKind = u8"kind";
-        constexpr static const char * const ValueKindGood = u8"good";
-        constexpr static const char * const ValueKindBad = u8"bad";
-        constexpr static const char * const KeyDots = u8"dots";
-        constexpr static const char * const KeyFunctions = u8"functions";
+        constexpr static const wchar_t * const KeyDataVersion = L"dataVersion";
+        constexpr static const wchar_t * const KeyX = L"x";
+        constexpr static const wchar_t * const KeyY = L"y";
+        constexpr static const wchar_t * const KeyRadius = L"radius";
+        constexpr static const wchar_t * const KeyKind = L"kind";
+        constexpr static const wchar_t * const ValueKindGood = L"good";
+        constexpr static const wchar_t * const ValueKindBad = L"bad";
+        constexpr static const wchar_t * const KeyDots = L"dots";
+        constexpr static const wchar_t * const KeyFunctions = L"functions";
 
     public:
         /*!
@@ -56,7 +56,7 @@ namespace Backend
          * \param game The game to serialize.
          * \param os The stream that shall accept the serialized game.
          */
-        void Serialize(const Game & game, std::ostream & os);
+        void Serialize(const Game & game, std::wostream & wos);
 
         /*!
          * \brief Deserializes a game from the provided stream (in a JSON representation) into the provided game.
@@ -64,13 +64,13 @@ namespace Backend
          * \param game The game that shall accept the deserialized information.
          * \return true and empty string if successful, false and error message if not.
          */
-        std::pair<bool, std::string> Deserialize(std::istream & is, Game & game);
+        std::pair<bool, std::wstring> Deserialize(std::wistream & wis, Game & game);
 
     private:
-        void TransformGameDotIntoSerializationDot(std::shared_ptr<Dot>& gameDot, rapidjson::Value& serializationDot, rapidjson::MemoryPoolAllocator<rapidjson::CrtAllocator>& allocator);
-        void AddSerializationTime(rapidjson::Document& document, rapidjson::MemoryPoolAllocator<rapidjson::CrtAllocator>& allocator);
-        std::string GetKindAsString(const bool isGood);
-        bool TryParseKindFromString(const std::string string, bool& kind);
+        void TransformGameDotIntoSerializationDot(std::shared_ptr<Dot>& gameDot, rapidjson::GenericValue<rapidjson::UTF16<wchar_t>>& serializationDot, rapidjson::MemoryPoolAllocator<rapidjson::CrtAllocator>& allocator);
+        void AddSerializationTime(rapidjson::GenericDocument<rapidjson::UTF16<wchar_t>>& document, rapidjson::MemoryPoolAllocator<rapidjson::CrtAllocator>& allocator);
+        std::wstring GetKindAsString(const bool isGood);
+        bool TryParseKindFromString(const std::wstring string, bool& kind);
     };
 
 }

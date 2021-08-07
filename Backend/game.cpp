@@ -43,18 +43,18 @@ namespace Backend {
         this->Init();
     }
 
-    void Game::Update(const std::vector<std::string> & funcStrings)
+    void Game::Update(const std::vector<std::wstring> & funcStrings)
     {
         this->updateFuncStrings = funcStrings;
         this->CreateGraphs();
     }
 
-    bool Game::IsParseable(const std::string& input) const
+    bool Game::IsParseable(const std::wstring& input) const
     {
         return this->parser.IsParseable(input);
     }
 
-    const std::vector<std::string> Game::GetFunctions() const
+    const std::vector<std::wstring> Game::GetFunctions() const
     {
         return this->updateFuncStrings;
     }
@@ -146,7 +146,7 @@ namespace Backend {
             }
 
 #ifdef _DEBUG
-            if(updateFuncStrings[i] == "slow")
+            if(updateFuncStrings[i] == L"slow")
             {
                 std::this_thread::sleep_for(std::chrono::milliseconds(2000));
                 continue;
@@ -187,11 +187,11 @@ namespace Backend {
         this->graphs[index] = graph;
     }
 
-    void Game::SaveFunctionAtIndex(unsigned long int index, std::string funcString)
+    void Game::SaveFunctionAtIndex(unsigned long int index, std::wstring funcString)
     {
         while(this->funcStringsEvaluated.size() < index + 1)
         {
-            this->funcStringsEvaluated.emplace_back("");
+            this->funcStringsEvaluated.emplace_back(L"");
         }
 
         this->funcStringsEvaluated[index] = funcString;

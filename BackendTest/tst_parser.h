@@ -45,12 +45,12 @@ TEST(BackendTest, SimpleCasesShouldParseCorrectly)
 {
     // Arrange
     Parser parser;
-    std::string x = "X";
-    std::string y = "Y";
-    std::string number = " +030.500 ";
-    std::string invalidNumber = "030.50.0";
-    std::string bracedX = "(X)";
-    std::string doubleBracedX = "((X))";
+    std::wstring x = L"X";
+    std::wstring y = L"Y";
+    std::wstring number = L" +030.500 ";
+    std::wstring invalidNumber = L"030.50.0";
+    std::wstring bracedX = L"(X)";
+    std::wstring doubleBracedX = L"((X))";
 
     // Act
     auto exprX = parser.Parse(x);
@@ -76,8 +76,8 @@ TEST(BackendTest, SingleSummandShouldParseToConstant)
 {
     // Arrange
     Parser parser;
-    std::string positive = "+1.1";
-    std::string negative = "-2.2";
+    std::wstring positive = L"+1.1";
+    std::wstring negative = L"-2.2";
 
     // Act
     auto exprPositive = parser.Parse(positive);
@@ -95,8 +95,8 @@ TEST(BackendTest, SingleXShouldParseToSum)
 {
     // Arrange
     Parser parser;
-    std::string positiveX = "+x";
-    std::string negativeX = "-x";
+    std::wstring positiveX = L"+x";
+    std::wstring negativeX = L"-x";
 
     // Act
     auto exprPositive = parser.Parse(positiveX);
@@ -116,7 +116,7 @@ TEST(BackendTest, SimpleSumShouldParseCorrectly1)
 {
     // Arrange
     Parser parser;
-    std::string twoAdd = "+2.0+3.0";
+    std::wstring twoAdd = L"+2.0+3.0";
 
     // Act
     auto exprSum = parser.Parse(twoAdd);
@@ -134,7 +134,7 @@ TEST(BackendTest, SimpleSumShouldParseCorrectly2)
 {
     // Arrange
     Parser parser;
-    std::string twoSubtract = "-2.0-3.0";
+    std::wstring twoSubtract = L"-2.0-3.0";
 
     // Act
     auto exprSum = parser.Parse(twoSubtract);
@@ -152,7 +152,7 @@ TEST(BackendTest, SimpleSumShouldParseCorrectly3)
 {
     // Arrange
     Parser parser;
-    std::string twoAddBracketed = "(2.0)+(3.0)";
+    std::wstring twoAddBracketed = L"(2.0)+(3.0)";
 
     // Act
     auto exprSum = parser.Parse(twoAddBracketed);
@@ -170,7 +170,7 @@ TEST(BackendTest, SimpleSumShouldParseCorrectly4)
 {
     // Arrange
     Parser parser;
-    std::string threeAdd = "2.0+3.0-x";
+    std::wstring threeAdd = L"2.0+3.0-x";
 
     // Act
     auto exprSum = parser.Parse(threeAdd);
@@ -189,7 +189,7 @@ TEST(BackendTest, SimpleSumShouldParseCorrectly5)
 {
     // Arrange
     Parser parser;
-    std::string threeAddWithBrackets = "2.0-(3.0+x)+1.0";
+    std::wstring threeAddWithBrackets = L"2.0-(3.0+x)+1.0";
 
     // Act
     auto exprSum = parser.Parse(threeAddWithBrackets);
@@ -212,7 +212,7 @@ TEST(BackendTest, SimpleProductShouldParseCorrectly1)
 {
     // Arrange
     Parser parser;
-    std::string twoMultiply = "2.0*3.0";
+    std::wstring twoMultiply = L"2.0*3.0";
 
     // Act
     auto exprProduct = parser.Parse(twoMultiply);
@@ -231,7 +231,7 @@ TEST(BackendTest, SimpleProductShouldParseCorrectly2)
 {
     // Arrange
     Parser parser;
-    std::string twoDivide = "2.0/3.0";
+    std::wstring twoDivide = L"2.0/3.0";
 
     // Act
     auto exprProduct = parser.Parse(twoDivide);
@@ -250,7 +250,7 @@ TEST(BackendTest, SimpleProductShouldParseCorrectly3)
 {
     // Arrange
     Parser parser;
-    std::string twoMultiplyBracketed = "(2.0)*(3.0)";
+    std::wstring twoMultiplyBracketed = L"(2.0)*(3.0)";
 
     // Act
     auto exprProduct = parser.Parse(twoMultiplyBracketed);
@@ -269,7 +269,7 @@ TEST(BackendTest, SimpleProductShouldParseCorrectly4)
 {
     // Arrange
     Parser parser;
-    std::string threeMultiply = "2.0*3.0/x";
+    std::wstring threeMultiply = L"2.0*3.0/x";
 
     // Act
     auto exprProduct = parser.Parse(threeMultiply);
@@ -288,7 +288,7 @@ TEST(BackendTest, SimpleProductShouldParseCorrectly5)
 {
     // Arrange
     Parser parser;
-    std::string threeMultiplyWithBrackets = "2.0/(3.0*x)*1.0";
+    std::wstring threeMultiplyWithBrackets = L"2.0/(3.0*x)*1.0";
 
     // Act
     auto exprProduct = parser.Parse(threeMultiplyWithBrackets);
@@ -311,7 +311,7 @@ TEST(BackendTest, ProductSumMixShouldParseCorrectly1)
 {
     // Arrange
     Parser parser;
-    std::string threeTerms = "2.0*x+1.0";
+    std::wstring threeTerms = L"2.0*x+1.0";
 
     // Act
     auto exprProduct = parser.Parse(threeTerms);
@@ -333,7 +333,7 @@ TEST(BackendTest, ProductSumMixShouldParseCorrectly2)
 {
     // Arrange
     Parser parser;
-    std::string threeTerms = "-2.0*x+1.0";
+    std::wstring threeTerms = L"-2.0*x+1.0";
 
     // Act
     auto exprProduct = parser.Parse(threeTerms);
@@ -355,7 +355,7 @@ TEST(BackendTest, ProductSumMixShouldParseCorrectly3)
 {
     // Arrange
     Parser parser;
-    std::string threeTermsBracketed = "-2.1*(x+3.1)+1.1";
+    std::wstring threeTermsBracketed = L"-2.1*(x+3.1)+1.1";
 
     // Act
     auto exprProduct = parser.Parse(threeTermsBracketed);
@@ -380,7 +380,7 @@ TEST(BackendTest, ProductSumMixShouldParseCorrectly4)
 {
     // Arrange
     Parser parser;
-    std::string threeTermsBracketed = "(x+3.1)*-2.1+1.1";
+    std::wstring threeTermsBracketed = L"(x+3.1)*-2.1+1.1";
 
     // Act
     auto exprProduct = parser.Parse(threeTermsBracketed);
@@ -405,7 +405,7 @@ TEST(BackendTest, PowerShouldParseCorrectly1)
 {
     // Arrange
     Parser parser;
-    std::string square = "x^2.0";
+    std::wstring square = L"x^2.0";
 
     // Act
     auto exprPower = parser.Parse(square);
@@ -424,7 +424,7 @@ TEST(BackendTest, PowerShouldParseCorrectly2)
 {
     // Arrange
     Parser parser;
-    std::string invertedSquare = "x^(-2.0)";
+    std::wstring invertedSquare = L"x^(-2.0)";
 
     // Act
     auto exprPower = parser.Parse(invertedSquare);
@@ -443,7 +443,7 @@ TEST(BackendTest, PowerShouldParseCorrectly3)
 {
     // Arrange
     Parser parser;
-    std::string invertedSquare = "x^-2.0";
+    std::wstring invertedSquare = L"x^-2.0";
 
     // Act
     auto exprPower = parser.Parse(invertedSquare);
@@ -456,7 +456,7 @@ TEST(BackendTest, PowerShouldParseCorrectly4)
 {
     // Arrange
     Parser parser;
-    std::string powerString = "2.0^x";
+    std::wstring powerString = L"2.0^x";
 
     // Act
     auto exprPower = parser.Parse(powerString);
@@ -475,7 +475,7 @@ TEST(BackendTest, PowerShouldParseCorrectly5)
 {
     // Arrange
     Parser parser;
-    std::string powerString = "-(2.0^x)";
+    std::wstring powerString = L"-(2.0^x)";
 
     // Act
     auto exprPower = parser.Parse(powerString);
@@ -495,7 +495,7 @@ TEST(BackendTest, LessSimplePowerShouldParseCorrectly)
 {
     // Arrange
     Parser parser;
-    std::string powerString = "-((2.0*x)^(x+1.0))";
+    std::wstring powerString = L"-((2.0*x)^(x+1.0))";
 
     // Act
     auto exprProduct = parser.Parse(powerString);
@@ -521,7 +521,7 @@ TEST(BackendTest, PowerTowerShouldParseCorrectly)
 {
     // Arrange
     Parser parser;
-    std::string powerString = "3.0^x^2.0";
+    std::wstring powerString = L"3.0^x^2.0";
 
     // Act
     auto exprProduct = parser.Parse(powerString);
@@ -543,7 +543,7 @@ TEST(BackendTest, FunctionsShouldParseCorrectly)
 {
     // Arrange
     Parser parser;
-    std::string functionString = "cos(x+sin(x))";
+    std::wstring functionString = L"cos(x+sin(x))";
 
     // Act
     auto exprFunction = parser.Parse(functionString);
@@ -562,7 +562,7 @@ TEST(BackendTest, FunctionsTowerShouldParseCorrectly)
 {
     // Arrange
     Parser parser;
-    std::string functionString = "abs(sin(cos(tan(exp(ln(x))))))";
+    std::wstring functionString = L"abs(sin(cos(tan(exp(ln(x))))))";
 
     // Act
     auto exprFunction = parser.Parse(functionString);
@@ -584,8 +584,8 @@ TEST(BackendTest, InvalidFunctionsShouldFailToParse)
 {
     // Arrange
     Parser parser;
-    std::string functionString1 = "cis(x+sin(x))";
-    std::string functionString2 = "z(x+sin(x))";
+    std::wstring functionString1 = L"cis(x+sin(x))";
+    std::wstring functionString2 = L"z(x+sin(x))";
 
     // Act
     auto exprFunction1 = parser.Parse(functionString1);
@@ -602,7 +602,7 @@ TEST(BackendTest, ComplexExpression01ShouldRoundtripCorrectly)
     Parser parser;
     auto reference = TestExpressionBuilder::Build01();
     auto optional = reference->Print();
-    std::string string = optional.value_or("irrelevant");
+    std::wstring string = optional.value_or(L"irrelevant");
 
     // Act
     auto expr = parser.Parse(string);
@@ -618,7 +618,7 @@ TEST(BackendTest, ComplexExpression02ShouldRoundtripCorrectly)
     Parser parser;
     auto reference = TestExpressionBuilder::Build02();
     auto optional = reference->Print();
-    std::string string = optional.value_or("irrelevant");
+    std::wstring string = optional.value_or(L"irrelevant");
 
     // Act
     auto expr = parser.Parse(string);
@@ -634,7 +634,7 @@ TEST(BackendTest, ComplexExpression03ShouldRoundtripCorrectly)
     Parser parser;
     auto reference = TestExpressionBuilder::Build03();
     auto optional = reference->Print();
-    std::string string = optional.value_or("irrelevant");
+    std::wstring string = optional.value_or(L"irrelevant");
 
     // Act
     auto expr = parser.Parse(string);
@@ -650,7 +650,7 @@ TEST(BackendTest, ComplexExpression04ShouldRoundtripCorrectly)
     Parser parser;
     auto reference = TestExpressionBuilder::Build04();
     auto optional = reference->Print();
-    std::string string = optional.value_or("irrelevant");
+    std::wstring string = optional.value_or(L"irrelevant");
 
     // Act
     auto expr = parser.Parse(string);
@@ -666,7 +666,7 @@ TEST(BackendTest, ComplexExpression05ShouldRoundtripCorrectly)
     Parser parser;
     auto reference = TestExpressionBuilder::Build05();
     auto optional = reference->Print();
-    std::string string = optional.value_or("irrelevant");
+    std::wstring string = optional.value_or(L"irrelevant");
 
     // Act
     auto expr = parser.Parse(string);
@@ -682,7 +682,7 @@ TEST(BackendTest, ComplexExpression06ShouldRoundtripCorrectly)
     Parser parser;
     auto reference = TestExpressionBuilder::Build06();
     auto optional = reference->Print();
-    std::string string = optional.value_or("irrelevant");
+    std::wstring string = optional.value_or(L"irrelevant");
 
     // Act
     auto expr = parser.Parse(string);
@@ -698,7 +698,7 @@ TEST(BackendTest, ComplexExpression07ShouldRoundtripCorrectly)
     Parser parser;
     auto reference = TestExpressionBuilder::Build07();
     auto optional = reference->Print();
-    std::string string = optional.value_or("irrelevant");
+    std::wstring string = optional.value_or(L"irrelevant");
 
     // Act
     auto expr = parser.Parse(string);
@@ -714,7 +714,7 @@ TEST(BackendTest, ComplexExpression08ShouldRoundtripCorrectly)
     Parser parser;
     auto reference = TestExpressionBuilder::Build08();
     auto optional = reference->Print();
-    std::string string = optional.value_or("irrelevant");
+    std::wstring string = optional.value_or(L"irrelevant");
 
     // Act
     auto expr = parser.Parse(string);
@@ -726,15 +726,15 @@ TEST(BackendTest, ComplexExpression08ShouldRoundtripCorrectly)
 
 struct TestFunctionResult
 {
-    std::string testname;
-    std::string text;
+    std::wstring testname;
+    std::wstring text;
     bool expectedParseability;
-    friend std::ostream& operator<<(std::ostream& os, const TestFunctionResult& obj)
+    friend std::wostream& operator<<(std::wostream& os, const TestFunctionResult& obj)
     {
         return os
-                << "testname: " << obj.testname
-                << " text: " << obj.text
-                << " expectedParseability: " << (obj.expectedParseability ? "true" : "false");
+                << L"testname: " << obj.testname
+                << L" text: " << obj.text
+                << L" expectedParseability: " << (obj.expectedParseability ? L"true" : L"false");
     }
 };
 
@@ -744,58 +744,58 @@ class ParseabilityTest : public testing::TestWithParam<TestFunctionResult>
 
 INSTANTIATE_TEST_SUITE_P(BackendTest, ParseabilityTest,
     testing::Values(
-    TestFunctionResult{"Empty", "", false},
-    TestFunctionResult{"X", "X", true},
-    TestFunctionResult{"Y", "Y", false},
-    TestFunctionResult{"Number", " +030.500 ", true},
-    TestFunctionResult{"Invalid number", "030.50.0", false},
-    TestFunctionResult{"Braced X", "(X)", true},
-    TestFunctionResult{"Double braced X", "((X))", true},
-    TestFunctionResult{"Complete sum", "1+x+2", true},
-    TestFunctionResult{"Incomplete sum", "1+x+", false},
-    TestFunctionResult{"Complete product", "1/x", true},
-    TestFunctionResult{"Incomplete product", "1/", false},
-    TestFunctionResult{"Complete power", "1^x", true},
-    TestFunctionResult{"Incomplete power", "1^", false},
-    TestFunctionResult{"Malformed", "(x)x", false},
-    TestFunctionResult{"Function no argument", "sin()", false},
-    TestFunctionResult{"Number with space", "1 .0", true},
-    TestFunctionResult{"Double x 1", "x x", false},
-    TestFunctionResult{"Double x 2", "xx", false},
-    TestFunctionResult{"Braced double x", "(x x)", false},
-    TestFunctionResult{"Open brace", "", false},
-    TestFunctionResult{"Close brace", "", false},
-    TestFunctionResult{"Just braces", "()", false},
-    TestFunctionResult{"Missing operator", "4x", false},
-    TestFunctionResult{"shadow01", "+1.1", true},
-    TestFunctionResult{"shadow02", "-2.2", true},
-    TestFunctionResult{"shadow03", "+x", true},
-    TestFunctionResult{"shadow04", "-x", true},
-    TestFunctionResult{"shadow05", "+2.0+3.0", true},
-    TestFunctionResult{"shadow06", "-2.0-3.0", true},
-    TestFunctionResult{"shadow07", "(2.0)+(3.0)", true},
-    TestFunctionResult{"shadow08", "2.0+3.0-x", true},
-    TestFunctionResult{"shadow09", "2.0-(3.0+x)+1.0", true},
-    TestFunctionResult{"shadow10", "2.0*3.0", true},
-    TestFunctionResult{"shadow11", "2.0/3.0", true},
-    TestFunctionResult{"shadow12", "(2.0)*(3.0)", true},
-    TestFunctionResult{"shadow13", "2.0*3.0/x", true},
-    TestFunctionResult{"shadow14", "2.0/(3.0*x)*1.0", true},
-    TestFunctionResult{"shadow15", "2.0*x+1.0", true},
-    TestFunctionResult{"shadow16", "-2.0*x+1.0", true},
-    TestFunctionResult{"shadow17", "-2.1*(x+3.1)+1.1", true},
-    TestFunctionResult{"shadow18", "(x+3.1)*-2.1+1.1", true},
-    TestFunctionResult{"shadow19", "x^2.0", true},
-    TestFunctionResult{"shadow20", "x^(-2.0)", true},
-    TestFunctionResult{"shadow21", "x^-2.0", false},
-    TestFunctionResult{"shadow22", "2.0^x", true},
-    TestFunctionResult{"shadow23", "-(2.0^x)", true},
-    TestFunctionResult{"shadow24", "-((2.0*x)^(x+1.0))", true},
-    TestFunctionResult{"shadow25", "3.0^x^2.0", true},
-    TestFunctionResult{"shadow26", "cos(x+sin(x))", true},
-    TestFunctionResult{"shadow27", "abs(sin(cos(tan(exp(ln(x))))))", true},
-    TestFunctionResult{"shadow28", "cis(x+sin(x))", false},
-    TestFunctionResult{"shadow29", "z(x+sin(x))", false}
+    TestFunctionResult{L"Empty", L"", false},
+    TestFunctionResult{L"X", L"X", true},
+    TestFunctionResult{L"Y", L"Y", false},
+    TestFunctionResult{L"Number", L" +030.500", true},
+    TestFunctionResult{L"Invalid number", L"030.50.0", false},
+    TestFunctionResult{L"Braced X", L"(X)", true},
+    TestFunctionResult{L"Double braced X", L"((X))", true},
+    TestFunctionResult{L"Complete sum", L"1+x+2", true},
+    TestFunctionResult{L"Incomplete sum", L"1+x+", false},
+    TestFunctionResult{L"Complete product", L"1/x", true},
+    TestFunctionResult{L"Incomplete product", L"1/", false},
+    TestFunctionResult{L"Complete power", L"1^x", true},
+    TestFunctionResult{L"Incomplete power", L"1^", false},
+    TestFunctionResult{L"Malformed", L"(x)x", false},
+    TestFunctionResult{L"Function no argument", L"sin()", false},
+    TestFunctionResult{L"Number with space", L"1 .0", true},
+    TestFunctionResult{L"Double x 1", L"x x", false},
+    TestFunctionResult{L"Double x 2", L"xx", false},
+    TestFunctionResult{L"Braced double x", L"(x x)", false},
+    TestFunctionResult{L"Open brace", L"", false},
+    TestFunctionResult{L"Close brace", L"", false},
+    TestFunctionResult{L"Just braces", L"()", false},
+    TestFunctionResult{L"Missing operator", L"4x", false},
+    TestFunctionResult{L"shadow01", L"+1.1", true},
+    TestFunctionResult{L"shadow02", L"-2.2", true},
+    TestFunctionResult{L"shadow03", L"+x", true},
+    TestFunctionResult{L"shadow04", L"-x", true},
+    TestFunctionResult{L"shadow05", L"+2.0+3.0", true},
+    TestFunctionResult{L"shadow06", L"-2.0-3.0", true},
+    TestFunctionResult{L"shadow07", L"(2.0)+(3.0)", true},
+    TestFunctionResult{L"shadow08", L"2.0+3.0-x", true},
+    TestFunctionResult{L"shadow09", L"2.0-(3.0+x)+1.0", true},
+    TestFunctionResult{L"shadow10", L"2.0*3.0", true},
+    TestFunctionResult{L"shadow11", L"2.0/3.0", true},
+    TestFunctionResult{L"shadow12", L"(2.0)*(3.0)", true},
+    TestFunctionResult{L"shadow13", L"2.0*3.0/x", true},
+    TestFunctionResult{L"shadow14", L"2.0/(3.0*x)*1.0", true},
+    TestFunctionResult{L"shadow15", L"2.0*x+1.0", true},
+    TestFunctionResult{L"shadow16", L"-2.0*x+1.0", true},
+    TestFunctionResult{L"shadow17", L"-2.1*(x+3.1)+1.1", true},
+    TestFunctionResult{L"shadow18", L"(x+3.1)*-2.1+1.1", true},
+    TestFunctionResult{L"shadow19", L"x^2.0", true},
+    TestFunctionResult{L"shadow20", L"x^(-2.0)", true},
+    TestFunctionResult{L"shadow21", L"x^-2.0", false},
+    TestFunctionResult{L"shadow22", L"2.0^x", true},
+    TestFunctionResult{L"shadow23", L"-(2.0^x)", true},
+    TestFunctionResult{L"shadow24", L"-((2.0*x)^(x+1.0))", true},
+    TestFunctionResult{L"shadow25", L"3.0^x^2.0", true},
+    TestFunctionResult{L"shadow26", L"cos(x+sin(x))", true},
+    TestFunctionResult{L"shadow27", L"abs(sin(cos(tan(exp(ln(x))))))", true},
+    TestFunctionResult{L"shadow28", L"cis(x+sin(x))", false},
+    TestFunctionResult{L"shadow29", L"z(x+sin(x))", false}
 ));
 
 TEST_P(ParseabilityTest, CheckingForParseabilityShouldNotCrashAndYieldCorrectResult)
@@ -807,7 +807,7 @@ TEST_P(ParseabilityTest, CheckingForParseabilityShouldNotCrashAndYieldCorrectRes
     // Act
     bool actualResult;
 
-    if(tfr.text == "")
+    if(tfr.text == L"")
     {
         actualResult = parser.IsParseable(tfr.text);
     }

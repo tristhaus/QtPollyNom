@@ -54,7 +54,7 @@ TEST(BackendTest, BaseXShallPrintCorrectly)
     // Assert
     ASSERT_TRUE(result1.has_value());
 
-    EXPECT_STREQ("x", result1.value().c_str());
+    EXPECT_STREQ(L"x", result1.value().c_str());
 }
 
 #endif // TST_BASEX_H

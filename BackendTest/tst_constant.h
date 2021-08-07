@@ -51,7 +51,7 @@ TEST(BackendTest, ConstantShallPrintCorrectly)
     // Assert
     ASSERT_TRUE(result1.has_value());
 
-    EXPECT_STREQ("-4.800000", result1.value().c_str());
+    EXPECT_STREQ(L"-4.800000", result1.value().c_str());
 }
 
 #endif // TST_CONSTANT_H

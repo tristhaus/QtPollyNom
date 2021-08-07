@@ -62,7 +62,7 @@ TEST(BackendTest, SumShallPrintCorrectly)
     // Assert
     ASSERT_TRUE(result1.has_value());
 
-    EXPECT_STREQ("x-3.000000", result1.value().c_str());
+    EXPECT_STREQ(L"x-3.000000", result1.value().c_str());
 }
 
 #endif // TST_SUM_H

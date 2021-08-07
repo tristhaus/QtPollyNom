@@ -58,7 +58,7 @@ namespace Backend {
         /*!
          * \reimp
          */
-        virtual std::optional<std::string> Print() const;
+        virtual std::optional<std::wstring> Print() const;
 
         /*!
          * \reimp

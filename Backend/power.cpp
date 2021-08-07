@@ -68,7 +68,7 @@ std::optional<double> Power::Evaluate(double input) const
     return retval;
 }
 
-std::optional<std::string> Power::Print() const
+std::optional<std::wstring> Power::Print() const
 {
     auto baseOptional = base->Print();
     auto exponentOptional = exponent->Print();
@@ -80,13 +80,13 @@ std::optional<std::string> Power::Print() const
 
     auto baseString = base->IsMonadic()
             ? baseOptional.value()
-            : "(" + baseOptional.value() + ")";
+            : L"(" + baseOptional.value() + L")";
 
     auto exponentString = exponent->IsMonadic()
             ? exponentOptional.value()
-            : "(" + exponentOptional.value() + ")";
+            : L"(" + exponentOptional.value() + L")";
 
-    return std::string(baseString + "^" + exponentString);
+    return std::wstring(baseString + L"^" + exponentString);
 }
 
 bool Power::operator==(const Expression& other) const

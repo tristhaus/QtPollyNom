@@ -35,7 +35,7 @@ unsigned long long ipow(unsigned long long base, unsigned long long exp)
     return result;
 }
 
-SubsetGenerator::SubsetGenerator(std::string input) :
+SubsetGenerator::SubsetGenerator(std::wstring input) :
     input(input),
     index(1),
     limitIndex(ipow(2, input.length()))
@@ -51,9 +51,9 @@ bool SubsetGenerator::HasNext() const
     return index < limitIndex;
 }
 
-std::string SubsetGenerator::GetNext()
+std::wstring SubsetGenerator::GetNext()
 {
-    std::string retval("");
+    std::wstring retval(L"");
     std::bitset<sizeof(unsigned long long)*8> b(index);
     const auto length = input.length();
 

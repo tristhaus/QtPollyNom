@@ -78,11 +78,11 @@ namespace Backend\
             }\
             return retval;\
         }\
-        virtual std::optional<std::string> Print() const\
+        virtual std::optional<std::wstring> Print() const\
         {\
             auto argumentOptional = expression->Print();\
             if(!argumentOptional.has_value()) { return {}; }\
-            return std::string(functionname "(" + argumentOptional.value() + ")");\
+            return std::wstring(functionname L"(" + argumentOptional.value() + L")");\
         }\
         virtual bool operator==(const Expression &other) const\
         {\
@@ -141,11 +141,11 @@ namespace Backend\
             }\
             return retval;\
         }\
-        virtual std::optional<std::string> Print() const\
+        virtual std::optional<std::wstring> Print() const\
         {\
             auto argumentOptional = expression->Print();\
             if(!argumentOptional.has_value()) { return {}; }\
-            return std::string(functionname "(" + argumentOptional.value() + ")");\
+            return std::wstring(functionname L"(" + argumentOptional.value() + L")");\
         }\
         virtual bool operator==(const Expression &other) const\
         {\
@@ -174,16 +174,16 @@ namespace Backend\
 
 // the actual function creation
 
-CREATE_FUNCTION(AbsoluteValue, "abs", std::fabs(x));
+CREATE_FUNCTION(AbsoluteValue, L"abs", std::fabs(x));
 
-CREATE_FUNCTION(Sine, "sin", std::sin(x));
+CREATE_FUNCTION(Sine, L"sin", std::sin(x));
 
-CREATE_FUNCTION(Cosine, "cos", std::cos(x));
+CREATE_FUNCTION(Cosine, L"cos", std::cos(x));
 
-CREATE_FUNCTION(Tangent, "tan", std::tan(x));
+CREATE_FUNCTION(Tangent, L"tan", std::tan(x));
 
-CREATE_FUNCTION(NaturalExponential, "exp", std::exp(x));
+CREATE_FUNCTION(NaturalExponential, L"exp", std::exp(x));
 
-CREATE_FUNCTION(NaturalLogarithm, "ln", std::log(x));
+CREATE_FUNCTION(NaturalLogarithm, L"ln", std::log(x));
 
 #endif // FUNCTIONS_H

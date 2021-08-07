@@ -73,9 +73,9 @@ namespace Backend
         return retval;
     }
 
-    std::optional<std::string> Sum::Print() const
+    std::optional<std::wstring> Sum::Print() const
     {
-        std::string retval("");
+        std::wstring retval(L"");
 
         auto expressionIterator = summands.begin();
         auto expressionEnd = summands.end();
@@ -94,11 +94,11 @@ namespace Backend
             case Sum::Sign::Plus:
                 if(retval.length() > 0)
                 {
-                    retval += "+";
+                    retval += L"+";
                 }
                 break;
             case Sum::Sign::Minus:
-                retval += "-";
+                retval += L"-";
                 break;
             default:
                 throw std::exception("programming mistake in Sum switch");

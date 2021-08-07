@@ -34,7 +34,7 @@ using namespace Backend;
 TEST(BackendTest, SerializationOfGame1WithoutFunctionsShouldWorkCorrectly)
 {
     // Arrange
-    std::stringstream ss;
+    std::wstringstream ss;
     DeSerializer ds;
     Game game(std::make_shared<FixedDotGenerator>());
 
@@ -45,23 +45,23 @@ TEST(BackendTest, SerializationOfGame1WithoutFunctionsShouldWorkCorrectly)
     auto result = ss.str();
 
     ASSERT_TRUE(result.length() > 0);
-    std::regex dataVersionRegex(R"foo("dataVersion":"[0-9]+")foo", std::regex_constants::ECMAScript);
+    std::wregex dataVersionRegex(LR"foo("dataVersion":"[0-9]+")foo", std::regex_constants::ECMAScript);
     EXPECT_TRUE(std::regex_search(result, dataVersionRegex));
-    std::regex creationDateRegex(R"foo("creationDate":")foo", std::regex_constants::ECMAScript);
+    std::wregex creationDateRegex(LR"foo("creationDate":")foo", std::regex_constants::ECMAScript);
     EXPECT_TRUE(std::regex_search(result, creationDateRegex));
-    std::regex dotsRegex(R"foo("dots":\[\{"x":1\.0,"y":1\.0,"radius":0\.25,"kind":"good"\},\{"x":-8\.0,"y":-0\.25,"radius":0\.25,"kind":"good"\},\{"x":-4\.0,"y":0\.35,"radius":0\.25,"kind":"good"\},\{"x":5\.0,"y":-5\.0,"radius":0\.25,"kind":"good"\},\{"x":2.5,"y":5.0,"radius":0.25,"kind":"bad"\}\])foo", std::regex_constants::ECMAScript);
+    std::wregex dotsRegex(LR"foo("dots":\[\{"x":1\.0,"y":1\.0,"radius":0\.25,"kind":"good"\},\{"x":-8\.0,"y":-0\.25,"radius":0\.25,"kind":"good"\},\{"x":-4\.0,"y":0\.35,"radius":0\.25,"kind":"good"\},\{"x":5\.0,"y":-5\.0,"radius":0\.25,"kind":"good"\},\{"x":2.5,"y":5.0,"radius":0.25,"kind":"bad"\}\])foo", std::regex_constants::ECMAScript);
     EXPECT_TRUE(std::regex_search(result, dotsRegex));
-    std::regex functionsRegex(R"foo("functions":\[\])foo", std::regex_constants::ECMAScript);
+    std::wregex functionsRegex(LR"foo("functions":\[\])foo", std::regex_constants::ECMAScript);
     EXPECT_TRUE(std::regex_search(result, functionsRegex));
 }
 
 TEST(BackendTest, SerializationOfGame1WithFunctionsShouldWorkCorrectly)
 {
     // Arrange
-    std::stringstream ss;
+    std::wstringstream ss;
     DeSerializer ds;
     Game game(std::make_shared<FixedDotGenerator>());
-    game.Update(std::vector<std::string> {"sin(x)", "x^2", "abc"});
+    game.Update(std::vector<std::wstring> {L"sin(x)", L"x^2", L"abc"});
 
     // Act
     ds.Serialize(game, ss);
@@ -70,25 +70,25 @@ TEST(BackendTest, SerializationOfGame1WithFunctionsShouldWorkCorrectly)
     auto result = ss.str();
 
     ASSERT_TRUE(result.length() > 0);
-    std::regex dataVersionRegex(R"foo("dataVersion":"[0-9]+")foo", std::regex_constants::ECMAScript);
+    std::wregex dataVersionRegex(LR"foo("dataVersion":"[0-9]+")foo", std::regex_constants::ECMAScript);
     EXPECT_TRUE(std::regex_search(result, dataVersionRegex));
-    std::regex creationDateRegex(R"foo("creationDate":")foo", std::regex_constants::ECMAScript);
+    std::wregex creationDateRegex(LR"foo("creationDate":")foo", std::regex_constants::ECMAScript);
     EXPECT_TRUE(std::regex_search(result, creationDateRegex));
-    std::regex dotsRegex(R"foo("dots":\[\{"x":1\.0,"y":1\.0,"radius":0\.25,"kind":"good"\},\{"x":-8\.0,"y":-0\.25,"radius":0\.25,"kind":"good"\},\{"x":-4\.0,"y":0\.35,"radius":0\.25,"kind":"good"\},\{"x":5\.0,"y":-5\.0,"radius":0\.25,"kind":"good"\},\{"x":2.5,"y":5.0,"radius":0.25,"kind":"bad"\}\])foo", std::regex_constants::ECMAScript);
+    std::wregex dotsRegex(LR"foo("dots":\[\{"x":1\.0,"y":1\.0,"radius":0\.25,"kind":"good"\},\{"x":-8\.0,"y":-0\.25,"radius":0\.25,"kind":"good"\},\{"x":-4\.0,"y":0\.35,"radius":0\.25,"kind":"good"\},\{"x":5\.0,"y":-5\.0,"radius":0\.25,"kind":"good"\},\{"x":2.5,"y":5.0,"radius":0.25,"kind":"bad"\}\])foo", std::regex_constants::ECMAScript);
     EXPECT_TRUE(std::regex_search(result, dotsRegex));
-    std::regex functionsRegex(R"foo("functions":\["sin\(x\)","x\^2","abc"\])foo", std::regex_constants::ECMAScript);
+    std::wregex functionsRegex(LR"foo("functions":\["sin\(x\)","x\^2","abc"\])foo", std::regex_constants::ECMAScript);
     EXPECT_TRUE(std::regex_search(result, functionsRegex));
 }
 
 struct TestDeserializationErrorResult
 {
-    std::string testname;
-    std::string json;
-    friend std::ostream& operator<<(std::ostream& os, const TestDeserializationErrorResult& obj)
+    std::wstring testname;
+    std::wstring json;
+    friend std::wostream& operator<<(std::wostream& wos, const TestDeserializationErrorResult& obj)
     {
-        return os
-                << "testname: " << obj.testname
-                << " json: " << obj.json;
+        return wos
+                << L"testname: " << obj.testname
+                << L" json: " << obj.json;
     }
 };
 
@@ -98,25 +98,25 @@ class DeserializationErrorTest : public testing::TestWithParam<TestDeserializati
 
 INSTANTIATE_TEST_SUITE_P(BackendTest, DeserializationErrorTest,
     testing::Values(
-    TestDeserializationErrorResult{"NotObject", R"foo([])foo"},
-    TestDeserializationErrorResult{"EmptyObject", R"foo({})foo"},
-    TestDeserializationErrorResult{"DataVersionNotCorrect1", R"foo({"dataVersion":0.0})foo"},
-    TestDeserializationErrorResult{"DataVersionNotCorrect2", R"foo({"dataVersion":"a"})foo"},
-    TestDeserializationErrorResult{"NoDotsMember", R"foo({"dataVersion":"1"})foo"},
-    TestDeserializationErrorResult{"InvalidDot1", R"foo({"dataVersion":"1","dots":[{"x":"a"}]})foo"},
-    TestDeserializationErrorResult{"InvalidDot2", R"foo({"dataVersion":"1","dots":[{"x":0.25,"y":0.17,"radius":0.33,"kind":true}]})foo"},
-    TestDeserializationErrorResult{"InvalidDot3", R"foo({"dataVersion":"1","dots":[{"x":0.25,"y":0.17,"radius":0.33,"kind":"bla"}]})foo"},
-    TestDeserializationErrorResult{"InvalidDot4", R"foo({"dataVersion":"1","dots":[{"x":0.25,"y":0.17,"radius":0.33,"kind":"good"},{"x":-0.25,"y":-0.17,"radius":0.66,"kind":"bla"}]})foo"},
-    TestDeserializationErrorResult{"InvalidDot5", R"foo({"dataVersion":"1","dots":[{"x":0.25,"y":0.17,"radius":-0.33,"kind":"good"}]})foo"},
-    TestDeserializationErrorResult{"NoFunctionsMember", R"foo({"dataVersion":"1","dots":[{"x":0.25,"y":0.17,"radius":0.33,"kind":"good"}]})foo"},
-    TestDeserializationErrorResult{"InvalidFunction", R"foo({"dataVersion":"1","functions":["sin(x)",true,"x^2"],"dots":[{"x":0.25,"y":0.17,"radius":0.33,"kind":"good"}]})foo"}
+    TestDeserializationErrorResult{L"NotObject", LR"foo([])foo"},
+    TestDeserializationErrorResult{L"EmptyObject", LR"foo({})foo"},
+    TestDeserializationErrorResult{L"DataVersionNotCorrect1", LR"foo({"dataVersion":0.0})foo"},
+    TestDeserializationErrorResult{L"DataVersionNotCorrect2", LR"foo({"dataVersion":"a"})foo"},
+    TestDeserializationErrorResult{L"NoDotsMember", LR"foo({"dataVersion":"1"})foo"},
+    TestDeserializationErrorResult{L"InvalidDot1", LR"foo({"dataVersion":"1","dots":[{"x":"a"}]})foo"},
+    TestDeserializationErrorResult{L"InvalidDot2", LR"foo({"dataVersion":"1","dots":[{"x":0.25,"y":0.17,"radius":0.33,"kind":true}]})foo"},
+    TestDeserializationErrorResult{L"InvalidDot3", LR"foo({"dataVersion":"1","dots":[{"x":0.25,"y":0.17,"radius":0.33,"kind":"bla"}]})foo"},
+    TestDeserializationErrorResult{L"InvalidDot4", LR"foo({"dataVersion":"1","dots":[{"x":0.25,"y":0.17,"radius":0.33,"kind":"good"},{"x":-0.25,"y":-0.17,"radius":0.66,"kind":"bla"}]})foo"},
+    TestDeserializationErrorResult{L"InvalidDot5", LR"foo({"dataVersion":"1","dots":[{"x":0.25,"y":0.17,"radius":-0.33,"kind":"good"}]})foo"},
+    TestDeserializationErrorResult{L"NoFunctionsMember", LR"foo({"dataVersion":"1","dots":[{"x":0.25,"y":0.17,"radius":0.33,"kind":"good"}]})foo"},
+    TestDeserializationErrorResult{L"InvalidFunction", LR"foo({"dataVersion":"1","functions":["sin(x)",true,"x^2"],"dots":[{"x":0.25,"y":0.17,"radius":0.33,"kind":"good"}]})foo"}
 ));
 
 TEST_P(DeserializationErrorTest, GivenBadJsonDeserializationShouldGiveError)
 {
     // Arrange
     TestDeserializationErrorResult tder = GetParam();
-    std::stringstream ss;
+    std::wstringstream ss;
     ss << tder.json;
     ss.seekg(0, std::ios::beg);
 
@@ -139,8 +139,8 @@ bool AreClose(double a, double b)
 TEST(BackendTest, DeserializationOfGame1WithFunctionsShouldWorkCorrectly)
 {
     // Arrange
-    std::stringstream ss;
-    ss << R"foo({"dataVersion":"1","creationDate":"2021-08-02T19:41:09Z\u0000","dots":[{"x":1.0,"y":1.0,"radius":0.25,"kind":"good"},{"x":-8.0,"y":-0.25,"radius":0.25,"kind":"good"},{"x":-4.0,"y":0.35,"radius":0.25,"kind":"good"},{"x":5.0,"y":-5.0,"radius":0.25,"kind":"good"},{"x":2.5,"y":5.0,"radius":0.25,"kind":"bad"}],"functions":["1/x","(x-3.0)*(x+4.0)","(x+8)*(x+4)*(x-1)"]})foo";
+    std::wstringstream ss;
+    ss << LR"foo({"dataVersion":"1","creationDate":"2021-08-02T19:41:09Z\u0000","dots":[{"x":1.0,"y":1.0,"radius":0.25,"kind":"good"},{"x":-8.0,"y":-0.25,"radius":0.25,"kind":"good"},{"x":-4.0,"y":0.35,"radius":0.25,"kind":"good"},{"x":5.0,"y":-5.0,"radius":0.25,"kind":"good"},{"x":2.5,"y":5.0,"radius":0.25,"kind":"bad"}],"functions":["1/x","(x-3.0)*(x+4.0)","(x+8)*(x+4)*(x-1)"]})foo";
     ss.seekg(0, std::ios::beg);
 
     DeSerializer ds;
@@ -197,11 +197,11 @@ TEST(BackendTest, DeserializationOfGame1WithFunctionsShouldWorkCorrectly)
     EXPECT_EQ(0.25, dotsFromPersistence[4]->GetRadius());
 
     ASSERT_EQ(5, functions.size());
-    EXPECT_STREQ("1/x", functions[0].c_str());
-    EXPECT_STREQ("(x-3.0)*(x+4.0)", functions[1].c_str());
-    EXPECT_STREQ("(x+8)*(x+4)*(x-1)", functions[2].c_str());
-    EXPECT_STREQ("", functions[3].c_str());
-    EXPECT_STREQ("", functions[4].c_str());
+    EXPECT_STREQ(L"1/x", functions[0].c_str());
+    EXPECT_STREQ(L"(x-3.0)*(x+4.0)", functions[1].c_str());
+    EXPECT_STREQ(L"(x+8)*(x+4)*(x-1)", functions[2].c_str());
+    EXPECT_STREQ(L"", functions[3].c_str());
+    EXPECT_STREQ(L"", functions[4].c_str());
 
     EXPECT_EQ(7, score);
 }
@@ -209,8 +209,8 @@ TEST(BackendTest, DeserializationOfGame1WithFunctionsShouldWorkCorrectly)
 TEST(BackendTest, DeserializationOfGameWithoutDotsOrFunctionsShouldWorkCorrectly)
 {
     // Arrange
-    std::stringstream ss;
-    ss << R"foo({"dataVersion":"1","creationDate":"2021-08-02T19:41:09Z\u0000","dots":[],"functions":["","","","",""]})foo";
+    std::wstringstream ss;
+    ss << LR"foo({"dataVersion":"1","creationDate":"2021-08-02T19:41:09Z\u0000","dots":[],"functions":["","","","",""]})foo";
     ss.seekg(0, std::ios::beg);
 
     DeSerializer ds;
@@ -235,11 +235,11 @@ TEST(BackendTest, DeserializationOfGameWithoutDotsOrFunctionsShouldWorkCorrectly
     ASSERT_EQ(0, dotsFromPersistence.size());
 
     ASSERT_EQ(5, functions.size());
-    EXPECT_STREQ("", functions[0].c_str());
-    EXPECT_STREQ("", functions[1].c_str());
-    EXPECT_STREQ("", functions[2].c_str());
-    EXPECT_STREQ("", functions[3].c_str());
-    EXPECT_STREQ("", functions[4].c_str());
+    EXPECT_STREQ(L"", functions[0].c_str());
+    EXPECT_STREQ(L"", functions[1].c_str());
+    EXPECT_STREQ(L"", functions[2].c_str());
+    EXPECT_STREQ(L"", functions[3].c_str());
+    EXPECT_STREQ(L"", functions[4].c_str());
 
     EXPECT_EQ(0, score);
 }
@@ -250,11 +250,11 @@ TEST(BackendTest, DeserializationSerializationRoundtripShouldWorkCorrectly)
     DeSerializer ds;
     Game game(std::make_shared<RandomDotGenerator>(6, 1));
 
-    std::stringstream ss;
+    std::wstringstream ss;
 
     // Act
     auto persistedDots = game.GetDots();
-    game.Update(std::vector<std::string> {"tan(x)", "x^3"});
+    game.Update(std::vector<std::wstring> {L"tan(x)", L"x^3"});
 
     ds.Serialize(game, ss);
     ss.seekg(0, std::ios::beg);
@@ -320,11 +320,11 @@ TEST(BackendTest, DeserializationSerializationRoundtripShouldWorkCorrectly)
     }
 
     ASSERT_EQ(5, functionsFromPersistence.size());
-    EXPECT_STREQ("tan(x)", functionsFromPersistence[0].c_str());
-    EXPECT_STREQ("x^3", functionsFromPersistence[1].c_str());
-    EXPECT_STREQ("", functionsFromPersistence[2].c_str());
-    EXPECT_STREQ("", functionsFromPersistence[3].c_str());
-    EXPECT_STREQ("", functionsFromPersistence[4].c_str());
+    EXPECT_STREQ(L"tan(x)", functionsFromPersistence[0].c_str());
+    EXPECT_STREQ(L"x^3", functionsFromPersistence[1].c_str());
+    EXPECT_STREQ(L"", functionsFromPersistence[2].c_str());
+    EXPECT_STREQ(L"", functionsFromPersistence[3].c_str());
+    EXPECT_STREQ(L"", functionsFromPersistence[4].c_str());
 }
 
 #endif // TST_DESERIALIZER_H

@@ -35,53 +35,54 @@ namespace Backend
     {
     }
 
-    void DeSerializer::AddSerializationTime(rapidjson::Document & document, rapidjson::MemoryPoolAllocator<rapidjson::CrtAllocator> & allocator)
+    void DeSerializer::AddSerializationTime(rapidjson::GenericDocument<rapidjson::UTF16<wchar_t>> & document, rapidjson::MemoryPoolAllocator<rapidjson::CrtAllocator> & allocator)
     {
-        rapidjson::Value key;
-        rapidjson::Value value;
+        rapidjson::GenericValue<rapidjson::UTF16<wchar_t>> key, value;
 
         time_t now;
         time(&now);
         tm tm;
-        char buf[sizeof "2011-10-08T07:07:09Z"];
+        wchar_t buf[sizeof "2011-10-08T07:07:09Z"];
         gmtime_s(&tm, &now);
-        strftime(buf, sizeof buf, "%FT%TZ", &tm);
+        wcsftime(buf, sizeof buf, L"%FT%TZ", &tm);
 
-        key.SetString("creationDate");
-        value.SetString(buf, sizeof buf, allocator);
+        std::wstring result(buf);
+
+        key.SetString(L"creationDate");
+        value.SetString(result.c_str(), static_cast<rapidjson::SizeType>(result.length()), allocator);
 
         document.AddMember(key, value, allocator);
     }
 
-    void DeSerializer::TransformGameDotIntoSerializationDot(std::shared_ptr<Dot> & gameDot, rapidjson::Value & serializationDot, rapidjson::MemoryPoolAllocator<rapidjson::CrtAllocator> & allocator)
+    void DeSerializer::TransformGameDotIntoSerializationDot(std::shared_ptr<Dot> & gameDot, rapidjson::GenericValue<rapidjson::UTF16<wchar_t>> & serializationDot, rapidjson::MemoryPoolAllocator<rapidjson::CrtAllocator> & allocator)
     {
-        rapidjson::Value key, value;
+        rapidjson::GenericValue<rapidjson::UTF16<wchar_t>> key, value;
         serializationDot.SetObject();
 
-        key.SetString(KeyX, static_cast<rapidjson::SizeType>(strlen(KeyX)), allocator);
+        key.SetString(KeyX, static_cast<rapidjson::SizeType>(wcslen(KeyX)), allocator);
         value.SetDouble(gameDot->GetCoordinates().first);
         serializationDot.AddMember(key, value, allocator);
 
-        key.SetString(KeyY, static_cast<rapidjson::SizeType>(strlen(KeyY)), allocator);
+        key.SetString(KeyY, static_cast<rapidjson::SizeType>(wcslen(KeyY)), allocator);
         value.SetDouble(gameDot->GetCoordinates().second);
         serializationDot.AddMember(key, value, allocator);
 
-        key.SetString(KeyRadius, static_cast<rapidjson::SizeType>(strlen(KeyRadius)), allocator);
+        key.SetString(KeyRadius, static_cast<rapidjson::SizeType>(wcslen(KeyRadius)), allocator);
         value.SetDouble(gameDot->GetRadius());
         serializationDot.AddMember(key, value, allocator);
 
-        key.SetString(KeyKind, static_cast<rapidjson::SizeType>(strlen(KeyKind)), allocator);
-        std::string gameDotKind = GetKindAsString(gameDot->IsGood());
+        key.SetString(KeyKind, static_cast<rapidjson::SizeType>(wcslen(KeyKind)), allocator);
+        auto gameDotKind = GetKindAsString(gameDot->IsGood());
         value.SetString(gameDotKind.c_str(), static_cast<rapidjson::SizeType>(gameDotKind.length()), allocator);
         serializationDot.AddMember(key, value, allocator);
     }
 
-    std::string DeSerializer::GetKindAsString(const bool isGood)
+    std::wstring DeSerializer::GetKindAsString(const bool isGood)
     {
         return isGood ? ValueKindGood : ValueKindBad;
     }
 
-    bool DeSerializer::TryParseKindFromString(const std::string string, bool & kind)
+    bool DeSerializer::TryParseKindFromString(const std::wstring string, bool & kind)
     {
         if(string.compare(ValueKindGood) == 0)
         {
@@ -97,23 +98,22 @@ namespace Backend
         return false;
     }
 
-    void DeSerializer::Serialize(const Game & game, std::ostream & os)
+    void DeSerializer::Serialize(const Game & game, std::wostream & wos)
     {
-        rapidjson::Document document;
+        rapidjson::GenericDocument<rapidjson::UTF16<wchar_t>> document;
         document.SetObject();
         auto & allocator = document.GetAllocator();
 
-        rapidjson::Value key;
-        rapidjson::Value value;
+        rapidjson::GenericValue<rapidjson::UTF16<wchar_t>> key, value;
 
-        key.SetString(KeyDataVersion, static_cast<rapidjson::SizeType>(strlen(KeyDataVersion)), allocator);
-        value.SetString("1");
+        key.SetString(KeyDataVersion, static_cast<rapidjson::SizeType>(wcslen(KeyDataVersion)), allocator);
+        value.SetString(L"1");
 
         document.AddMember(key, value, allocator);
 
         AddSerializationTime(document, allocator);
 
-        rapidjson::Value dots;
+        rapidjson::GenericValue<rapidjson::UTF16<wchar_t>> dots;
         dots.SetArray();
 
         auto gameDots = game.GetDots();
@@ -121,17 +121,17 @@ namespace Backend
         auto gameDotsEnd = gameDots.end();
         for(; gameDotsIt != gameDotsEnd; ++gameDotsIt)
         {
-            rapidjson::Value dot;
+            rapidjson::GenericValue<rapidjson::UTF16<wchar_t>> dot;
 
             TransformGameDotIntoSerializationDot((*gameDotsIt), dot, allocator);
 
             dots.PushBack(dot, allocator);
         }
 
-        key.SetString(KeyDots, static_cast<rapidjson::SizeType>(strlen(KeyDots)), allocator);
+        key.SetString(KeyDots, static_cast<rapidjson::SizeType>(wcslen(KeyDots)), allocator);
         document.AddMember(key, dots, allocator);
 
-        rapidjson::Value functions;
+        rapidjson::GenericValue<rapidjson::UTF16<wchar_t>> functions;
         functions.SetArray();
 
         auto gameFunctions = game.GetFunctions();
@@ -143,40 +143,40 @@ namespace Backend
             functions.PushBack(value, allocator);
         }
 
-        key.SetString(KeyFunctions, static_cast<rapidjson::SizeType>(strlen(KeyFunctions)), allocator);
+        key.SetString(KeyFunctions, static_cast<rapidjson::SizeType>(wcslen(KeyFunctions)), allocator);
         document.AddMember(key, functions, allocator);
 
-        rapidjson::OStreamWrapper osw(os);
+        rapidjson::WOStreamWrapper osw(wos);
 
-        rapidjson::Writer<rapidjson::OStreamWrapper> writer(osw);
+        rapidjson::Writer<rapidjson::WOStreamWrapper, rapidjson::UTF16<wchar_t>, rapidjson::ASCII<char>> writer(osw);
         document.Accept(writer);
     }
 
-    std::pair<bool, std::string> MakeError(std::string error)
+    std::pair<bool, std::wstring> MakeError(std::wstring error)
     {
-        return std::make_pair<bool, std::string>(false, error.c_str());
+        return std::make_pair<bool, std::wstring>(false, error.c_str());
     }
 
-    std::pair<bool, std::string> DeSerializer::Deserialize(std::istream& is, Game& game)
+    std::pair<bool, std::wstring> DeSerializer::Deserialize(std::wistream& wis, Game& game)
     {
-        rapidjson::IStreamWrapper isw(is);
+        rapidjson::WIStreamWrapper wisw(wis);
 
-        rapidjson::Document document;
-        document.ParseStream(isw);
+        rapidjson::GenericDocument<rapidjson::UTF16<wchar_t>> document;
+        document.ParseStream(wisw);
 
         if(!(document.IsObject()))
         {
-            return MakeError("did not parse to object");
+            return MakeError(L"did not parse to object");
         }
 
-        if(!(document.HasMember(KeyDataVersion) && document[KeyDataVersion].IsString() && std::strcmp(document[KeyDataVersion].GetString(), "1") == 0))
+        if(!(document.HasMember(KeyDataVersion) && document[KeyDataVersion].IsString() && std::wcscmp(document[KeyDataVersion].GetString(), L"1") == 0))
         {
-            return MakeError("no valid data version found");
+            return MakeError(L"no valid data version found");
         }
 
         if(!(document.HasMember(KeyDots) && document[KeyDots].IsArray()))
         {
-            return MakeError("no valid dots member found");
+            return MakeError(L"no valid dots member found");
         }
 
         auto & dots = document[KeyDots];
@@ -192,7 +192,7 @@ namespace Backend
                  && dotsIt->HasMember(KeyKind) && (*dotsIt)[KeyKind].IsString()
                  && dotsIt->HasMember(KeyRadius) && (*dotsIt)[KeyRadius].IsDouble()))
             {
-                return MakeError("invalid dot found");
+                return MakeError(L"invalid dot found");
             }
 
             auto deserializedX = (*dotsIt)[KeyX].GetDouble();
@@ -201,13 +201,13 @@ namespace Backend
 
             if(deserializedRadius < 0.0)
             {
-                return MakeError("radius of dot must be positive");
+                return MakeError(L"radius of dot must be positive");
             }
 
             bool deserializedKind;
             if(!TryParseKindFromString((*dotsIt)[KeyKind].GetString(), deserializedKind))
             {
-                return MakeError("invalid kind in dot found");
+                return MakeError(L"invalid kind in dot found");
             }
 
             auto deserializedDot = std::make_shared<Dot>(deserializedX, deserializedY, deserializedKind, deserializedRadius);
@@ -217,23 +217,23 @@ namespace Backend
 
         if(!(document.HasMember(KeyFunctions) && document[KeyFunctions].IsArray()))
         {
-            return MakeError("no valid functions member found");
+            return MakeError(L"no valid functions member found");
         }
 
         auto & functions = document[KeyFunctions];
         auto functionsIt = functions.Begin();
         auto functionsEnd = functions.End();
 
-        std::vector<std::string> deserializedFunctions;
+        std::vector<std::wstring> deserializedFunctions;
 
         for(; functionsIt != functionsEnd; ++functionsIt)
         {
             if(!functionsIt->IsString())
             {
-                return MakeError("function is not a string");
+                return MakeError(L"function is not a string");
             }
 
-            auto deserializedFunction = std::string(functionsIt->GetString());
+            auto deserializedFunction = std::wstring(functionsIt->GetString());
 
             deserializedFunctions.push_back(deserializedFunction);
         }
@@ -245,14 +245,14 @@ namespace Backend
 
         while(deserializedFunctions.size() < 5)
         {
-            deserializedFunctions.push_back("");
+            deserializedFunctions.push_back(L"");
         }
 
         game.Clear();
         game.SetDots(deserializedDots);
         game.Update(deserializedFunctions);
 
-        return std::make_pair<bool, std::string>(true, "");
+        return std::make_pair<bool, std::wstring>(true, L"");
     }
 
 }

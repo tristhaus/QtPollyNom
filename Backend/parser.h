@@ -41,11 +41,11 @@ namespace Backend {
          */
         static const std::regex InputValidationRegex;
 
-        static const std::string PlusString;
-        static const std::string MinusString;
-        static const std::string TimesString;
-        static const std::string DivideString;
-        static const std::string PowerString;
+        static const std::wstring PlusString;
+        static const std::wstring MinusString;
+        static const std::wstring TimesString;
+        static const std::wstring DivideString;
+        static const std::wstring PowerString;
 
     public:
         /*!
@@ -58,14 +58,14 @@ namespace Backend {
          * \param input The string to parse.
          * \return A pointer to the expression or a nullptr.
          */
-        std::shared_ptr<Expression> Parse(const std::string & input) const;
+        std::shared_ptr<Expression> Parse(const std::wstring & input) const;
 
         /*!
          * \brief IsParseable indicates whether the supplied string is parseable.
          * \param input The string to check for parseability.
          * \return true if the argument is parseable, false otherwise.
          */
-        bool IsParseable(const std::string & input) const;
+        bool IsParseable(const std::wstring & input) const;
 
         /*!
          * \brief Register registers a function to create an expression representing
@@ -75,7 +75,7 @@ namespace Backend {
          *        representing the mathematical function.
          * \return A dummy bool such that the function can be used in static initialization.
          */
-        static bool Register(std::string name, CreateFunction createFunction);
+        static bool Register(std::wstring name, CreateFunction createFunction);
 
     private:
         /*!
@@ -86,19 +86,19 @@ namespace Backend {
          *
          * \return The registration map.
          */
-        static std::map<std::string, CreateFunction> & GetRegisteredFunctions();
-        std::regex GetValidationRegex() const;
-        std::string PrepareInput(const std::string & input) const;
-        bool ValidateInput(const std::string & input) const;
-        unsigned long long FindMatchingBrace(const std::string & input, unsigned long long pos) const;
+        static std::map<std::wstring, CreateFunction> & GetRegisteredFunctions();
+        std::wregex GetValidationRegex() const;
+        std::wstring PrepareInput(const std::wstring & input) const;
+        bool ValidateInput(const std::wstring & input) const;
+        unsigned long long FindMatchingBrace(const std::wstring & input, unsigned long long pos) const;
 
-        std::shared_ptr<Expression> InternalParse(std::string input) const;
-        void Tokenize(const std::string & input, std::vector<std::string> & tokens, std::vector<std::string> & ops) const;
-        std::shared_ptr<Expression> ParseToConstant(const std::string & input) const;
-        std::shared_ptr<Expression> ParseToSum(std::vector<std::string> & tokens, std::vector<std::string> & ops) const;
-        std::shared_ptr<Expression> ParseToProduct(std::vector<std::string> & tokens, std::vector<std::string> & ops) const;
-        std::shared_ptr<Expression> ParseToPower(std::vector<std::string> & tokens, std::vector<std::string> & ops) const;
-        std::shared_ptr<Expression> ParseToFunction(std::vector<std::string>& tokens) const;
+        std::shared_ptr<Expression> InternalParse(std::wstring input) const;
+        void Tokenize(const std::wstring & input, std::vector<std::wstring> & tokens, std::vector<std::wstring> & ops) const;
+        std::shared_ptr<Expression> ParseToConstant(const std::wstring & input) const;
+        std::shared_ptr<Expression> ParseToSum(std::vector<std::wstring> & tokens, std::vector<std::wstring> & ops) const;
+        std::shared_ptr<Expression> ParseToProduct(std::vector<std::wstring> & tokens, std::vector<std::wstring> & ops) const;
+        std::shared_ptr<Expression> ParseToPower(std::vector<std::wstring> & tokens, std::vector<std::wstring> & ops) const;
+        std::shared_ptr<Expression> ParseToFunction(std::vector<std::wstring>& tokens) const;
     };
 
 }

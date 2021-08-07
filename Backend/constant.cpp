@@ -43,9 +43,9 @@ namespace Backend {
         return this->value;
     }
 
-    std::optional<std::string> Constant::Print() const
+    std::optional<std::wstring> Constant::Print() const
     {
-        return std::to_string(this->value);
+        return std::to_wstring(this->value);
     }
 
     bool Constant::operator==(const Expression &other) const

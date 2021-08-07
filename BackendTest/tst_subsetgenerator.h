@@ -29,11 +29,11 @@ using namespace testing;
 TEST(InfastructureTest, SubsetGeneratorShallCreateCorrectSet)
 {
     // Arrange
-    SubsetGenerator generator(std::string("abc"));
+    SubsetGenerator generator(std::wstring(L"abc"));
 
     // Act
-    std::set<std::string> result;
-    std::string lastItem;
+    std::set<std::wstring> result;
+    std::wstring lastItem;
     for(int i = 0; i < 7; ++i)
     {
         ASSERT_TRUE(generator.HasNext());
@@ -44,14 +44,14 @@ TEST(InfastructureTest, SubsetGeneratorShallCreateCorrectSet)
     // Assert
     EXPECT_EQ(7, result.size());
     ASSERT_FALSE(generator.HasNext());
-    EXPECT_EQ(1, result.count("a"));
-    EXPECT_EQ(1, result.count("b"));
-    EXPECT_EQ(1, result.count("c"));
-    EXPECT_EQ(1, result.count("ab"));
-    EXPECT_EQ(1, result.count("ac"));
-    EXPECT_EQ(1, result.count("bc"));
-    EXPECT_EQ(1, result.count("abc"));
-    EXPECT_STREQ("abc", lastItem.c_str());
+    EXPECT_EQ(1, result.count(L"a"));
+    EXPECT_EQ(1, result.count(L"b"));
+    EXPECT_EQ(1, result.count(L"c"));
+    EXPECT_EQ(1, result.count(L"ab"));
+    EXPECT_EQ(1, result.count(L"ac"));
+    EXPECT_EQ(1, result.count(L"bc"));
+    EXPECT_EQ(1, result.count(L"abc"));
+    EXPECT_STREQ(L"abc", lastItem.c_str());
 }
 
 TEST(InfastructureTest, SubsetGeneratorShallThrowOnLongInput)
@@ -59,7 +59,7 @@ TEST(InfastructureTest, SubsetGeneratorShallThrowOnLongInput)
     // Arrange, Act, Assert
     try
     {
-        SubsetGenerator generator(std::string("01234567890123456789012345678901234567890123456789012345678901234"));
+        SubsetGenerator generator(std::wstring(L"01234567890123456789012345678901234567890123456789012345678901234"));
         FAIL();
     }
     catch (std::exception&)

@@ -32,17 +32,17 @@
 
 namespace Backend {
 
-    const std::string Parser::PlusString = "+";
-    const std::string Parser::MinusString = "-";
-    const std::string Parser::TimesString = "*";
-    const std::string Parser::DivideString = "/";
-    const std::string Parser::PowerString = "^";
+    const std::wstring Parser::PlusString = L"+";
+    const std::wstring Parser::MinusString = L"-";
+    const std::wstring Parser::TimesString = L"*";
+    const std::wstring Parser::DivideString = L"/";
+    const std::wstring Parser::PowerString = L"^";
 
     Parser::Parser()
     {
     }
 
-    bool Parser::Register(std::string name, CreateFunction createFunction)
+    bool Parser::Register(std::wstring name, CreateFunction createFunction)
     {
         auto & functions = Parser::GetRegisteredFunctions();
 
@@ -56,19 +56,19 @@ namespace Backend {
         return false;
     }
 
-    std::map<std::string, CreateFunction> & Parser::GetRegisteredFunctions()
+    std::map<std::wstring, CreateFunction> & Parser::GetRegisteredFunctions()
     {
-        static std::map<std::string, CreateFunction> theFunctions;
+        static std::map<std::wstring, CreateFunction> theFunctions;
         return theFunctions;
     }
 
-    std::regex Parser::GetValidationRegex() const
+    std::wregex Parser::GetValidationRegex() const
     {
         // This must be adjusted if another math operator is added to the game.
-        std::string regexString("^[-+/*^()0-9.,");
+        std::wstring regexString(L"^[-+/*^()0-9.,");
 
         // allow independent variable
-        std::set<char> allowedLetters {'x', 'X'};
+        std::set<wchar_t> allowedLetters {L'x', L'X'};
 
         // grab from all function names all letters
         auto & registrationMap = Parser::GetRegisteredFunctions();
@@ -96,12 +96,12 @@ namespace Backend {
             regexString += *allowedLettersIt;
         }
 
-        regexString.append("]+$");
+        regexString.append(L"]+$");
 
-        return std::regex(regexString.c_str(), std::regex_constants::ECMAScript);
+        return std::wregex(regexString.c_str(), std::regex_constants::ECMAScript);
     }
 
-    std::shared_ptr<Expression> Parser::Parse(const std::string & input) const
+    std::shared_ptr<Expression> Parser::Parse(const std::wstring & input) const
     {
         std::string locale(std::setlocale(LC_ALL, nullptr));
 
@@ -126,19 +126,19 @@ namespace Backend {
         }
     }
 
-    bool Parser::IsParseable(const std::string& input) const
+    bool Parser::IsParseable(const std::wstring& input) const
     {
         return this->Parse(input) != nullptr;
     }
 
-    std::string Parser::PrepareInput(const std::string & input) const
+    std::wstring Parser::PrepareInput(const std::wstring & input) const
     {
-        static std::regex re("[ \t]", std::regex_constants::ECMAScript);
+        static std::wregex re(L"[ \t]", std::regex_constants::ECMAScript);
 
-        return std::regex_replace(input, re, "");
+        return std::regex_replace(input, re, L"");
     }
 
-    bool Parser::ValidateInput(const std::string & input) const
+    bool Parser::ValidateInput(const std::wstring & input) const
     {
         // check unsupported characters. The regex should not change after startup
         static auto inputValidationRegex = this->GetValidationRegex();
@@ -148,14 +148,14 @@ namespace Backend {
         }
 
         // check for "^-", "^+", which is hard to parse
-        if(input.find("^-") != std::string::npos || input.find("^+") != std::string::npos)
+        if(input.find(L"^-") != std::wstring::npos || input.find(L"^+") != std::wstring::npos)
         {
             return false;
         }
 
         // check for dangling operators at the end of string
         auto lastChar = input.back();
-        if (lastChar == '+' || lastChar == '-' || lastChar == '*' || lastChar == '\\' || lastChar == '^' || lastChar == '(')
+        if (lastChar == L'+' || lastChar == L'-' || lastChar == L'*' || lastChar == L'\\' || lastChar == L'^' || lastChar == L'(')
         {
             return false;
         }
@@ -168,11 +168,11 @@ namespace Backend {
 
         for (; inputIt != inputEnd; ++inputIt)
         {
-            if (*inputIt == '(')
+            if (*inputIt == L'(')
             {
                 count++;
             }
-            else if (*inputIt == ')')
+            else if (*inputIt == L')')
             {
                 count--;
             }
@@ -191,7 +191,7 @@ namespace Backend {
         return true;
     }
 
-    unsigned long long Parser::FindMatchingBrace(const std::string & input, unsigned long long pos) const
+    unsigned long long Parser::FindMatchingBrace(const std::wstring & input, unsigned long long pos) const
     {
         if (pos > input.length() - 1)
         {
@@ -199,11 +199,11 @@ namespace Backend {
         }
 
         bool lookForClosing;
-        if (input[pos] == '(')
+        if (input[pos] == L'(')
         {
             lookForClosing = true;
         }
-        else if (input[pos] == ')')
+        else if (input[pos] == L')')
         {
             lookForClosing = false;
         }
@@ -217,12 +217,12 @@ namespace Backend {
         {
             for (unsigned long long index = pos; index < input.length(); index++)
             {
-                char c = input[index];
-                if (c == '(')
+                wchar_t c = input[index];
+                if (c == L'(')
                 {
                     count++;
                 }
-                else if (c == ')')
+                else if (c == L')')
                 {
                     count--;
                 }
@@ -237,12 +237,12 @@ namespace Backend {
         {
             for (int index = static_cast<int>(pos); index >= 0; index--)
             {
-                char c = input[index];
-                if (c == ')')
+                wchar_t c = input[index];
+                if (c == L')')
                 {
                     count++;
                 }
-                else if (c == '(')
+                else if (c == L'(')
                 {
                     count--;
                 }
@@ -257,7 +257,7 @@ namespace Backend {
         return -1;
     }
 
-    std::shared_ptr<Expression> Parser::InternalParse(std::string input) const
+    std::shared_ptr<Expression> Parser::InternalParse(std::wstring input) const
     {
         if (!ValidateInput(input))
         {
@@ -271,12 +271,12 @@ namespace Backend {
         }
 
         // deal with a simple case: plain x
-        if (input == "X" || input == "x")
+        if (input == L"X" || input == L"x")
         {
             return std::make_shared<BaseX>();
         }
 
-        static std::regex constantRegex("^[-+]?[0-9]+[.,]?[0-9]*$", std::regex_constants::ECMAScript);
+        static std::wregex constantRegex(L"^[-+]?[0-9]+[.,]?[0-9]*$", std::regex_constants::ECMAScript);
 
         // deal with a simple case: a numerical constant
         if (std::regex_search(input, constantRegex))
@@ -285,17 +285,17 @@ namespace Backend {
         }
 
         // now, tokenize
-        std::vector<std::string> tokens;
-        std::vector<std::string> ops;
+        std::vector<std::wstring> tokens;
+        std::vector<std::wstring> ops;
 
         this->Tokenize(input, tokens, ops);
 
         // deal with a signed single token
-        static std::regex singleSignedTokenRegex("^[-+]", std::regex_constants::ECMAScript);
+        static std::wregex singleSignedTokenRegex(L"^[-+]", std::regex_constants::ECMAScript);
 
         if (tokens.size() == 1 && std::regex_search(input, singleSignedTokenRegex))
         {
-            std::string subToken = input.substr(1);
+            std::wstring subToken = input.substr(1);
             std::shared_ptr<Expression> bracketedExpression = this->InternalParse(subToken);
 
             if (bracketedExpression == nullptr)
@@ -351,19 +351,19 @@ namespace Backend {
         return nullptr;
     }
 
-    void Parser::Tokenize(const std::string & input, std::vector<std::string> & tokens, std::vector<std::string> & ops) const
+    void Parser::Tokenize(const std::wstring & input, std::vector<std::wstring> & tokens, std::vector<std::wstring> & ops) const
     {
-        static std::function<bool(char)> isOperatorChar = [](char c)
+        static std::function<bool(wchar_t)> isOperatorChar = [](wchar_t c)
         {
-            return c == '-' || c == '+' || c == '*' || c == '/' || c == '^';
+            return c == L'-' || c == L'+' || c == L'*' || c == L'/' || c == L'^';
         };
 
-        std::string token;
+        std::wstring token;
         for (unsigned long long index = 0; index < input.length(); ++index)
         {
-            char c = input[index];
+            wchar_t c = input[index];
 
-            if (c == '(')
+            if (c == L'(')
             {
                 auto endIndex = FindMatchingBrace(input, index);
                 token += input.substr(index, endIndex - index + 1);
@@ -374,7 +374,7 @@ namespace Backend {
             if (isOperatorChar(c) && token.length() > 0)
             {
                 tokens.push_back(token);
-                token = "";
+                token = L"";
                 ops.emplace_back(1, c);
                 continue;
             }
@@ -388,13 +388,13 @@ namespace Backend {
         }
     }
 
-    std::shared_ptr<Expression> Parser::ParseToConstant(const std::string & input) const
+    std::shared_ptr<Expression> Parser::ParseToConstant(const std::wstring & input) const
     {
         try
         {
-            static std::regex re(",", std::regex_constants::ECMAScript);
+            static std::wregex re(L",", std::regex_constants::ECMAScript);
 
-            auto anglified = std::regex_replace(input, re, ".");
+            auto anglified = std::regex_replace(input, re, L".");
 
             double parsed = std::stod(anglified);
             return std::make_shared<Constant>(parsed);
@@ -405,7 +405,7 @@ namespace Backend {
         }
     }
 
-    std::shared_ptr<Expression> Parser::ParseToSum(std::vector<std::string> & tokens, std::vector<std::string> & ops) const
+    std::shared_ptr<Expression> Parser::ParseToSum(std::vector<std::wstring> & tokens, std::vector<std::wstring> & ops) const
     {
         if(tokens.size() != ops.size() + 1)
         {
@@ -416,7 +416,7 @@ namespace Backend {
 
         Sum::Sign sign = Sum::Sign::Plus;
 
-        std::string token = tokens[0];
+        std::wstring token = tokens[0];
         tokens.erase(tokens.begin());
 
         auto opsIt = ops.begin();
@@ -424,7 +424,7 @@ namespace Backend {
 
         for(;opsIt != opsEnd; ++opsIt)
         {
-            if (*opsIt == "+" || *opsIt == "-")
+            if (*opsIt == L"+" || *opsIt == L"-")
             {
                 auto expression = this->InternalParse(token);
                 if (expression == nullptr)
@@ -435,7 +435,7 @@ namespace Backend {
                 targetList.push_back(Sum::Summand(sign, expression));
                 token = tokens[0];
                 tokens.erase(tokens.begin());
-                sign = *opsIt == "+" ? Sum::Sign::Plus : Sum::Sign::Minus;
+                sign = *opsIt == L"+" ? Sum::Sign::Plus : Sum::Sign::Minus;
             }
             else
             {
@@ -450,7 +450,7 @@ namespace Backend {
             token = tokens[0];
         }
 
-        if (token != "")
+        if (token != L"")
         {
             auto expression = this->InternalParse(token);
             if (expression == nullptr)
@@ -464,7 +464,7 @@ namespace Backend {
         return std::make_shared<Sum>(targetList);
     }
 
-    std::shared_ptr<Expression> Parser::ParseToProduct(std::vector<std::string> & tokens, std::vector<std::string> & ops) const
+    std::shared_ptr<Expression> Parser::ParseToProduct(std::vector<std::wstring> & tokens, std::vector<std::wstring> & ops) const
     {
         if(tokens.size() != ops.size() + 1)
         {
@@ -475,7 +475,7 @@ namespace Backend {
 
         Product::Exponent sign = Product::Exponent::Positive;
 
-        std::string token = tokens[0];
+        std::wstring token = tokens[0];
         tokens.erase(tokens.begin());
 
         auto opsIt = ops.begin();
@@ -483,7 +483,7 @@ namespace Backend {
 
         for(;opsIt != opsEnd; ++opsIt)
         {
-            if (*opsIt == "*" || *opsIt == "/")
+            if (*opsIt == L"*" || *opsIt == L"/")
             {
                 auto expression = this->InternalParse(token);
                 if (expression == nullptr)
@@ -494,7 +494,7 @@ namespace Backend {
                 targetList.push_back(Product::Factor(sign, expression));
                 token = tokens[0];
                 tokens.erase(tokens.begin());
-                sign = *opsIt == "*" ? Product::Exponent::Positive : Product::Exponent::Negative;
+                sign = *opsIt == L"*" ? Product::Exponent::Positive : Product::Exponent::Negative;
             }
             else
             {
@@ -509,7 +509,7 @@ namespace Backend {
             token = tokens[0];
         }
 
-        if (token != "")
+        if (token != L"")
         {
             auto expression = this->InternalParse(token);
             if (expression == nullptr)
@@ -523,7 +523,7 @@ namespace Backend {
         return std::make_shared<Product>(targetList);
     }
 
-    std::shared_ptr<Expression> Parser::ParseToPower(std::vector<std::string>& tokens, std::vector<std::string>& ops) const
+    std::shared_ptr<Expression> Parser::ParseToPower(std::vector<std::wstring>& tokens, std::vector<std::wstring>& ops) const
     {
         if(tokens.size() != ops.size() + 1)
         {
@@ -567,7 +567,7 @@ namespace Backend {
         return std::make_shared<Power>(baseExpression, exponentExpression);
     }
 
-    std::shared_ptr<Expression> Parser::ParseToFunction(std::vector<std::string>& tokens) const
+    std::shared_ptr<Expression> Parser::ParseToFunction(std::vector<std::wstring>& tokens) const
     {
         auto functionToken = tokens[0];
         tokens.erase(tokens.begin());

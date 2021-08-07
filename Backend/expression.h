@@ -67,7 +67,7 @@ namespace Backend
          * \brief Prints the expression as a human-readable and machine-parseable string.
          * \return The string or nothing.
          */
-        virtual std::optional<std::string> Print() const = 0;
+        virtual std::optional<std::wstring> Print() const = 0;
 
         /*!
          * \brief Equality operator for the expression, checking type and content.

@@ -32,13 +32,13 @@ TEST(BackendTest, GameShallUpdateCorrectlySingleStep)
     // Arrange
     Game game(std::make_shared<FixedDotGenerator>());
 
-    std::vector<std::string> exprStrings =
+    std::vector<std::wstring> exprStrings =
     {
-        std::string("1/x"),
-        std::string("(x-3.0)*(x+4.0)"),
-        std::string(""),
-        std::string(""),
-        std::string("")
+        std::wstring(L"1/x"),
+        std::wstring(L"(x-3.0)*(x+4.0)"),
+        std::wstring(L""),
+        std::wstring(L""),
+        std::wstring(L"")
     };
 
     // Act
@@ -66,25 +66,25 @@ TEST(BackendTest, GameShallUpdateCorrectlyMultiStep)
     // Arrange
     Game game(std::make_shared<FixedDotGenerator>());
 
-    std::vector<std::string> exprStrings1 =
+    std::vector<std::wstring> exprStrings1 =
     {
-        std::string("1/x"),
-        std::string(""),
-        std::string(""),
-        std::string(""),
-        std::string("")
+        std::wstring(L"1/x"),
+        std::wstring(L""),
+        std::wstring(L""),
+        std::wstring(L""),
+        std::wstring(L"")
     };
 
-    std::vector<std::string> exprStrings2 =
+    std::vector<std::wstring> exprStrings2 =
     {
-        std::string("1/x"),
-        std::string("(x-3.0)*(x+4.0)"),
-        std::string(""),
-        std::string(""),
-        std::string("")
+        std::wstring(L"1/x"),
+        std::wstring(L"(x-3.0)*(x+4.0)"),
+        std::wstring(L""),
+        std::wstring(L""),
+        std::wstring(L"")
     };
 
-    std::vector<std::string> exprStrings3(exprStrings1);
+    std::vector<std::wstring> exprStrings3(exprStrings1);
 
     // Act 1
     game.Update(exprStrings1);
@@ -134,22 +134,22 @@ TEST(BackendTest, GameShallUpdateCorrectlyBadDotHit)
     // Arrange
     Game game(std::make_shared<FixedDotGenerator>());
 
-    std::vector<std::string> exprStrings1 =
+    std::vector<std::wstring> exprStrings1 =
     {
-        std::string("1/x"),
-        std::string(""),
-        std::string(""),
-        std::string(""),
-        std::string("")
+        std::wstring(L"1/x"),
+        std::wstring(L""),
+        std::wstring(L""),
+        std::wstring(L""),
+        std::wstring(L"")
     };
 
-    std::vector<std::string> exprStrings2 =
+    std::vector<std::wstring> exprStrings2 =
     {
-        std::string("1/x"),
-        std::string("5.05"),
-        std::string(""),
-        std::string(""),
-        std::string("")
+        std::wstring(L"1/x"),
+        std::wstring(L"5.05"),
+        std::wstring(L""),
+        std::wstring(L""),
+        std::wstring(L"")
     };
 
     // Act 1
@@ -186,40 +186,40 @@ TEST(BackendTest, GameShallUpdateCorrectlyAndIgnoreOrder)
     // Arrange
     Game game(std::make_shared<FixedDotGenerator>());
 
-    std::vector<std::string> exprStrings1 =
+    std::vector<std::wstring> exprStrings1 =
     {
-        std::string("1/x"),
-        std::string("(x-3.0)*(x+4.0)"),
-        std::string(""),
-        std::string(""),
-        std::string("")
+        std::wstring(L"1/x"),
+        std::wstring(L"(x-3.0)*(x+4.0)"),
+        std::wstring(L""),
+        std::wstring(L""),
+        std::wstring(L"")
     };
 
-    std::vector<std::string> exprStrings2 =
+    std::vector<std::wstring> exprStrings2 =
     {
-        std::string("(x+8)*(x+4)*(x-1)"),
-        std::string("1/x"),
-        std::string("(x-3.0)*(x+4.0)"),
-        std::string(""),
-        std::string("")
+        std::wstring(L"(x+8)*(x+4)*(x-1)"),
+        std::wstring(L"1/x"),
+        std::wstring(L"(x-3.0)*(x+4.0)"),
+        std::wstring(L""),
+        std::wstring(L"")
     };
 
-    std::vector<std::string> exprStrings3 =
+    std::vector<std::wstring> exprStrings3 =
     {
-        std::string("1/x"),
-        std::string("(x-3.0)*(x+4.0)"),
-        std::string("(x+8)*(x+4)*(x-1)"),
-        std::string(""),
-        std::string("")
+        std::wstring(L"1/x"),
+        std::wstring(L"(x-3.0)*(x+4.0)"),
+        std::wstring(L"(x+8)*(x+4)*(x-1)"),
+        std::wstring(L""),
+        std::wstring(L"")
     };
 
-    std::vector<std::string> exprStrings4 =
+    std::vector<std::wstring> exprStrings4 =
     {
-        std::string("1/x"),
-        std::string("(x-3.0)*(x+4.0)"),
-        std::string("(x+8)*(x+4)*(x-1)"),
-        std::string("(x+8)*(x+4)*(x-1)*(x-4.95)"),
-        std::string("")
+        std::wstring(L"1/x"),
+        std::wstring(L"(x-3.0)*(x+4.0)"),
+        std::wstring(L"(x+8)*(x+4)*(x-1)"),
+        std::wstring(L"(x+8)*(x+4)*(x-1)*(x-4.95)"),
+        std::wstring(L"")
     };
 
     // Act 1
@@ -284,13 +284,13 @@ TEST(BackendTest, GameShallRepeatedlyAndCorrectlyCalculateScore)
     // Arrange
     Game game(std::make_shared<FixedDotGenerator>());
 
-    std::vector<std::string> exprStrings =
+    std::vector<std::wstring> exprStrings =
     {
-        std::string("1/x"),
-        std::string("(x-3.0)*(x+4.0)"),
-        std::string("(x+8)*(x+4)*(x-1)"),
-        std::string("(x+8)*(x+4)*(x-1)*(x-4.95)"),
-        std::string("")
+        std::wstring(L"1/x"),
+        std::wstring(L"(x-3.0)*(x+4.0)"),
+        std::wstring(L"(x+8)*(x+4)*(x-1)"),
+        std::wstring(L"(x+8)*(x+4)*(x-1)*(x-4.95)"),
+        std::wstring(L"")
     };
 
     // Act
@@ -316,22 +316,22 @@ TEST(BackendTest, GameShallCorrectlyCalculateScoreForPermutatedFunctions)
     // Arrange
     Game game(std::make_shared<FixedDotGenerator>());
 
-    std::vector<std::string> exprStrings1 =
+    std::vector<std::wstring> exprStrings1 =
     {
-        std::string("1/x"),
-        std::string("(x-3.0)*(x+4.0)"),
-        std::string("(x+8)*(x+4)*(x-1)"),
-        std::string("(x+8)*(x+4)*(x-1)*(x-4.95)"),
-        std::string("")
+        std::wstring(L"1/x"),
+        std::wstring(L"(x-3.0)*(x+4.0)"),
+        std::wstring(L"(x+8)*(x+4)*(x-1)"),
+        std::wstring(L"(x+8)*(x+4)*(x-1)*(x-4.95)"),
+        std::wstring(L"")
     };
 
-    std::vector<std::string> exprStrings2 =
+    std::vector<std::wstring> exprStrings2 =
     {
-        std::string("(x+8)*(x+4)*(x-1)*(x-4.95)"),
-        std::string("(x+8)*(x+4)*(x-1)"),
-        std::string(""),
-        std::string("(x-3.0)*(x+4.0)"),
-        std::string("1/x")
+        std::wstring(L"(x+8)*(x+4)*(x-1)*(x-4.95)"),
+        std::wstring(L"(x+8)*(x+4)*(x-1)"),
+        std::wstring(L""),
+        std::wstring(L"(x-3.0)*(x+4.0)"),
+        std::wstring(L"1/x")
     };
 
     // Act
@@ -350,22 +350,22 @@ TEST(BackendTest, GameShallCorrectlyHandleOverlappingGraphs)
     // Arrange
     Game game(std::make_shared<FixedDotGenerator>());
 
-    std::vector<std::string> exprStrings1 =
+    std::vector<std::wstring> exprStrings1 =
     {
-        std::string("1/x"),
-        std::string("(x+8)*(x+4)*(x-1)"),
-        std::string("(x+4)*(x-1)*(x-4.95)"),
-        std::string(""),
-        std::string("")
+        std::wstring(L"1/x"),
+        std::wstring(L"(x+8)*(x+4)*(x-1)"),
+        std::wstring(L"(x+4)*(x-1)*(x-4.95)"),
+        std::wstring(L""),
+        std::wstring(L"")
     };
 
-    std::vector<std::string> exprStrings2 =
+    std::vector<std::wstring> exprStrings2 =
     {
-        std::string("1/x"),
-        std::string("(x+8)*(x+4)*(x-1)"),
-        std::string("(x+8)*(x+4)*(x-1)*(x-4.95)"),
-        std::string(""),
-        std::string("")
+        std::wstring(L"1/x"),
+        std::wstring(L"(x+8)*(x+4)*(x-1)"),
+        std::wstring(L"(x+8)*(x+4)*(x-1)*(x-4.95)"),
+        std::wstring(L""),
+        std::wstring(L"")
     };
 
     // Act 1
@@ -404,13 +404,13 @@ TEST(BackendTest, GameRemakeShallCreateANewGame)
     // Arrange
     Game game(std::make_shared<FixedDotGenerator>(2));
 
-    std::vector<std::string> exprStrings =
+    std::vector<std::wstring> exprStrings =
     {
-        std::string("1/x"),
-        std::string("(x-3.0)*(x+4.0)"),
-        std::string(""),
-        std::string(""),
-        std::string("")
+        std::wstring(L"1/x"),
+        std::wstring(L"(x-3.0)*(x+4.0)"),
+        std::wstring(L""),
+        std::wstring(L""),
+        std::wstring(L"")
     };
 
     // Act
@@ -451,22 +451,22 @@ TEST(BackendTest, GameShallAcceptDots)
     // Arrange
     Game game(std::make_shared<FixedDotGenerator>());
 
-    std::vector<std::string> exprStrings1 =
+    std::vector<std::wstring> exprStrings1 =
     {
-        std::string("1/x"),
-        std::string("(x+8)*(x+4)*(x-1)"),
-        std::string("(x+4)*(x-1)*(x-4.95)"),
-        std::string(""),
-        std::string("")
+        std::wstring(L"1/x"),
+        std::wstring(L"(x+8)*(x+4)*(x-1)"),
+        std::wstring(L"(x+4)*(x-1)*(x-4.95)"),
+        std::wstring(L""),
+        std::wstring(L"")
     };
 
-    std::vector<std::string> exprStrings2 =
+    std::vector<std::wstring> exprStrings2 =
     {
-        std::string("-x"),
-        std::string(""),
-        std::string(""),
-        std::string(""),
-        std::string("")
+        std::wstring(L"-x"),
+        std::wstring(L""),
+        std::wstring(L""),
+        std::wstring(L""),
+        std::wstring(L"")
     };
 
     std::vector<std::shared_ptr<Dot>> dots;

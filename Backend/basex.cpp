@@ -43,9 +43,9 @@ namespace Backend {
         return input;
     }
 
-    std::optional<std::string> BaseX::Print() const
+    std::optional<std::wstring> BaseX::Print() const
     {
-        return std::string("x");
+        return std::wstring(L"x");
     }
 
     bool BaseX::operator==(const Expression &other) const

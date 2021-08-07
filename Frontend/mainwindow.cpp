@@ -324,11 +324,11 @@ void MainWindow::StartCalculation()
 {
     this->SetGameIsBusy(true);
 
-    std::vector<std::string> funcStrings;
+    std::vector<std::wstring> funcStrings;
 
     for(size_t i = 0; i<this->numberOfFunctionInputs; ++i)
     {
-        funcStrings.emplace_back(this->ui->funcLineEdit[i]->text().toLocal8Bit().constData());
+        funcStrings.emplace_back(this->ui->funcLineEdit[i]->text().toStdWString());
     }
 
     QFuture<void> updateFuture = QtConcurrent::run([=](){
@@ -352,12 +352,12 @@ void MainWindow::OnReturnKeyPressed()
 void MainWindow::OnFuncLineEditTextChanged()
 {
     auto funcLineEdit = dynamic_cast<QLineEdit*>(QObject::sender());
-    auto funcString = std::string(funcLineEdit->text().toLocal8Bit().constData());
+    auto funcString = std::wstring(funcLineEdit->text().toStdWString());
 
     bool isParseable = funcString.empty() || this->game.IsParseable(funcString);
 
 #ifdef _DEBUG
-    if(funcString == "slow")
+    if(funcString == L"slow")
     {
         isParseable = true;
     }

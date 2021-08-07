@@ -39,8 +39,8 @@ namespace Backend {
     {
     private:
         std::vector<std::shared_ptr<Dot>> dots;
-        std::vector<std::string> updateFuncStrings;
-        std::vector<std::string> funcStringsEvaluated;
+        std::vector<std::wstring> updateFuncStrings;
+        std::vector<std::wstring> funcStringsEvaluated;
         std::vector<std::vector<std::pair<std::vector<double>, std::vector<double>>>> graphs;
 
         Parser parser;
@@ -68,20 +68,20 @@ namespace Backend {
          * \brief Evaluates the functions supplied by the user.
          * \param funcStrings The user-supplied string representations of functions.
          */
-        void Update(const std::vector<std::string> & funcStrings);
+        void Update(const std::vector<std::wstring> & funcStrings);
 
         /*!
          * \brief IsParseable indicates whether the supplied string can parse to an expression.
          * \param input The string to check for parseability.
          * \return true if the argument is parseable, false otherwise.
          */
-        bool IsParseable(const std::string & input) const;
+        bool IsParseable(const std::wstring & input) const;
 
         /*!
          * \brief Gets the functions contained.
          * \return The functions.
          */
-        const std::vector<std::string> GetFunctions() const;
+        const std::vector<std::wstring> GetFunctions() const;
 
         /*!
          * \brief Gets the sorted data calculated in the update representing the graphs of the functions.
@@ -118,7 +118,7 @@ namespace Backend {
         void CreateGraphs();
         void PutEmptyGraphAtIndex(unsigned long int index);
         void PutGraphAtIndex(unsigned long index, std::vector<std::pair<std::vector<double>, std::vector<double> > > graph);
-        void SaveFunctionAtIndex(unsigned long index, std::string funcString);
+        void SaveFunctionAtIndex(unsigned long index, std::wstring funcString);
         void CreateDots();
         void CheckDots(unsigned long int graphIndex, std::shared_ptr<Expression> expression, std::vector<std::pair<std::vector<double>, std::vector<double>>> graphData);
         void ResetDots();

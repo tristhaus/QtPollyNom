@@ -30,7 +30,7 @@
 class SubsetGenerator final
 {
 private:
-    const std::string input;
+    const std::wstring input;
     unsigned long long index;
     const unsigned long long limitIndex;
 public:
@@ -38,7 +38,7 @@ public:
      * \brief Initializes a new instance.
      * \param input The string to modify.
      */
-    SubsetGenerator(std::string input);
+    SubsetGenerator(std::wstring input);
     ~SubsetGenerator() = default;
     SubsetGenerator(const SubsetGenerator&) = delete;
     SubsetGenerator(SubsetGenerator&&) = delete;
@@ -55,7 +55,7 @@ public:
      * \brief Gets the next substring.
      * \return The next substring.
      */
-    std::string GetNext();
+    std::wstring GetNext();
 };
 
 #endif // SUBSETGENERATOR_H

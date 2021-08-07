@@ -98,7 +98,7 @@ TEST(BackendTest, ProductShallPrintCorrectly)
     // Assert
     ASSERT_TRUE(result1.has_value());
 
-    EXPECT_STREQ("x/2.000000*(x-3.000000)", result1.value().c_str());
+    EXPECT_STREQ(L"x/2.000000*(x-3.000000)", result1.value().c_str());
 }
 
 #endif // TST_PRODUCT_H

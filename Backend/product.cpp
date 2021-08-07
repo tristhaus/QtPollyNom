@@ -91,9 +91,9 @@ namespace Backend
         return retval;
     }
 
-    std::optional<std::string> Product::Print() const
+    std::optional<std::wstring> Product::Print() const
     {
-        std::string retval("");
+        std::wstring retval(L"");
 
         auto expressionIterator = factors.begin();
         auto expressionEnd = factors.end();
@@ -120,15 +120,15 @@ namespace Backend
             case Product::Exponent::Positive:
                 if(retval.length() > 0)
                 {
-                    retval += "*";
+                    retval += L"*";
                 }
                 break;
             case Product::Exponent::Negative:
                 if(retval.length() == 0)
                 {
-                    retval += "1.0";
+                    retval += L"1.0";
                 }
-                retval += "/";
+                retval += L"/";
                 break;
             default:
                 throw std::exception("programming mistake in Product switch");
