@@ -27,6 +27,8 @@
 #include "dot.h"
 #include "dotgenerator.h"
 #include "randomdotgenerator.h"
+#include "repository.h"
+#include "diskrepository.h"
 
 namespace Backend {
 
@@ -45,14 +47,17 @@ namespace Backend {
 
         Parser parser;
         std::shared_ptr<DotGenerator> dotGenerator;
+        std::shared_ptr<Repository> repository;
         std::vector<std::set<unsigned long int>> dotHitBy;
 
     public:
         /*!
          * \brief Initializes a new instance using the supplied dot generator.
          * \param dotGenerator The generator to use in creation of a new game.
+         * \param repository The repository used to persist games.
          */
-        Game(std::shared_ptr<DotGenerator> dotGenerator = std::make_shared<RandomDotGenerator>(8, 2));
+        Game(std::shared_ptr<DotGenerator> dotGenerator = std::make_shared<RandomDotGenerator>(8, 2),
+             std::shared_ptr<Repository> repository = std::make_shared<DiskRepository>());
         ~Game() = default;
         Game(const Game&) = delete;
         Game(Game&&) = delete;
@@ -111,6 +116,20 @@ namespace Backend {
          * \brief Clears all input of the game.
          */
         void Clear();
+
+        /*!
+         * \brief Save the game using the repository.
+         * \param identifier The identifier under which to save.
+         * \return A pair of bool (indicating success) and string (describing the error if unsuccessful).
+         */
+        std::pair<bool, std::wstring> Save(std::wstring identifier) const;
+
+        /*!
+         * \brief Load the game from the repository, changing the current instance.
+         * \param identifier The identifier from which to load.
+         * \return A pair of bool (indicating success) and string (describing the error if unsuccessful).
+         */
+        std::pair<bool, std::wstring> Load(std::wstring identifier);
 
     private:
         void Init();

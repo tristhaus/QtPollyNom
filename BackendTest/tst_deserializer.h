@@ -25,6 +25,7 @@
 #include "../Backend/deserializer.h"
 #include "../Backend/game.h"
 #include "../TestHelper/fixeddotgenerator.h"
+#include "../TestHelper/doublehelper.h"
 
 #include <sstream>
 
@@ -129,11 +130,6 @@ TEST_P(DeserializationErrorTest, GivenBadJsonDeserializationShouldGiveError)
     // Assert
     ASSERT_FALSE(result.first);
     ASSERT_LT(0, result.second.length());
-}
-
-bool AreClose(double a, double b)
-{
-    return std::abs(a - b) < 10e-6;
 }
 
 TEST(BackendTest, DeserializationOfGame1WithFunctionsShouldWorkCorrectly)

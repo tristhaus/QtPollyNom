@@ -32,8 +32,9 @@ namespace Backend {
         this->Clear();
     }
 
-    Game::Game(std::shared_ptr<DotGenerator> dotGenerator)
-        : dotGenerator(dotGenerator)
+    Game::Game(std::shared_ptr<DotGenerator> dotGenerator, std::shared_ptr<Repository> repository)
+        : dotGenerator(dotGenerator),
+          repository(repository)
     {
         this->Init();
     }
@@ -124,6 +125,16 @@ namespace Backend {
         this->funcStringsEvaluated.clear();
         this->graphs.clear();
         this->ResetDots();
+    }
+
+    std::pair<bool, std::wstring> Game::Save(std::wstring identifier) const
+    {
+        return repository->Save(*this, identifier);
+    }
+
+    std::pair<bool, std::wstring> Game::Load(std::wstring identifier)
+    {
+        return repository->Load(identifier, *this);
     }
 
     void Game::CreateItems()

@@ -23,6 +23,8 @@
 #include <gmock/gmock-matchers.h>
 #include "../Backend/game.h"
 #include "../TestHelper/fixeddotgenerator.h"
+#include "../TestHelper/memoryrepository.h"
+#include "../TestHelper/doublehelper.h"
 
 using namespace testing;
 using namespace Backend;
@@ -495,6 +497,118 @@ TEST(BackendTest, GameShallAcceptDots)
     EXPECT_EQ(2.0, storedDots[1]->GetCoordinates().first);
     EXPECT_EQ(-2.0, storedDots[1]->GetCoordinates().second);
     EXPECT_EQ(3, score3);
+}
+
+TEST(BackendTest, GameShallSaveToRepository)
+{
+    // Arrange
+    auto repository = std::make_shared<MemoryRepository>();
+    Game game(std::make_shared<FixedDotGenerator>(), repository);
+    std::wstring id = L"theIdentifier";
+
+    std::vector<std::wstring> exprStrings =
+    {
+        std::wstring(L"1/x"),
+        std::wstring(L"(x+8)*(x+4)*(x-1)"),
+        std::wstring(L"(x+4)*(x-1)*(x-4.95)"),
+        std::wstring(L""),
+        std::wstring(L"")
+    };
+
+    // Act
+    game.Update(exprStrings);
+    auto result = game.Save(id);
+    std::wstring persisted;
+    bool found = repository->TryGetByIdentifier(id, persisted);
+
+    // Assert
+    ASSERT_TRUE(found);
+    ASSERT_TRUE(result.first);
+
+    ASSERT_TRUE(persisted.length() > 0);
+    std::wregex dataVersionRegex(LR"foo("dataVersion":"[0-9]+")foo", std::regex_constants::ECMAScript);
+    EXPECT_TRUE(std::regex_search(persisted, dataVersionRegex));
+    std::wregex creationDateRegex(LR"foo("creationDate":")foo", std::regex_constants::ECMAScript);
+    EXPECT_TRUE(std::regex_search(persisted, creationDateRegex));
+    std::wregex dotsRegex(LR"foo("dots":\[\{"x":1\.0,"y":1\.0,"radius":0\.25,"kind":"good"\},\{"x":-8\.0,"y":-0\.25,"radius":0\.25,"kind":"good"\},\{"x":-4\.0,"y":0\.35,"radius":0\.25,"kind":"good"\},\{"x":5\.0,"y":-5\.0,"radius":0\.25,"kind":"good"\},\{"x":2.5,"y":5.0,"radius":0.25,"kind":"bad"\}\])foo", std::regex_constants::ECMAScript);
+    EXPECT_TRUE(std::regex_search(persisted, dotsRegex));
+    std::wregex functionsRegex(LR"foo("functions":\["1/x","\(x\+8\)\*\(x\+4\)\*\(x-1\)","\(x\+4\)\*\(x-1\)\*\(x-4.95\)","",""\])foo", std::regex_constants::ECMAScript);
+    EXPECT_TRUE(std::regex_search(persisted, functionsRegex));
+}
+
+TEST(BackendTest, GameShallLoadFromRepository)
+{
+    // Arrange
+    auto repository = std::make_shared<MemoryRepository>();
+    Game game(std::make_shared<FixedDotGenerator>(2), repository);
+    std::wstring id = L"theIdentifier";
+
+    std::vector<std::wstring> exprStrings =
+    {
+        std::wstring(L"1/x"),
+        std::wstring(L"(x+8)*(x+4)*(x-1)"),
+        std::wstring(L"(x+4)*(x-1)*(x-4.95)"),
+        std::wstring(L""),
+        std::wstring(L"")
+    };
+
+    // Act
+    game.Update(exprStrings);
+    auto originalDots = game.GetDots();
+    repository->Save(game, id);
+    game.Remake();
+    auto remadeDots = game.GetDots();
+    auto result = game.Load(id);
+    auto loadedDots = game.GetDots();
+
+    // Assert
+    ASSERT_TRUE(result.first);
+
+    ASSERT_EQ(remadeDots.size(), loadedDots.size());
+
+    // compare remade dots to dots from deserialization
+    {
+        bool onlyMatchesFound = true;
+        for(unsigned short i= 0; i < remadeDots.size(); ++i)
+        {
+            auto & remadeDot = remadeDots[i];
+            auto & loadedDot = loadedDots[i];
+
+            if(!(AreClose(remadeDot->GetCoordinates().first, loadedDot ->GetCoordinates().first)
+                 && AreClose(remadeDot->GetCoordinates().second, loadedDot ->GetCoordinates().second)
+                 && remadeDot->IsGood() == loadedDot ->IsGood()
+                 && remadeDot->GetRadius() == loadedDot ->GetRadius()))
+            {
+                onlyMatchesFound = false;
+                break;
+            }
+        }
+
+        ASSERT_FALSE(onlyMatchesFound);
+    }
+
+    ASSERT_EQ(originalDots.size(), loadedDots.size());
+
+    // compare persisted dots to dots from deserialization
+    {
+        bool onlyMatchesFound = true;
+        for(unsigned short i= 0; i < originalDots.size(); ++i)
+        {
+            auto & originalDot = originalDots[i];
+            auto & loadedDot = loadedDots[i];
+
+            if(!(AreClose(originalDot->GetCoordinates().first, loadedDot->GetCoordinates().first)
+                 && AreClose(originalDot->GetCoordinates().second, loadedDot->GetCoordinates().second)
+                 && originalDot->IsGood() == loadedDot->IsGood()
+                 && originalDot->GetRadius() == loadedDot->GetRadius()))
+            {
+                onlyMatchesFound = false;
+                break;
+            }
+        }
+
+        ASSERT_TRUE(onlyMatchesFound);
+    }
 }
 
 #endif // TST_GAME_H

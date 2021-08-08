@@ -17,9 +17,11 @@
 #
 
 HEADERS += \
+    $$PWD/doublehelper.h \
     $$PWD/fixeddotgenerator.h \
     $$PWD/memoryrepository.h
 
 SOURCES += \
+    $$PWD/doublehelper.cpp \
     $$PWD/fixeddotgenerator.cpp \
     $$PWD/memoryrepository.cpp
