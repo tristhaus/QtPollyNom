@@ -17,6 +17,7 @@
  */
 
 #include <QtConcurrent>
+#include <QStandardPaths>
 
 #include "mainwindow.h"
 
@@ -25,7 +26,16 @@
 #include <iterator>
 #include <functional>
 
-MainWindow::MainWindow(std::shared_ptr<Backend::DotGenerator> dotGenerator, QWidget *parent)
+MainWindow::MainWindow(std::shared_ptr<Backend::DotGenerator> dotGenerator,
+                       std::shared_ptr<Backend::Repository> repository,
+                       QWidget *parent)
+    : MainWindow(parent)
+{
+    this->game = Backend::Game(dotGenerator, repository);
+}
+
+MainWindow::MainWindow(std::shared_ptr<Backend::DotGenerator> dotGenerator,
+                       QWidget *parent)
     : MainWindow(parent)
 {
     this->game = Backend::Game(dotGenerator);
@@ -34,8 +44,8 @@ MainWindow::MainWindow(std::shared_ptr<Backend::DotGenerator> dotGenerator, QWid
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
-    , focusIndicator(-2)
     , game()
+    , focusIndicator(-2)
 {
     ui->setupUi(this);
     this->UpdateWindowTitle();
@@ -61,6 +71,8 @@ MainWindow::MainWindow(QWidget *parent)
     connect(&gameUpdateFutureWatcher, &QFutureWatcher<void>::finished, this, &MainWindow::OnGameUpdateFinished);
     connect(&waitTimer, &QTimer::timeout, this, &MainWindow::OnWaitTimerFinished);
     connect(ui->newGameMenuAction, &QAction::triggered, this, &MainWindow::OnNewGameMenuTriggered);
+    connect(ui->openGameMenuAction, &QAction::triggered, this, &MainWindow::OnOpenGameMenuTriggered);
+    connect(ui->saveGameMenuAction, &QAction::triggered, this, &MainWindow::OnSaveGameMenuTriggered);
     connect(ui->aboutMenuAction, &QAction::triggered, this, &MainWindow::OnAboutMenuTriggered);
 }
 
@@ -82,6 +94,91 @@ void MainWindow::OnNewGameMenuTriggered()
 
     this->InitializePlot();
     this->UpdateWindowTitle();
+}
+
+void MainWindow::OnOpenGameMenuTriggered()
+{
+    Resetter resetter([&](){ this->presetFilename.clear(); });
+
+    auto folder = this->GetFolderForFileDialog();
+    auto filter = this->GetGameFileFilter();
+    QString fileName = !this->presetFilename.isEmpty() ? this->presetFilename : QFileDialog::getOpenFileName(this, "", folder, filter, nullptr, QFileDialog::Options());
+
+    if(fileName.isEmpty())
+    {
+        return;
+    }
+
+    auto result = this->game.Load(fileName.toStdWString());
+
+    if(result.first)
+    {
+        this->SetGameIsBusy(true);
+        this->SetFunctionsInputFromGame();
+
+        QFuture<void> updateFuture = QtConcurrent::run([=](){
+            this->game.CreateGraphs();
+        });
+        this->gameUpdateFutureWatcher.setFuture(updateFuture);
+
+        this->waitTimer.start();
+        return;
+    }
+
+    auto messageBoxTitle = QCoreApplication::translate("MainWindow", "Error", nullptr);
+
+    //: Arg 1 is the internal error message, not translated.
+    auto messageBoxTextTemplate = QCoreApplication::translate("MainWindow", "Error occurred when trying to open a game: %1", nullptr);
+    auto errorMesssage = QString::fromStdWString(result.second);
+    auto messageBoxText = messageBoxTextTemplate.arg(errorMesssage);
+
+    auto errorBox = std::make_unique<QMessageBox>(
+                    QMessageBox::Icon::Critical,
+                    messageBoxTitle,
+                    messageBoxText);
+
+    errorBox->exec();
+
+    errorBox.reset();
+}
+
+void MainWindow::OnSaveGameMenuTriggered()
+{
+    Resetter resetter([&](){ this->presetFilename.clear(); });
+
+    this->StartCalculation();
+
+    auto folder = this->GetFolderForFileDialog();
+    auto filter = this->GetGameFileFilter();
+    QString fileName = !this->presetFilename.isEmpty() ? this->presetFilename : QFileDialog::getSaveFileName(this, "", folder, filter, nullptr, QFileDialog::Options());
+
+    if(fileName.isEmpty())
+    {
+        return;
+    }
+
+    auto result = this->game.Save(fileName.toStdWString());
+
+    if(result.first)
+    {
+        return;
+    }
+
+    auto messageBoxTitle = QCoreApplication::translate("MainWindow", "Error", nullptr);
+
+    //: Arg 1 is the internal error message, not translated.
+    auto messageBoxTextTemplate = QCoreApplication::translate("MainWindow", "Error occurred when trying to save a game: %1", nullptr);
+    auto errorMesssage = QString::fromStdWString(result.second);
+    auto messageBoxText = messageBoxTextTemplate.arg(errorMesssage);
+
+    auto errorBox = std::make_unique<QMessageBox>(
+                    QMessageBox::Icon::Critical,
+                    messageBoxTitle,
+                    messageBoxText);
+
+    errorBox->exec();
+
+    errorBox.reset();
 }
 
 void MainWindow::OnAboutMenuTriggered()
@@ -289,6 +386,8 @@ void MainWindow::SetGameIsBusy(bool isBusy)
     }
 
     this->ui->newGameMenuAction->setDisabled(isBusy);
+    this->ui->openGameMenuAction->setDisabled(isBusy);
+    this->ui->saveGameMenuAction->setDisabled(isBusy);
     this->ui->aboutMenuAction->setDisabled(isBusy);
     this->ui->calcButton->setDisabled(isBusy);
     for(size_t i = 0; i<this->numberOfFunctionInputs; ++i)
@@ -320,6 +419,16 @@ void MainWindow::UpdateGui()
     ui->plot->replot();
 }
 
+void MainWindow::SetFunctionsInputFromGame()
+{
+    std::vector<std::wstring> funcStrings = this->game.GetFunctions();
+
+    for(size_t i = 0; i<this->numberOfFunctionInputs && i<funcStrings.size(); ++i)
+    {
+        this->ui->funcLineEdit[i]->setText(QString::fromStdWString(funcStrings[i]));
+    }
+}
+
 void MainWindow::StartCalculation()
 {
     this->SetGameIsBusy(true);
@@ -337,6 +446,17 @@ void MainWindow::StartCalculation()
     this->gameUpdateFutureWatcher.setFuture(updateFuture);
 
     this->waitTimer.start();
+}
+
+QString MainWindow::GetGameFileFilter()
+{
+    return QCoreApplication::translate("MainWindow", "Games (*.qpn)", nullptr);
+}
+
+QString MainWindow::GetFolderForFileDialog()
+{
+    auto list = QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation);
+    return QString(list.first());
 }
 
 void MainWindow::OnCalcButtonClicked()

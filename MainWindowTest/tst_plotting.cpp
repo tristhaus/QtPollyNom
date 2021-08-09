@@ -27,6 +27,7 @@
 
 #include "../Frontend/mainwindow.h"
 #include "../TestHelper/fixeddotgenerator.h"
+#include "../TestHelper/memoryrepository.h"
 
 class MainWindowTest : public QObject
 {
@@ -55,6 +56,8 @@ private slots:
     void NewGameButtonShallCreateNewGame();
 #if defined(_USE_LONG_TEST)
     void AboutButtonShallTriggerDialogAndOKShallClose();
+    void SaveGameActionShallWorkWithPresetValueAndPersist();
+    void LoadGameActionShallWorkWithPresetValueAndEvaluateGame();
 #endif
 };
 
@@ -548,6 +551,110 @@ void MainWindowTest::AboutButtonShallTriggerDialogAndOKShallClose()
     QVERIFY2(aboutMessageBoxHasOneButton, "aboutMessageBox does not have exactly one button");
 
     QVERIFY2(mw.aboutMessageBox == nullptr, "aboutMessageBox still reachable");
+}
+
+void MainWindowTest::SaveGameActionShallWorkWithPresetValueAndPersist()
+{
+    // Arrange
+    std::shared_ptr<Backend::DotGenerator> dotGenerator = std::make_shared<FixedDotGenerator>();
+    std::shared_ptr<MemoryRepository> memoryRepository = std::make_shared<MemoryRepository>();
+    MainWindow mw(dotGenerator, memoryRepository);
+    auto ui = mw.ui;
+
+    std::wstring identifier = L"something";
+    std::wstring dummy;
+
+    mw.presetFilename = QString::fromStdWString(identifier);
+
+    // spy needed such that events actually happen
+    QSignalSpy spySaveAction(ui->saveGameMenuAction, &QAction::triggered);
+
+    bool actionFound = false;
+
+    // Act
+    QMenuBar *menuBar = ui->menubar;
+    QVERIFY2(menuBar != nullptr, "menuBar not found");
+    if (menuBar != nullptr)
+    {
+        QList<QAction *> actions = menuBar->actions();
+        for(qsizetype i = 0; i < actions.size(); ++i)
+        {
+            auto & action = actions[i];
+            if (action->objectName() == QString::fromUtf8("saveGame"))
+            {
+                actionFound = true;
+                action->trigger();
+                break;
+            }
+        }
+    }
+
+    spySaveAction.wait();
+
+    // Assert
+    QVERIFY2(actionFound, "no action found");
+    QVERIFY2(memoryRepository->TryGetByIdentifier(identifier, dummy), "no persisted data found");
+    QVERIFY2(mw.presetFilename.isEmpty(), "preset file name not cleared after logic has executed");
+}
+
+void MainWindowTest::LoadGameActionShallWorkWithPresetValueAndEvaluateGame()
+{
+    // Arrange
+    std::shared_ptr<Backend::DotGenerator> dataSetupDotGenerator = std::make_shared<FixedDotGenerator>(2);
+    std::shared_ptr<MemoryRepository> theSingleMemoryRepository = std::make_shared<MemoryRepository>();
+
+    Game dataSetupGame(dataSetupDotGenerator, theSingleMemoryRepository);
+    dataSetupGame.Remake();
+
+    std::vector<std::wstring> exprStrings =
+    {
+        std::wstring(L"1/x"),
+        std::wstring(L"-(-x-3.0)*(-x+4.0)"),
+        std::wstring(L"-(-x+8)*(-x+4)*(-x-1)"),
+        std::wstring(L"-(-x+8)*(-x+4)*(-x-1)*(-x-4.95)"),
+        std::wstring(L"")
+    };
+    dataSetupGame.Update(exprStrings);
+
+    std::wstring identifier = L"something";
+    dataSetupGame.Save(identifier);
+
+    std::shared_ptr<Backend::DotGenerator> dotGenerator = std::make_shared<FixedDotGenerator>();
+    MainWindow mw(dotGenerator, theSingleMemoryRepository);
+    auto ui = mw.ui;
+
+    mw.presetFilename = QString::fromStdWString(identifier);
+
+    // spy needed such that events actually happen
+    QSignalSpy spyLoadAction(ui->openGameMenuAction, &QAction::triggered);
+
+    bool actionFound = false;
+
+    // Act
+    QMenuBar *menuBar = ui->menubar;
+    QVERIFY2(menuBar != nullptr, "menuBar not found");
+    if (menuBar != nullptr)
+    {
+        QList<QAction *> actions = menuBar->actions();
+        for(qsizetype i = 0; i < actions.size(); ++i)
+        {
+            auto & action = actions[i];
+            if (action->objectName() == QString::fromUtf8("openGame"))
+            {
+                actionFound = true;
+                action->trigger();
+                break;
+            }
+        }
+    }
+
+    spyLoadAction.wait();
+
+    // Assert
+    QVERIFY2(actionFound, "no action found");
+    QVERIFY2(mw.game.GetScore() == 15, "game did not load correctly");
+    QVERIFY2(ui->plot->graphCount() > 0, "no graphs found");
+    QVERIFY2(mw.presetFilename.isEmpty(), "preset file name not cleared after logic has executed");
 }
 #endif
 

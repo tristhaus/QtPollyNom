@@ -46,6 +46,8 @@ namespace Ui
     public:
         QMenuBar *menubar;
         QAction *newGameMenuAction;
+        QAction *openGameMenuAction;
+        QAction *saveGameMenuAction;
         QAction *aboutMenuAction;
         QStatusBar *statusbar;
         QWidget *centralwidget;
@@ -186,6 +188,14 @@ namespace Ui
             newGameMenuAction = menubar->addAction(newGameActionLabel);
             newGameMenuAction->setObjectName(QString::fromUtf8("newGame"));
 
+            auto openGameMenuActionLabel = QCoreApplication::translate("MainWindow", "Open Game ...", nullptr);
+            openGameMenuAction = menubar->addAction(openGameMenuActionLabel);
+            openGameMenuAction->setObjectName(QString::fromUtf8("openGame"));
+
+            auto saveGameMenuActionLabel = QCoreApplication::translate("MainWindow", "Save Game ...", nullptr);
+            saveGameMenuAction = menubar->addAction(saveGameMenuActionLabel);
+            saveGameMenuAction->setObjectName(QString::fromUtf8("saveGame"));
+
             //: Arg 1 is a placeholder for the program name
             auto aboutActionLabelTemplate = QCoreApplication::translate("MainWindow", "About %1", nullptr);
             auto aboutActionLabel = aboutActionLabelTemplate.arg(QCoreApplication::translate("MainWindow", "QtPollyNom", nullptr));
@@ -232,9 +242,36 @@ class MainWindow : public QMainWindow
 
     friend MainWindowTest;
 
+    /*!
+     * \brief The Resetter class executes the contained action on destruction.
+     *        The usual application is to reset something.
+     */
+    class Resetter
+    {
+    private:
+        std::function<void()> action;
+
+    public:
+        /*!
+         * \brief Initializes a new instance holding the supplied action.
+         * \param action The action to store and execute on destruction.
+         */
+        Resetter(std::function<void()> action) : action(action)
+        {
+        }
+        ~Resetter()
+        {
+            this->action();
+        }
+        Resetter(const Resetter&) = delete;
+        Resetter(Resetter&&) = delete;
+        Resetter& operator=(const Resetter&) = delete;
+        Resetter& operator=(Resetter&&) = delete;
+    };
+
 private:
     Ui::MainWindow *ui;
-    size_t numberOfFunctionInputs;
+    Backend::Game game;
 
     /*!
      * \brief focusIndicator indicates the focus before a calculation
@@ -244,13 +281,19 @@ private:
      */
     int focusIndicator;
 
-    Backend::Game game;
     QFutureWatcher<void> gameUpdateFutureWatcher;
     QTimer waitTimer;
 
     std::unique_ptr<QMessageBox> waitingMessageBox;
     std::unique_ptr<QMessageBox> aboutMessageBox;
 
+    /*!
+     * \brief presetFilename allows to set a filename and
+     *        thus circumvent the file dialog, e.g. for testing.
+     */
+    QString presetFilename;
+
+    size_t numberOfFunctionInputs;
     std::vector<QCPAbstractPlottable*> dotCurves;
 
     std::vector<QColor> graphColors;
@@ -263,11 +306,22 @@ private:
 
 public:
     /*!
+     * \brief Initializes a new instance using the supplied dot generator and repository.
+     * \param dotGenerator The generator for dots to use.
+     * \param repository The repository to use to persist games.
+     * \param parent The QT-defined parent.
+     */
+    MainWindow(std::shared_ptr<Backend::DotGenerator> dotGenerator,
+               std::shared_ptr<Backend::Repository> repository,
+               QWidget *parent = nullptr);
+
+    /*!
      * \brief Initializes a new instance using the supplied dot generator.
      * \param dotGenerator The generator for dots to use.
      * \param parent The QT-defined parent.
      */
-    MainWindow(std::shared_ptr<Backend::DotGenerator> dotGenerator, QWidget *parent = nullptr);
+    MainWindow(std::shared_ptr<Backend::DotGenerator> dotGenerator,
+               QWidget *parent = nullptr);
 
     /*!
      * \brief Initializes a new instance and lets Game decide its own dot generator.
@@ -278,6 +332,8 @@ public:
 
 private slots:
     void OnNewGameMenuTriggered();
+    void OnOpenGameMenuTriggered();
+    void OnSaveGameMenuTriggered();
     void OnAboutMenuTriggered();
     void OnCalcButtonClicked();
     void OnReturnKeyPressed();
@@ -294,6 +350,9 @@ private:
     void UpdateWindowTitle();
     void SetGameIsBusy(bool isBusy);
     void UpdateGui();
+    void SetFunctionsInputFromGame();
     void StartCalculation();
+    QString GetGameFileFilter();
+    QString GetFolderForFileDialog();
 };
 #endif // MAINWINDOW_H

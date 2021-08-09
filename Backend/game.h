@@ -76,6 +76,11 @@ namespace Backend {
         void Update(const std::vector<std::wstring> & funcStrings);
 
         /*!
+         * \brief CreateGraphs Creates graphs from the contained functions.
+         */
+        void CreateGraphs();
+
+        /*!
          * \brief IsParseable indicates whether the supplied string can parse to an expression.
          * \param input The string to check for parseability.
          * \return true if the argument is parseable, false otherwise.
@@ -134,7 +139,6 @@ namespace Backend {
     private:
         void Init();
         void CreateItems();
-        void CreateGraphs();
         void PutEmptyGraphAtIndex(unsigned long int index);
         void PutGraphAtIndex(unsigned long index, std::vector<std::pair<std::vector<double>, std::vector<double> > > graph);
         void SaveFunctionAtIndex(unsigned long index, std::wstring funcString);

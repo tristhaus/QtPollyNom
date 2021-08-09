@@ -47,5 +47,31 @@
         <source>New Game</source>
         <translation>Neues Spiel</translation>
     </message>
+    <message>
+        <source>Open Game ...</source>
+        <translation>Spiel öffnen ...</translation>
+    </message>
+    <message>
+        <source>Save Game ...</source>
+        <translation>Spiel speichern ...</translation>
+    </message>
+    <message>
+        <source>Error</source>
+        <translation>Fehler</translation>
+    </message>
+    <message>
+        <source>Error occurred when trying to open a game: %1</source>
+        <extracomment>Arg 1 is the internal error message, not translated.</extracomment>
+        <translation>Aufgetretener Fehler beim Versuch ein Spiel zu öffnen: %1</translation>
+    </message>
+    <message>
+        <source>Error occurred when trying to save a game: %1</source>
+        <extracomment>Arg 1 is the internal error message, not translated.</extracomment>
+        <translation>Aufgetretener Fehler beim Versuch ein Spiel zu speichern: %1</translation>
+    </message>
+    <message>
+        <source>Games (*.qpn)</source>
+        <translation>Spiele (*.qpn)</translation>
+    </message>
 </context>
 </TS>
