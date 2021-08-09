@@ -288,6 +288,8 @@ void MainWindow::SetGameIsBusy(bool isBusy)
         }
     }
 
+    this->ui->newGameMenuAction->setDisabled(isBusy);
+    this->ui->aboutMenuAction->setDisabled(isBusy);
     this->ui->calcButton->setDisabled(isBusy);
     for(size_t i = 0; i<this->numberOfFunctionInputs; ++i)
     {
