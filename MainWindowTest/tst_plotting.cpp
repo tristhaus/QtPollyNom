@@ -431,6 +431,8 @@ void MainWindowTest::NewGameButtonShallCreateNewGame()
     QSignalSpy spyUpdate(&(mw.gameUpdateFutureWatcher), &QFutureWatcher<void>::finished);
     QSignalSpy spyNewGameAction(ui->newGameMenuAction, &QAction::triggered);
 
+    bool actionFound = false;
+
     // Act
     for(size_t i = 0; i < ui->funcLineEdit.size(); ++i)
     {
@@ -455,6 +457,7 @@ void MainWindowTest::NewGameButtonShallCreateNewGame()
             auto & action = actions[i];
             if (action->objectName() == QString::fromUtf8("newGame"))
             {
+                actionFound = true;
                 action->trigger();
                 break;
             }
@@ -464,6 +467,7 @@ void MainWindowTest::NewGameButtonShallCreateNewGame()
     auto dots2 = mw.game.GetDots();
 
     // Assert
+    QVERIFY2(actionFound, "no action found");
     const double tolerance = 1e-9;
     for(unsigned int iter1 = 0; iter1 < dots1.size(); ++iter1)
     {
@@ -503,6 +507,8 @@ void MainWindowTest::AboutButtonShallTriggerDialogAndOKShallClose()
 
     QVERIFY2(ui->plot->graphCount() == 0, "graphs found that should not be there");
 
+    bool actionFound = false;
+
     // Act
     bool aboutMessageBoxFound = false;
     bool aboutMessageBoxHasOneButton = false;
@@ -527,6 +533,7 @@ void MainWindowTest::AboutButtonShallTriggerDialogAndOKShallClose()
             auto & action = actions[i];
             if (action->objectName() == QString::fromUtf8("about"))
             {
+                actionFound = true;
                 action->trigger();
                 break;
             }
@@ -536,6 +543,7 @@ void MainWindowTest::AboutButtonShallTriggerDialogAndOKShallClose()
     spyAboutAction.wait();
 
     // Assert
+    QVERIFY2(actionFound, "no action found");
     QVERIFY2(aboutMessageBoxFound, "aboutMessageBox not found");
     QVERIFY2(aboutMessageBoxHasOneButton, "aboutMessageBox does not have exactly one button");
 
