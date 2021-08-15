@@ -97,7 +97,7 @@ class DeserializationErrorTest : public testing::TestWithParam<TestDeserializati
 {
 };
 
-INSTANTIATE_TEST_SUITE_P(BackendTest, DeserializationErrorTest,
+INSTANTIATE_TEST_SUITE_P(BackendTest, DeserializationErrorTest, // clazy:exclude=non-pod-global-static
     testing::Values(
     TestDeserializationErrorResult{L"NotObject", LR"foo([])foo"},
     TestDeserializationErrorResult{L"EmptyObject", LR"foo({})foo"},

@@ -742,7 +742,7 @@ class ParseabilityTest : public testing::TestWithParam<TestFunctionResult>
 {
 };
 
-INSTANTIATE_TEST_SUITE_P(BackendTest, ParseabilityTest,
+INSTANTIATE_TEST_SUITE_P(BackendTest, ParseabilityTest, // clazy:exclude=non-pod-global-static
     testing::Values(
     TestFunctionResult{L"Empty", L"", false},
     TestFunctionResult{L"X", L"X", true},
